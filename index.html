@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mortgage Calculator — Canada & USA</title>
+  <meta name="description" content="Minimal, mobile‑first mortgage calculator for Canada and the USA showing full monthly cost of ownership." />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Mortgage Calculator — Canada & USA</h1>
+      <nav class="inline" role="navigation">
+        <a class="btn" href="gst-hst.html" style="text-decoration:none">GST/HST Calculator</a>
+      </nav>
+    </header>
+
+    <div class="row">
+      <section class="card" aria-labelledby="inputsTitle">
+        <div class="row-actions">
+          <h2 id="inputsTitle" style="margin:0;font-size:16px">Inputs</h2>
+          <div class="toggle" id="flowToggle" aria-label="Flow">
+            <button type="button" data-flow="purchase" class="active">Purchase</button>
+            <button type="button" data-flow="refi">Refinance</button>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="grid two">
+            <div>
+              <div class="label">City & Province/State</div>
+              <input id="region" placeholder="e.g., Toronto, ON or Austin, TX" />
+            </div>
+            <div>
+              <div class="label">Term (years)</div>
+              <select id="term">
+                <option>30</option>
+                <option>25</option>
+                <option selected>20</option>
+                <option>15</option>
+                <option>10</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid two">
+            <div>
+              <div class="label">Home price / value</div>
+              <input id="price" type="number" min="0" step="0.01" value="700000" />
+            </div>
+            <div>
+              <div class="label">Down payment (%)</div>
+              <input id="downPct" type="number" min="0" max="100" step="0.01" value="10" />
+            </div>
+          </div>
+
+          <div class="grid two">
+            <div>
+              <div class="label">Interest rate (annual %)</div>
+              <input id="rate" type="number" min="0" step="0.01" value="5.29" />
+            </div>
+            <div>
+              <div class="label">Payment frequency</div>
+              <select id="frequency">
+                <option value="monthly" selected>Monthly</option>
+                <option value="biweekly">Bi‑weekly (accelerated)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid two">
+            <div>
+              <div class="label">Condo fee (monthly)</div>
+              <input id="condo" type="number" min="0" step="1" value="400" />
+            </div>
+            <div>
+              <div class="label">Home insurance (monthly, optional)</div>
+              <input id="homeIns" type="number" min="0" step="1" value="0" />
+            </div>
+          </div>
+
+          <div class="grid two">
+            <div>
+              <div class="label">Property tax mode</div>
+              <select id="taxMode">
+                <option value="percent" selected>Percent of value</option>
+                <option value="fixed">Fixed monthly</option>
+              </select>
+            </div>
+            <div id="taxValueWrap">
+              <div class="label">Property tax (% per year)</div>
+              <input id="taxValue" type="number" min="0" step="0.01" value="1.0" />
+            </div>
+          </div>
+
+          <div class="grid three">
+            <div>
+              <div class="label">Water (monthly)</div>
+              <input id="water" type="number" min="0" step="1" value="40" />
+            </div>
+            <div>
+              <div class="label">Electricity (monthly)</div>
+              <input id="electricity" type="number" min="0" step="1" value="120" />
+            </div>
+            <div>
+              <div class="label">Heating (monthly)</div>
+              <input id="heating" type="number" min="0" step="1" value="100" />
+            </div>
+          </div>
+        </div>
+
+        <div class="section" id="insuranceSection">
+          <div class="inline" style="justify-content:space-between">
+            <div>
+              <div class="label">Mortgage insurance</div>
+              <div class="help" id="insuranceHelp">Auto‑applied if down payment &lt; 20%.</div>
+            </div>
+            <div class="toggle" id="usInsToggle" style="display:none">
+              <button type="button" data-ins="fha" class="active">FHA</button>
+              <button type="button" data-ins="pmi">Conventional PMI</button>
+            </div>
+          </div>
+
+          <div class="grid two" id="canadaToggles" style="margin-top:8px; display:none">
+            <div class="inline">
+              <input id="financePremium" type="checkbox" checked />
+              <label for="financePremium" class="help">Finance CMHC premium into mortgage</label>
+            </div>
+            <div class="inline">
+              <span class="help">PST on CMHC premium is due in ON/QC/MB at closing (not financed).</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section" id="flowSection">
+          <div id="purchaseOnly" class="grid two">
+            <div class="inline">
+              <input id="financeClosing" type="checkbox" />
+              <label for="financeClosing" class="help">Roll closing costs into loan</label>
+            </div>
+            <div>
+              <div class="label">Closing costs (% of price)</div>
+              <input id="closingPct" type="number" min="0" step="0.1" value="1.5" />
+            </div>
+          </div>
+          <div id="refiOnly" class="grid two" style="display:none">
+            <div>
+              <div class="label">Current loan balance</div>
+              <input id="currBalance" type="number" min="0" step="0.01" value="400000" />
+            </div>
+            <div>
+              <div class="label">Cash‑out amount (optional)</div>
+              <input id="cashOut" type="number" min="0" step="0.01" value="0" />
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <button class="btn" id="prefillCanada">Prefill Canada example</button>
+          <button class="btn" id="prefillUSA">Prefill USA example</button>
+          <span class="help">All values editable. Results update instantly.</span>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="resultsTitle">
+        <h2 id="resultsTitle" style="margin:0 0 8px 0; font-size:16px">Results</h2>
+        <div class="inline" style="justify-content:space-between; align-items:flex-end">
+          <div>
+            <div class="label">Estimated Monthly Cost of Ownership</div>
+            <div class="result-hero" id="totalOut">—</div>
+          </div>
+          <div id="miChip" class="pill warn" style="display:none">Mortgage insurance applied</div>
+          <div id="noMiChip" class="pill ok" style="display:none">No mortgage insurance required</div>
+        </div>
+
+        <div class="list" id="breakdown"></div>
+
+        <div class="section">
+          <div class="label">Amortization</div>
+          <canvas id="spark" width="600" height="120" aria-label="Amortization sparkline"></canvas>
+          <div class="help">Balance trend over term (principal only, assuming constant rate).</div>
+        </div>
+
+        <div class="section disclosure">
+          Calculations are estimates. Canadian rates use semi‑annual compounding; US uses monthly. FHA and PMI values use default tables; confirm with lender. CMHC PST (ON/QC/MB) is paid at closing and not financed by default.
+        </div>
+      </section>
+    </div>
+
+    <div class="footer">
+      © Demo. No data collected. Update config inside JS for newer rules.
+    </div>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>
