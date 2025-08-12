@@ -1,8 +1,8 @@
 const $ = (id)=>document.getElementById(id);
 const provinces = [
   {code:'AB', name:'Alberta',        type:'GST', rate:0.05},
-  {code:'BC', name:'British Columbia', type:'GST', rate:0.05}, // PST separate; not included
-  {code:'MB', name:'Manitoba',       type:'GST', rate:0.05}, // RST separate
+  {code:'BC', name:'British Columbia', type:'GST', rate:0.05},
+  {code:'MB', name:'Manitoba',       type:'GST', rate:0.05},
   {code:'NB', name:'New Brunswick',  type:'HST', rate:0.15},
   {code:'NL', name:'Newfoundland and Labrador', type:'HST', rate:0.15},
   {code:'NS', name:'Nova Scotia',    type:'HST', rate:0.15},
@@ -10,24 +10,13 @@ const provinces = [
   {code:'NU', name:'Nunavut',        type:'GST', rate:0.05},
   {code:'ON', name:'Ontario',        type:'HST', rate:0.13},
   {code:'PE', name:'Prince Edward Island', type:'HST', rate:0.15},
-  {code:'QC', name:'Quebec',         type:'GST', rate:0.05}, // QST separate; not included
+  {code:'QC', name:'Quebec',         type:'GST', rate:0.05},
   {code:'SK', name:'Saskatchewan',   type:'GST', rate:0.05},
   {code:'YT', name:'Yukon',          type:'GST', rate:0.05},
 ];
 
 function fmt(n){
   return new Intl.NumberFormat(undefined,{style:'currency',currency:'CAD'}).format(isFinite(n)?n:0);
-}
-
-function populateProvince(){
-  const sel = $("province");
-  provinces.forEach(p=>{
-    const o = document.createElement('option');
-    o.value = p.code;
-    o.textContent = `${p.name} (${p.type === 'HST' ? 'HST' : 'GST'} ${Math.round(p.rate*100)}%)`;
-    sel.appendChild(o);
-  });
-  sel.value = 'ON';
 }
 
 function getRate(){
@@ -38,7 +27,7 @@ function getRate(){
     const r = Number($("customRate").value)||0;
     return Math.max(0, r)/100;
   } else {
-    const p = provinces.find(x=> x.code === $("province").value);
+    const p = provinces.find(x=> x.code === (window.__provinceCode || 'ON'));
     return p ? p.rate : 0.05;
   }
 }
@@ -51,7 +40,6 @@ function compute(){
   let base = NaN, tax = NaN, gross = NaN;
 
   if(isFinite(total) && total > 0){
-    // Breakout from total
     gross = total;
     base = gross / (1 + rate);
     tax = gross - base;
@@ -73,7 +61,6 @@ function compute(){
 }
 
 function bind(){
-  $("province").addEventListener('change', compute);
   $("taxMode").addEventListener('change', ()=>{
     $("customWrap").style.display = $("taxMode").value==='custom' ? 'grid':'none';
     compute();
@@ -85,7 +72,8 @@ function bind(){
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
-  populateProvince();
+  // province is set via places.js when user picks a location
+  window.__provinceCode = 'ON';
   bind();
   compute();
 });

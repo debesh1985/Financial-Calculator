@@ -12,7 +12,7 @@
     <header>
       <h1>GST / HST Calculator — Canada</h1>
       <nav class="inline">
-        <a class="btn" href="index.html" style="text-decoration:none">← Mortgage Calculator</a>
+        <a class="btn" href="index.html">← Mortgage Calculator</a>
       </nav>
     </header>
 
@@ -21,10 +21,11 @@
 
       <div class="section">
         <div class="grid two">
-          <div>
-            <div class="label">Province/Territory (auto rate)</div>
-            <select id="province"></select>
-            <div class="help">If your province uses HST, we'll apply that rate. Otherwise we'll use GST (5%).</div>
+          <div class="autocomplete">
+            <div class="label">City or Province (type to search)</div>
+            <input id="gsRegion" placeholder="e.g., Toronto, ON" autocomplete="off" />
+            <div id="gsRegion-list" class="ac-list" style="display:none"></div>
+            <div class="small">Choose a location to auto-set the GST/HST rate.</div>
           </div>
           <div>
             <div class="label">Tax mode</div>
@@ -65,9 +66,10 @@
       <div class="list" id="breakdown"></div>
     </section>
 
-    <div class="footer">© Demo. For estimates only.</div>
+    <div class="footer">© FunDu Web Co. No data collected. Update config inside JS for newer rules.</div>
   </div>
 
   <script src="assets/tax.js"></script>
+  <script src="assets/places.js"></script>
 </body>
 </html>

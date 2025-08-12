@@ -93,7 +93,6 @@ function compute(){
     baseLoan = Math.max(0, price - dpAmount);
     if(financeClosing){ baseLoan += price * (closingPct/100); }
   } else {
-    // refinance: replace with current balance +/- cashout; price used for LTV
     baseLoan = Math.max(0, currBalance + cashOut);
   }
 
@@ -110,9 +109,8 @@ function compute(){
     if(ltvVal>0.80){
       miApplied = true;
       const rate = findRateFromBuckets(CONFIG.canada.cmhc, ltvVal) || 0;
-      const premium = baseLoan * rate; // CMHC premium
+      const premium = baseLoan * rate;
       if(financePremium){ upfrontAdd += premium; }
-      // PST note only; not added to loan by default
     }
   } else {
     document.getElementById("canadaToggles").style.display='none';
@@ -121,14 +119,12 @@ function compute(){
       miApplied = true;
       if(state.usIns==='fha'){
         const uf = CONFIG.usa.fha.ufmip;
-        const ufAmt = baseLoan * uf; // financed
+        const ufAmt = baseLoan * uf;
         upfrontAdd += ufAmt;
-        // Annual MIP (billed monthly)
         const match = CONFIG.usa.fha.mip.find(r=> termYears===r.term && ltvVal>=r.min && ltvVal<=r.max );
         const mipRate = (match?.rate) || 0.0055;
         miMonthly = (mipRate * baseLoan)/12;
       } else {
-        // Conventional PMI
         const pmiRate = findRateFromBuckets(CONFIG.usa.pmi, ltvVal) || 0.0075;
         miMonthly = (pmiRate * baseLoan)/12;
       }
@@ -145,7 +141,7 @@ function compute(){
   if(taxMode==='percent'){
     monthlyTax = (taxVal/100 * usedPrice)/12;
   } else {
-    monthlyTax = taxVal; // already monthly
+    monthlyTax = taxVal;
   }
 
   const totalMonthly = paymentMonthly + miMonthly + monthlyTax + condo + water + elec + heat + (homeIns||0);
@@ -183,9 +179,7 @@ function drawSpark(principal, i, n, m){
   const ctx = c.getContext('2d');
   const W = c.width, H = c.height;
   ctx.clearRect(0,0,W,H);
-  // axis baseline
-  ctx.strokeStyle = '#1e2230'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(8,H-8); ctx.lineTo(W-8,H-8); ctx.stroke();
-  // points
+  ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(8,H-8); ctx.lineTo(W-8,H-8); ctx.stroke();
   const steps = Math.min(200, n);
   const stepN = Math.floor(n/steps) || 1;
   let bal = principal;
@@ -200,7 +194,7 @@ function drawSpark(principal, i, n, m){
   }
   const maxB = principal, minB = 0;
   const xStep = (W-16)/(pts.length-1 || 1);
-  ctx.strokeStyle = '#2dd4bf'; ctx.lineWidth=2; ctx.beginPath();
+  ctx.strokeStyle = '#2563eb'; ctx.lineWidth=2; ctx.beginPath();
   pts.forEach((b,idx)=>{
     const x = 8 + idx*xStep;
     const y = 8 + (H-16) * (b - minB) / (maxB - minB + 1e-6);
@@ -211,7 +205,7 @@ function drawSpark(principal, i, n, m){
 }
 
 function bind(){
-  // Country toggle buttons (inline creation to keep HTML minimal)
+  // Country toggle (add to header)
   const countryToggle = document.createElement('div');
   countryToggle.className = 'toggle';
   countryToggle.innerHTML = `
@@ -225,7 +219,6 @@ function bind(){
       countryToggle.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
       state.country = btn.dataset.country;
-      // defaults per country
       if(state.country==='canada'){
         $("rate").value = 5.29; $("term").value = 25; $("taxValue").value = CONFIG.canada.defaults.taxPct; $("heating").value=100; $("condo").value=CONFIG.canada.defaults.condo;
       } else {
@@ -261,7 +254,7 @@ function bind(){
       $("taxValue").value = state.country==='canada'? CONFIG.canada.defaults.taxPct : CONFIG.usa.defaults.taxPct;
     } else {
       $("taxValueWrap").querySelector('.label').textContent = 'Property tax (fixed monthly)';
-      $("taxValue").value = 400; // placeholder default
+      $("taxValue").value = 400;
     }
     compute();
   });
@@ -283,11 +276,10 @@ function bind(){
   });
   $("prefillUSA").addEventListener('click',()=>{
     countryToggle.querySelector('[data-country="usa"]').click();
-    $("region").value='Austin, TX';
+    $("region").value='San Francisco, CA';
     $("term").value='30'; $("price").value='550000'; $("downPct").value='5'; $("rate").value='6.25';
     $("condo").value='250'; $("taxMode").value='percent'; $("taxValue").value='1.8';
     $("water").value='40'; $("electricity").value='120'; $("heating").value='90';
-    // ensure FHA default
     state.usIns='fha';
     document.querySelector('#usInsToggle [data-ins="fha"]').classList.add('active');
     document.querySelector('#usInsToggle [data-ins="pmi"]').classList.remove('active');
