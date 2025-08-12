@@ -36,20 +36,30 @@
     if(!input || !list) return;
 
     let activeIndex = -1;
+    let lastItems = [];
 
     function close(){ list.style.display='none'; list.innerHTML=''; activeIndex=-1; }
     function render(items){
+      lastItems = items;
       list.innerHTML='';
       items.forEach((it, idx)=>{
         const div = document.createElement('div');
         div.className = 'ac-item';
         div.textContent = it.label;
-        div.addEventListener('mousedown', (e)=>{ // mousedown to fire before input blur
+
+        const choose = (e)=>{
           e.preventDefault();
           input.value = it.label;
           close();
           if(onPick) onPick(it);
-        });
+        };
+        // Fire before blur on touch/mobile
+        div.addEventListener('pointerdown', choose, {passive:false});
+        div.addEventListener('touchstart', choose, {passive:false});
+        // Fallbacks
+        div.addEventListener('mousedown', choose);
+        div.addEventListener('click', choose);
+
         list.appendChild(div);
       });
       list.style.display = items.length ? 'block' : 'none';
@@ -57,7 +67,7 @@
 
     function search(q){
       const qq = q.trim().toLowerCase();
-      // Prefix matches first, then substring matches
+      if(!qq) return [];
       const starts = [];
       const contains = [];
       for(const x of locations){
@@ -69,20 +79,21 @@
     }
 
     function showInitial(){
-      // Top suggestions to prove it's working
       render(locations.slice(0, 10));
     }
 
     input.addEventListener('input', ()=>{
       const q = input.value;
-      if(q.length < 2){ close(); return; }
-      render(search(q));
+      if(q.length >= 2) render(search(q));
+      else close();
     });
 
     input.addEventListener('focus', ()=>{
-      const q = input.value;
-      if(q.length >= 2) render(search(q));
-      else showInitial();
+      if(input.value.length >= 2){
+        render(search(input.value));
+      } else {
+        showInitial();
+      }
     });
 
     input.addEventListener('keydown', (e)=>{
@@ -92,13 +103,14 @@
       else if(e.key === 'ArrowUp'){ activeIndex = Math.max(0, activeIndex-1); e.preventDefault(); }
       else if(e.key === 'Enter' && activeIndex>=0){
         e.preventDefault();
-        items[activeIndex].dispatchEvent(new Event('mousedown'));
+        items[activeIndex].dispatchEvent(new Event('click'));
         return;
       } else if(e.key === 'Escape'){ close(); return; }
       items.forEach((it,i)=> it.classList.toggle('active', i===activeIndex));
     });
 
-    input.addEventListener('blur', ()=> setTimeout(close, 120));
+    // Keep list visible briefly so pointerdown can fire before blur
+    input.addEventListener('blur', ()=> setTimeout(close, 200));
   }  // Mortgage page
   if(document.getElementById('region')){
     attachAutocomplete('region','region-list');
