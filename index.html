@@ -66,7 +66,11 @@
               <div class="label">Payment frequency</div>
               <select id="frequency">
                 <option value="monthly" selected>Monthly</option>
-                <option value="biweekly">Bi‑weekly (accelerated)</option>
+                <option value="semi-monthly">Semi‑Monthly (24/yr)</option>
+                <option value="biweekly">Bi‑Weekly (26/yr)</option>
+                <option value="accelerated-biweekly">Accelerated Bi‑Weekly (26/yr)</option>
+                <option value="weekly">Weekly (52/yr)</option>
+                <option value="accelerated-weekly">Accelerated Weekly (52/yr)</option>
               </select>
             </div>
           </div>
@@ -181,7 +185,8 @@
         <div class="section">
           <div class="label">Amortization</div>
           <canvas id="spark" width="600" height="120" aria-label="Amortization sparkline"></canvas>
-          <div class="help">Balance trend over term (principal only, assuming constant rate).</div>
+          <div class="help">Balance trend and payment split by principal vs interest for the chosen frequency.</div>
+<div class="small amort-legend"><span style="display:inline-block;width:12px;height:4px;background:#2563eb;margin-right:6px;border-radius:2px;"></span>Balance <span style="display:inline-block;width:12px;height:4px;background:#10b981;margin:0 6px;border-radius:2px;"></span>Principal portion <span style="display:inline-block;width:12px;height:4px;background:#f59e0b;margin:0 6px;border-radius:2px;"></span>Interest portion</div>
         </div>
 
         <div class="section disclosure">

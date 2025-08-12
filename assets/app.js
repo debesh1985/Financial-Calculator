@@ -41,6 +41,15 @@ const CONFIG = {
 
 let state = {country:'canada', flow:'purchase', usIns:'fha'};
 
+const FREQUENCIES = {
+  'monthly':            {ppy:12,  accel:false, label:'Monthly'},
+  'semi-monthly':       {ppy:24,  accel:false, label:'Semi-Monthly'},
+  'biweekly':           {ppy:26,  accel:false, label:'Bi-Weekly'},
+  'accelerated-biweekly':{ppy:26, accel:true,  label:'Accelerated Bi-Weekly'},
+  'weekly':             {ppy:52,  accel:false, label:'Weekly'},
+  'accelerated-weekly': {ppy:52,  accel:true,  label:'Accelerated Weekly'}
+};
+
 // Math helpers
 function monthlyRate(annualPct){
   const r = Math.max(0, Number(annualPct)/100);
@@ -133,10 +142,20 @@ function compute(){
 
   const principal = baseLoan + upfrontAdd;
 
-  // Payment
-  let paymentMonthly = pmt(principal, i, n);
+  // Payment by frequency
+const sel = FREQUENCIES[freq] || FREQUENCIES['monthly'];
+// convert monthly effective rate to per-period rate
+const i_period = Math.pow(1 + i, 12/sel.ppy) - 1;
+const n_periods = termYears * sel.ppy;
+// base monthly payment for comparison/accelerated formula
+const baseMonthly = pmt(principal, i, n);
+let paymentPerPeriod = pmt(principal, i_period, n_periods);
+if(sel.accel){
+  // accelerated: target 13x monthly per year spread across periods
+  paymentPerPeriod = (baseMonthly * 13) / sel.ppy;
+}
 
-  // Property tax
+// Property tax
   let monthlyTax = 0;
   if(taxMode==='percent'){
     monthlyTax = (taxVal/100 * usedPrice)/12;
@@ -144,7 +163,7 @@ function compute(){
     monthlyTax = taxVal;
   }
 
-  const totalMonthly = paymentMonthly + miMonthly + monthlyTax + condo + water + elec + heat + (homeIns||0);
+  const totalMonthly = (paymentPerPeriod * (sel.ppy/12)) + miMonthly + monthlyTax + condo + water + elec + heat + (homeIns||0);
 
   // UI
   $("totalOut").textContent = fmt(totalMonthly, state.country);
@@ -152,7 +171,7 @@ function compute(){
   $("noMiChip").style.display = (!miApplied && price>0)? 'inline-block':'none';
 
   const bd = [
-    ['Mortgage P&I', paymentMonthly],
+    ['Mortgage P&I', paymentPerPeriod * (sel.ppy/12)],
     ['Mortgage insurance', miMonthly],
     ['Property tax', monthlyTax],
     ['Condo fee', condo],
@@ -171,26 +190,71 @@ function compute(){
     list.appendChild(div);
   });
 
-  drawSpark(principal, i, n, paymentMonthly);
+  drawSpark(principal, i, n, baseMonthly);
 }
 
-function drawSpark(principal, i, n, m){
-  const c = $("spark");
+function drawSpark(principal, i_month, n_months, monthlyPay){
+  const c = document.getElementById('spark');
   const ctx = c.getContext('2d');
   const W = c.width, H = c.height;
   ctx.clearRect(0,0,W,H);
-  ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(8,H-8); ctx.lineTo(W-8,H-8); ctx.stroke();
-  const steps = Math.min(200, n);
-  const stepN = Math.floor(n/steps) || 1;
+  // Determine selected frequency
+  const sel = FREQUENCIES[(document.getElementById('frequency')||{}).value || 'monthly'] || FREQUENCIES['monthly'];
+  const i_p = Math.pow(1 + i_month, 12/sel.ppy) - 1;
+  const n_p = (n_months/12) * sel.ppy;
+  // Base monthly for accelerated calc
+  const baseMonthly = monthlyPay; // already the monthly payment we computed earlier
+  let pay = pmt(principal, i_p, n_p);
+  if(sel.accel){ pay = (baseMonthly * 13) / sel.ppy; }
+
+  // Simulate per-period to build series
+  const maxSteps = Math.min(400, Math.floor(n_p));
+  const step = Math.max(1, Math.floor(n_p / maxSteps));
   let bal = principal;
-  const pts = [];
-  for(let k=0; k<steps; k++){
-    for(let t=0;t<stepN;t++){
-      const interest = bal * i;
-      const princ = Math.max(0, m - interest);
-      bal = Math.max(0, bal - princ);
+  const balSeries = [];
+  const princSeries = [];
+  const intSeries = [];
+  for(let k=0; k<n_p; k++){
+    const interest = bal * i_p;
+    const princ = Math.max(0, pay - interest);
+    bal = Math.max(0, bal - princ);
+    if(k % step === 0){
+      balSeries.push(bal);
+      princSeries.push(princ);
+      intSeries.push(interest);
     }
-    pts.push(bal);
+    if(bal <= 0) break;
+  }
+  const xStep = (W-16)/Math.max(1, balSeries.length-1);
+  const maxB = principal;
+  // axes
+  ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(8,H-8); ctx.lineTo(W-8,H-8); ctx.stroke();
+  // balance line (blue)
+  ctx.strokeStyle = '#2563eb'; ctx.lineWidth=2; ctx.beginPath();
+  balSeries.forEach((b,idx)=>{
+    const x = 8 + idx*xStep;
+    const yInv = H - (8 + (H-16) * (b / (maxB + 1e-6)));
+    if(idx===0) ctx.moveTo(x,yInv); else ctx.lineTo(x,yInv);
+  });
+  ctx.stroke();
+  // principal bars/line (green)
+  const maxPayComp = Math.max(...princSeries, ...intSeries, 1);
+  ctx.strokeStyle = '#10b981'; ctx.lineWidth=1.5; ctx.beginPath();
+  princSeries.forEach((p,idx)=>{
+    const x = 8 + idx*xStep;
+    const yInv = H - (8 + (H-16) * (p / maxPayComp));
+    if(idx===0) ctx.moveTo(x,yInv); else ctx.lineTo(x,yInv);
+  });
+  ctx.stroke();
+  // interest line (amber)
+  ctx.strokeStyle = '#f59e0b'; ctx.lineWidth=1.5; ctx.beginPath();
+  intSeries.forEach((p,idx)=>{
+    const x = 8 + idx*xStep;
+    const yInv = H - (8 + (H-16) * (p / maxPayComp));
+    if(idx===0) ctx.moveTo(x,yInv); else ctx.lineTo(x,yInv);
+  });
+  ctx.stroke();
+}    pts.push(bal);
   }
   const maxB = principal, minB = 0;
   const xStep = (W-16)/(pts.length-1 || 1);
