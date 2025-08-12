@@ -1,33 +1,25 @@
-// Lightweight autocomplete for Canadian & US cities + provinces/states.
-// Also maps selected location to a province/state code, so GST/HST page can set the correct rate.
-
+// Minimal, fast autocomplete with a curated list of cities and provinces/states.
 (function(){
   const locations = [
-    // Canada cities
-    {label:'Toronto, ON', prov:'ON'}, {label:'Ottawa, ON', prov:'ON'}, {label:'Mississauga, ON', prov:'ON'},
-    {label:'Vancouver, BC', prov:'BC'}, {label:'Victoria, BC', prov:'BC'}, {label:'Kelowna, BC', prov:'BC'},
-    {label:'Montreal, QC', prov:'QC'}, {label:'Quebec City, QC', prov:'QC'}, {label:'Laval, QC', prov:'QC'},
-    {label:'Calgary, AB', prov:'AB'}, {label:'Edmonton, AB', prov:'AB'},
-    {label:'Winnipeg, MB', prov:'MB'}, {label:'Saskatoon, SK', prov:'SK'}, {label:'Regina, SK', prov:'SK'},
-    {label:'Halifax, NS', prov:'NS'}, {label:'St. John\'s, NL', prov:'NL'}, {label:'Charlottetown, PE', prov:'PE'},
-    // USA cities (include an alias for the user's example)
-    {label:'San Francisco, CA', prov:'CA'}, {label:'Sun Francisco, CA', prov:'CA'},
-    {label:'Los Angeles, CA', prov:'CA'}, {label:'San Diego, CA', prov:'CA'}, {label:'San Jose, CA', prov:'CA'},
-    {label:'New York, NY', prov:'NY'}, {label:'Chicago, IL', prov:'IL'}, {label:'Houston, TX', prov:'TX'},
-    {label:'Phoenix, AZ', prov:'AZ'}, {label:'Miami, FL', prov:'FL'}, {label:'Orlando, FL', prov:'FL'},
-    {label:'Seattle, WA', prov:'WA'}, {label:'Boston, MA', prov:'MA'}, {label:'Austin, TX', prov:'TX'},
-    {label:'Dallas, TX', prov:'TX'}, {label:'Washington, DC', prov:'DC'}, {label:'Atlanta, GA', prov:'GA'},
-    {label:'Denver, CO', prov:'CO'}, {label:'Las Vegas, NV', prov:'NV'}, {label:'Philadelphia, PA', prov:'PA'}, {label:'Portland, OR', prov:'OR'},
-    // Provinces/Territories (as standalone)
-    {label:'Ontario (ON)', prov:'ON'}, {label:'Quebec (QC)', prov:'QC'}, {label:'British Columbia (BC)', prov:'BC'},
-    {label:'Alberta (AB)', prov:'AB'}, {label:'Manitoba (MB)', prov:'MB'}, {label:'Saskatchewan (SK)', prov:'SK'},
-    {label:'Nova Scotia (NS)', prov:'NS'}, {label:'New Brunswick (NB)', prov:'NB'}, {label:'Prince Edward Island (PE)', prov:'PE'},
-    {label:'Newfoundland and Labrador (NL)', prov:'NL'}, {label:'Yukon (YT)', prov:'YT'}, {label:'Northwest Territories (NT)', prov:'NT'}, {label:'Nunavut (NU)', prov:'NU'},
-    // US states (subset)
-    {label:'California (CA)', prov:'CA'}, {label:'New York (NY)', prov:'NY'}, {label:'Texas (TX)', prov:'TX'},
-    {label:'Florida (FL)', prov:'FL'}, {label:'Washington (WA)', prov:'WA'}, {label:'Massachusetts (MA)', prov:'MA'},
-    {label:'Arizona (AZ)', prov:'AZ'}, {label:'Colorado (CO)', prov:'CO'}, {label:'Georgia (GA)', prov:'GA'},
-    {label:'Illinois (IL)', prov:'IL'}, {label:'Nevada (NV)', prov:'NV'}, {label:'Oregon (OR)', prov:'OR'}, {label:'Pennsylvania (PA)', prov:'PA'}
+    // Canada (cities)
+    {label:'Toronto, ON', code:'ON'},{label:'Ottawa, ON', code:'ON'},{label:'Mississauga, ON', code:'ON'},{label:'Hamilton, ON', code:'ON'},
+    {label:'Montreal, QC', code:'QC'},{label:'Quebec City, QC', code:'QC'},{label:'Laval, QC', code:'QC'},
+    {label:'Vancouver, BC', code:'BC'},{label:'Victoria, BC', code:'BC'},{label:'Surrey, BC', code:'BC'},{label:'Burnaby, BC', code:'BC'},
+    {label:'Calgary, AB', code:'AB'},{label:'Edmonton, AB', code:'AB'},
+    {label:'Winnipeg, MB', code:'MB'},{label:'Regina, SK', code:'SK'},{label:'Saskatoon, SK', code:'SK'},
+    {label:'Halifax, NS', code:'NS'},{label:'Moncton, NB', code:'NB'},{label:'St. John\'s, NL', code:'NL'},{label:'Charlottetown, PE', code:'PE'},
+    {label:'Whitehorse, YT', code:'YT'},{label:'Yellowknife, NT', code:'NT'},{label:'Iqaluit, NU', code:'NU'},
+    // Canada (provinces/territories)
+    {label:'Ontario (ON)', code:'ON'},{label:'Quebec (QC)', code:'QC'},{label:'British Columbia (BC)', code:'BC'},{label:'Alberta (AB)', code:'AB'},
+    {label:'Manitoba (MB)', code:'MB'},{label:'Saskatchewan (SK)', code:'SK'},{label:'Nova Scotia (NS)', code:'NS'},{label:'New Brunswick (NB)', code:'NB'},
+    {label:'Prince Edward Island (PE)', code:'PE'},{label:'Newfoundland and Labrador (NL)', code:'NL'},{label:'Yukon (YT)', code:'YT'},{label:'Northwest Territories (NT)', code:'NT'},{label:'Nunavut (NU)', code:'NU'},
+    // USA (cities)
+    {label:'New York, NY', code:'NY'},{label:'Los Angeles, CA', code:'CA'},{label:'San Francisco, CA', code:'CA'},{label:'San Diego, CA', code:'CA'},
+    {label:'Seattle, WA', code:'WA'},{label:'Portland, OR', code:'OR'},{label:'Phoenix, AZ', code:'AZ'},{label:'Denver, CO', code:'CO'},
+    {label:'Austin, TX', code:'TX'},{label:'Dallas, TX', code:'TX'},{label:'Houston, TX', code:'TX'},
+    {label:'Chicago, IL', code:'IL'},{label:'Miami, FL', code:'FL'},{label:'Orlando, FL', code:'FL'},
+    {label:'Boston, MA', code:'MA'},{label:'Philadelphia, PA', code:'PA'},{label:'Atlanta, GA', code:'GA'},
+    {label:'Las Vegas, NV', code:'NV'},{label:'Washington, DC', code:'DC'}
   ];
 
   function attachAutocomplete(inputId, listId, onPick){
@@ -36,30 +28,19 @@
     if(!input || !list) return;
 
     let activeIndex = -1;
-    let lastItems = [];
 
     function close(){ list.style.display='none'; list.innerHTML=''; activeIndex=-1; }
     function render(items){
-      lastItems = items;
       list.innerHTML='';
       items.forEach((it, idx)=>{
         const div = document.createElement('div');
         div.className = 'ac-item';
         div.textContent = it.label;
-
-        const choose = (e)=>{
-          e.preventDefault();
-          input.value = it.label;
-          close();
-          if(onPick) onPick(it);
-        };
-        // Fire before blur on touch/mobile
+        const choose = (e)=>{ e.preventDefault(); input.value = it.label; close(); onPick && onPick(it); };
         div.addEventListener('pointerdown', choose, {passive:false});
         div.addEventListener('touchstart', choose, {passive:false});
-        // Fallbacks
         div.addEventListener('mousedown', choose);
         div.addEventListener('click', choose);
-
         list.appendChild(div);
       });
       list.style.display = items.length ? 'block' : 'none';
@@ -67,67 +48,34 @@
 
     function search(q){
       const qq = q.trim().toLowerCase();
-      if(!qq) return [];
-      const starts = [];
-      const contains = [];
+      if(qq.length<2) return [];
+      const starts = [], contains = [];
       for(const x of locations){
         const lab = x.label.toLowerCase();
-        if(lab.startsWith(qq) || lab.split(/[,\s]+/).some(tok => tok.startsWith(qq))) starts.push(x);
+        if(lab.startsWith(qq) || lab.split(/[,\s]+/).some(tok=>tok.startsWith(qq))) starts.push(x);
         else if(lab.includes(qq)) contains.push(x);
       }
-      return [...starts, ...contains].slice(0, 15);
-    }
-
-    function showInitial(){
-      render(locations.slice(0, 10));
+      return [...starts, ...contains].slice(0, 20);
     }
 
     input.addEventListener('input', ()=>{
-      const q = input.value;
-      if(q.length >= 2) render(search(q));
-      else close();
+      render(search(input.value));
     });
-
     input.addEventListener('focus', ()=>{
-      if(input.value.length >= 2){
-        render(search(input.value));
-      } else {
-        showInitial();
-      }
+      if(input.value.trim().length>=2) render(search(input.value));
+      else render(locations.slice(0,12));
     });
-
     input.addEventListener('keydown', (e)=>{
       const items = Array.from(list.querySelectorAll('.ac-item'));
       if(!items.length) return;
-      if(e.key === 'ArrowDown'){ activeIndex = Math.min(items.length-1, activeIndex+1); e.preventDefault(); }
-      else if(e.key === 'ArrowUp'){ activeIndex = Math.max(0, activeIndex-1); e.preventDefault(); }
-      else if(e.key === 'Enter' && activeIndex>=0){
-        e.preventDefault();
-        items[activeIndex].dispatchEvent(new Event('click'));
-        return;
-      } else if(e.key === 'Escape'){ close(); return; }
-      items.forEach((it,i)=> it.classList.toggle('active', i===activeIndex));
+      if(e.key==='ArrowDown'){ activeIndex=Math.min(items.length-1, activeIndex+1); e.preventDefault(); }
+      else if(e.key==='ArrowUp'){ activeIndex=Math.max(0, activeIndex-1); e.preventDefault(); }
+      else if(e.key==='Enter' && activeIndex>=0){ e.preventDefault(); items[activeIndex].dispatchEvent(new Event('click')); }
+      items.forEach((el,i)=>el.classList.toggle('active', i===activeIndex));
     });
-
-    // Keep list visible briefly so pointerdown can fire before blur
-    input.addEventListener('blur', ()=> setTimeout(close, 200));
-  }  // Mortgage page
-  if(document.getElementById('region')){
-    attachAutocomplete('region','region-list');
+    input.addEventListener('blur', ()=> setTimeout(close, 160));
   }
 
-  // GST/HST page — set province code for tax logic when a location is picked
-  if(document.getElementById('gsRegion')){
-    attachAutocomplete('gsRegion','gsRegion-list', (picked)=>{
-      // Extract province/state code from the end of the label if present like ", ON" or "(ON)"
-      const m = picked.label.match(/[,\\s\\(]([A-Z]{2})\\)?$/);
-      const code = m ? m[1] : 'ON';
-      window.__provinceCode = code;
-      // Force province-backed mode
-      const mode = document.getElementById('taxMode');
-      if(mode){ mode.value = 'province'; }
-      // Trigger recompute if tax.js loaded
-      if(typeof compute === 'function'){ compute(); }
-    });
-  }
+  // Attach for the mortgage page
+  attachAutocomplete('region','region-list');
 })();

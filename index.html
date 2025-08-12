@@ -4,14 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mortgage Calculator — Canada & USA</title>
-  <meta name="description" content="Light, mobile-first mortgage calculator for Canada and the USA with full monthly ownership cost and dynamic city/province suggestions." />
+  <meta name="description" content="Mortgage calculator for Canada and the USA with city suggestions, flexible payment frequencies, and a yearly amortization graph." />
   <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
   <div class="wrap">
     <header>
       <h1>Mortgage Calculator — Canada & USA</h1>
-      <div class="toggle" id="countryToggle" aria-live="polite">
+      <div class="toggle" id="countryToggle" aria-label="Country">
         <button type="button" data-country="canada" class="active">Canada (CAD)</button>
         <button type="button" data-country="usa">USA (USD)</button>
       </div>
@@ -19,21 +19,14 @@
 
     <div class="row">
       <section class="card" aria-labelledby="inputsTitle">
-        <div class="row-actions">
-          <h2 id="inputsTitle" style="margin:0;font-size:16px">Inputs</h2>
-          <div class="toggle" id="flowToggle" aria-label="Flow">
-            <button type="button" data-flow="purchase" class="active">Purchase</button>
-            <button type="button" data-flow="refi">Refinance</button>
-          </div>
-        </div>
-
+        <h2 id="inputsTitle" class="h2">Inputs</h2>
         <div class="section">
           <div class="grid two">
             <div class="autocomplete">
               <div class="label">City & Province/State (type to search)</div>
               <input id="region" placeholder="e.g., Toronto, ON or San Francisco, CA" autocomplete="off" />
               <div id="region-list" class="ac-list" style="display:none"></div>
-              <div class="small">Tip: type at least 2 letters (try Tor, Van, Sun).</div>
+              <div class="small">Start typing (try “Tor”, “San”, “Van”, “Mon”).</div>
             </div>
             <div>
               <div class="label">Term (years)</div>
@@ -66,7 +59,7 @@
             <div>
               <div class="label">Payment frequency</div>
               <select id="frequency">
-                <option value="monthly" selected>Monthly</option>
+                <option value="monthly" selected>Monthly (12/yr)</option>
                 <option value="semi-monthly">Semi‑Monthly (24/yr)</option>
                 <option value="biweekly">Bi‑Weekly (26/yr)</option>
                 <option value="accelerated-biweekly">Accelerated Bi‑Weekly (26/yr)</option>
@@ -75,132 +68,49 @@
               </select>
             </div>
           </div>
-
-          <div class="grid two">
-            <div>
-              <div class="label">Condo fee (monthly)</div>
-              <input id="condo" type="number" min="0" step="1" value="400" />
-            </div>
-            <div>
-              <div class="label">Home insurance (monthly, optional)</div>
-              <input id="homeIns" type="number" min="0" step="1" value="0" />
-            </div>
-          </div>
-
-          <div class="grid two">
-            <div>
-              <div class="label">Property tax mode</div>
-              <select id="taxMode">
-                <option value="percent" selected>Percent of value</option>
-                <option value="fixed">Fixed monthly</option>
-              </select>
-            </div>
-            <div id="taxValueWrap">
-              <div class="label">Property tax (% per year)</div>
-              <input id="taxValue" type="number" min="0" step="0.01" value="1.0" />
-            </div>
-          </div>
-
-          <div class="grid three">
-            <div>
-              <div class="label">Water (monthly)</div>
-              <input id="water" type="number" min="0" step="1" value="40" />
-            </div>
-            <div>
-              <div class="label">Electricity (monthly)</div>
-              <input id="electricity" type="number" min="0" step="1" value="120" />
-            </div>
-            <div>
-              <div class="label">Heating (monthly)</div>
-              <input id="heating" type="number" min="0" step="1" value="100" />
-            </div>
-          </div>
-        </div>
-
-        <div class="section" id="insuranceSection">
-          <div class="inline" style="justify-content:space-between">
-            <div>
-              <div class="label">Mortgage insurance</div>
-              <div class="help" id="insuranceHelp">Auto‑applied if down payment &lt; 20%.</div>
-            </div>
-            <div class="toggle" id="usInsToggle" style="display:none">
-              <button type="button" data-ins="fha" class="active">FHA</button>
-              <button type="button" data-ins="pmi">Conventional PMI</button>
-            </div>
-          </div>
-
-          <div class="grid two" id="canadaToggles" style="margin-top:8px; display:none">
-            <div class="inline">
-              <input id="financePremium" type="checkbox" checked />
-              <label for="financePremium" class="help">Finance CMHC premium into mortgage</label>
-            </div>
-            <div class="inline">
-              <span class="help">PST on CMHC premium is due in ON/QC/MB at closing (not financed).</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="section" id="flowSection">
-          <div id="purchaseOnly" class="grid two">
-            <div class="inline">
-              <input id="financeClosing" type="checkbox" />
-              <label for="financeClosing" class="help">Roll closing costs into loan</label>
-            </div>
-            <div>
-              <div class="label">Closing costs (% of price)</div>
-              <input id="closingPct" type="number" min="0" step="0.1" value="1.5" />
-            </div>
-          </div>
-          <div id="refiOnly" class="grid two" style="display:none">
-            <div>
-              <div class="label">Current loan balance</div>
-              <input id="currBalance" type="number" min="0" step="0.01" value="400000" />
-            </div>
-            <div>
-              <div class="label">Cash‑out amount (optional)</div>
-              <input id="cashOut" type="number" min="0" step="0.01" value="0" />
-            </div>
-          </div>
         </div>
 
         <div class="section">
-          <button class="btn" id="prefillCanada">Prefill Canada example</button>
-          <button class="btn" id="prefillUSA">Prefill USA example</button>
-          <span class="help">All values editable. Results update instantly.</span>
+          <button class="btn" id="prefillCanada">Prefill Canada</button>
+          <button class="btn" id="prefillUSA">Prefill USA</button>
         </div>
       </section>
 
       <section class="card" aria-labelledby="resultsTitle">
-        <h2 id="resultsTitle" style="margin:0 0 8px 0; font-size:16px">Results</h2>
-        <div class="inline" style="justify-content:space-between; align-items:flex-end">
-          <div>
-            <div class="label">Estimated Monthly Cost of Ownership</div>
-            <div class="result-hero" id="totalOut">—</div>
+        <h2 id="resultsTitle" class="h2">Results</h2>
+
+        <div class="grid two">
+          <div class="stat">
+            <div class="label">Per‑period payment</div>
+            <div class="hero" id="perPeriod">—</div>
+            <div class="small" id="perPeriodNote">Based on chosen schedule</div>
           </div>
-          <div id="miChip" class="pill warn" style="display:none">Mortgage insurance applied</div>
-          <div id="noMiChip" class="pill ok" style="display:none">No mortgage insurance required</div>
+          <div class="stat">
+            <div class="label">Monthly equivalent (P&I)</div>
+            <div class="hero" id="monthlyOut">—</div>
+            <div class="small">Converted for easy comparison</div>
+          </div>
         </div>
 
-        <div class="list" id="breakdown"></div>
-
         <div class="section">
-          <div class="label">Amortization</div>
-          <canvas id="spark" width="800" height="160" aria-label="Amortization chart"></canvas>
-          <div class="help">Balance trend and payment split by principal vs interest for the chosen frequency.</div>
-          <div class="small amort-legend">
-            <span class="key key-blue"></span>Balance
-            <span class="key key-green"></span>Principal portion
-            <span class="key key-amber"></span>Interest portion
+          <div class="label">Amortization by year</div>
+          <canvas id="chart" width="900" height="260" aria-label="Yearly amortization graph"></canvas>
+          <div class="legend">
+            <span class="swatch balance"></span>Balance
+            <span class="swatch principal"></span>Principal
+            <span class="swatch interest"></span>Interest
           </div>
+          <div class="small">X‑axis shows years 1..Term. Bars show yearly principal/interest; blue line shows remaining balance.</div>
         </div>
       </section>
     </div>
 
-    <div class="footer">
+    <footer class="footer">
       © FunDu Web Co. No data collected. Update config inside JS for newer rules.
-    </div>
+    </footer>
   </div>
+
+  <script src="assets/places.js"></script>
   <script src="assets/app.js"></script>
-  <script src="assets/suggest.js"></script>
 </body>
 </html>
