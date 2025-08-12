@@ -38,7 +38,7 @@
     let activeIndex = -1;
 
     function close(){ list.style.display='none'; list.innerHTML=''; activeIndex=-1; }
-    function open(items){
+    function render(items){
       list.innerHTML='';
       items.forEach((it, idx)=>{
         const div = document.createElement('div');
@@ -55,18 +55,41 @@
       list.style.display = items.length ? 'block' : 'none';
     }
 
+    function search(q){
+      const qq = q.trim().toLowerCase();
+      // Prefix matches first, then substring matches
+      const starts = [];
+      const contains = [];
+      for(const x of locations){
+        const lab = x.label.toLowerCase();
+        if(lab.startsWith(qq) || lab.split(/[,\s]+/).some(tok => tok.startsWith(qq))) starts.push(x);
+        else if(lab.includes(qq)) contains.push(x);
+      }
+      return [...starts, ...contains].slice(0, 15);
+    }
+
+    function showInitial(){
+      // Top suggestions to prove it's working
+      render(locations.slice(0, 10));
+    }
+
     input.addEventListener('input', ()=>{
-      const q = input.value.trim().toLowerCase();
+      const q = input.value;
       if(q.length < 2){ close(); return; }
-      const items = locations.filter(x=> x.label.toLowerCase().includes(q)).slice(0, 15);
-      open(items);
+      render(search(q));
+    });
+
+    input.addEventListener('focus', ()=>{
+      const q = input.value;
+      if(q.length >= 2) render(search(q));
+      else showInitial();
     });
 
     input.addEventListener('keydown', (e)=>{
       const items = Array.from(list.querySelectorAll('.ac-item'));
       if(!items.length) return;
-      if(e.key === 'ArrowDown'){ activeIndex = Math.min(items.length-1, activeIndex+1); }
-      else if(e.key === 'ArrowUp'){ activeIndex = Math.max(0, activeIndex-1); }
+      if(e.key === 'ArrowDown'){ activeIndex = Math.min(items.length-1, activeIndex+1); e.preventDefault(); }
+      else if(e.key === 'ArrowUp'){ activeIndex = Math.max(0, activeIndex-1); e.preventDefault(); }
       else if(e.key === 'Enter' && activeIndex>=0){
         e.preventDefault();
         items[activeIndex].dispatchEvent(new Event('mousedown'));
@@ -76,9 +99,7 @@
     });
 
     input.addEventListener('blur', ()=> setTimeout(close, 120));
-  }
-
-  // Mortgage page
+  }  // Mortgage page
   if(document.getElementById('region')){
     attachAutocomplete('region','region-list');
   }
