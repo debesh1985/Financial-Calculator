@@ -73,6 +73,7 @@ function findRateFromBuckets(buckets, ltv){
 
 // Core compute
 function compute(){
+  try{
   // Read inputs
   const price = Number($("price").value)||0;
   const downPct = Math.max(0, Math.min(100, Number($("downPct").value)||0));
@@ -191,6 +192,7 @@ if(sel.accel){
   });
 
   drawSpark(principal, i, n, baseMonthly);
+  } catch(err){ console && console.error && console.error('Compute error:', err); }
 }
 
 function drawSpark(principal, i_month, n_months, monthlyPay){
@@ -199,7 +201,8 @@ function drawSpark(principal, i_month, n_months, monthlyPay){
   const W = c.width, H = c.height;
   ctx.clearRect(0,0,W,H);
   // Determine selected frequency
-  const sel = FREQUENCIES[(document.getElementById('frequency')||{}).value || 'monthly'] || FREQUENCIES['monthly'];
+  const freqEl = document.getElementById('frequency');
+  const sel = FREQUENCIES[(freqEl && freqEl.value) || 'monthly'] || FREQUENCIES['monthly'];
   const i_p = Math.pow(1 + i_month, 12/sel.ppy) - 1;
   const n_p = (n_months/12) * sel.ppy;
   // Base monthly for accelerated calc
@@ -324,6 +327,8 @@ function bind(){
   });
 
   // inputs recalc
+  const freqEl = document.getElementById('frequency');
+  if(freqEl){ freqEl.addEventListener('change', compute); }
   document.querySelectorAll('input, select').forEach(el=>{
     el.addEventListener('input', compute);
     el.addEventListener('change', compute);
