@@ -11,12 +11,12 @@ header{display:flex; gap:12px; align-items:center; justify-content:space-between
 .h2{font-size:16px; margin:0 0 6px 0}
 h1{font-size:22px; margin:0; font-weight:700}
 .row{display:grid; grid-template-columns:1fr; gap:16px}
-@media(min-width:960px){ .row{grid-template-columns: 430px 1fr; align-items:start} }
+@media(min-width:960px){ .row{grid-template-columns: 440px 1fr; align-items:start} }
 .card{background:var(--card); border:1px solid var(--border); border-radius:var(--br); padding:14px; box-shadow:var(--shadow); overflow:visible}
 .section{border-top:1px solid var(--border); margin-top:10px; padding-top:10px}
 .section:first-child{border-top:none; padding-top:0}
 .grid{display:grid; grid-template-columns:1fr; gap:10px}
-@media(min-width:540px){ .grid.two{grid-template-columns:1fr 1fr} }
+@media(min-width:540px){ .grid.two{grid-template-columns:1fr 1fr} .grid.three{grid-template-columns:1fr 1fr 1fr}}
 .label{font-size:12px; color:var(--muted); margin-bottom:6px}
 .small{font-size:12px; color:var(--muted)}
 input,select{width:100%; padding:10px 12px; background:#fff; border:1px solid var(--border); border-radius:10px; color:var(--text)}
@@ -29,6 +29,8 @@ input:focus,select:focus{outline:2px solid rgba(37,99,235,.25); border-color:#bf
 .btn:hover{filter:brightness(1.05)}
 .stat .hero{font-size:26px; font-weight:800}
 .footer{color:var(--muted); font-size:12px; margin-top:16px; text-align:center}
+.list{display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px}
+.item{display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:#ffffff; border:1px solid var(--border); border-radius:12px}
 /* Autocomplete */
 .autocomplete{position:relative}
 .ac-list{position:absolute; top:100%; left:0; right:0; z-index:99999; background:#fff; border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); max-height:220px; overflow:auto; margin-top:6px}

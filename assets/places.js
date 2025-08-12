@@ -1,4 +1,3 @@
-// Minimal, fast autocomplete with a curated list of cities and provinces/states.
 (function(){
   const locations = [
     // Canada (cities)
@@ -12,7 +11,8 @@
     // Canada (provinces/territories)
     {label:'Ontario (ON)', code:'ON'},{label:'Quebec (QC)', code:'QC'},{label:'British Columbia (BC)', code:'BC'},{label:'Alberta (AB)', code:'AB'},
     {label:'Manitoba (MB)', code:'MB'},{label:'Saskatchewan (SK)', code:'SK'},{label:'Nova Scotia (NS)', code:'NS'},{label:'New Brunswick (NB)', code:'NB'},
-    {label:'Prince Edward Island (PE)', code:'PE'},{label:'Newfoundland and Labrador (NL)', code:'NL'},{label:'Yukon (YT)', code:'YT'},{label:'Northwest Territories (NT)', code:'NT'},{label:'Nunavut (NU)', code:'NU'},
+    {label:'Prince Edward Island (PE)', code:'PE'},{label:'Newfoundland and Labrador (NL)', code:'NL'},{label:'Yukon (YT)', code:'YT'},
+    {label:'Northwest Territories (NT)', code:'NT'},{label:'Nunavut (NU)', code:'NU'},
     // USA (cities)
     {label:'New York, NY', code:'NY'},{label:'Los Angeles, CA', code:'CA'},{label:'San Francisco, CA', code:'CA'},{label:'San Diego, CA', code:'CA'},
     {label:'Seattle, WA', code:'WA'},{label:'Portland, OR', code:'OR'},{label:'Phoenix, AZ', code:'AZ'},{label:'Denver, CO', code:'CO'},
@@ -58,13 +58,8 @@
       return [...starts, ...contains].slice(0, 20);
     }
 
-    input.addEventListener('input', ()=>{
-      render(search(input.value));
-    });
-    input.addEventListener('focus', ()=>{
-      if(input.value.trim().length>=2) render(search(input.value));
-      else render(locations.slice(0,12));
-    });
+    input.addEventListener('input', ()=>{ render(search(input.value)); });
+    input.addEventListener('focus', ()=>{ if(input.value.trim().length>=2) render(search(input.value)); else render(locations.slice(0,12)); });
     input.addEventListener('keydown', (e)=>{
       const items = Array.from(list.querySelectorAll('.ac-item'));
       if(!items.length) return;
@@ -76,6 +71,5 @@
     input.addEventListener('blur', ()=> setTimeout(close, 160));
   }
 
-  // Attach for the mortgage page
   attachAutocomplete('region','region-list');
 })();

@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mortgage Calculator — Canada & USA</title>
-  <meta name="description" content="Mortgage calculator for Canada and the USA with city suggestions, flexible payment frequencies, and a yearly amortization graph." />
+  <meta name="description" content="Mortgage calculator for Canada and the USA with city suggestions, flexible payment frequencies, insurance (CMHC/FHA/PMI), and a yearly amortization graph." />
   <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
@@ -20,6 +20,17 @@
     <div class="row">
       <section class="card" aria-labelledby="inputsTitle">
         <h2 id="inputsTitle" class="h2">Inputs</h2>
+
+        <div class="section">
+          <div class="inline">
+            <span class="label">Scenario</span>
+            <div class="toggle" id="flowToggle">
+              <button type="button" data-flow="purchase" class="active">Purchase</button>
+              <button type="button" data-flow="refi">Refinance</button>
+            </div>
+          </div>
+        </div>
+
         <div class="section">
           <div class="grid two">
             <div class="autocomplete">
@@ -42,12 +53,23 @@
 
           <div class="grid two">
             <div>
-              <div class="label">Home price / value</div>
+              <div class="label">Home price / appraised value</div>
               <input id="price" type="number" min="0" step="0.01" value="700000" />
             </div>
-            <div>
+            <div id="downWrap">
               <div class="label">Down payment (%)</div>
               <input id="downPct" type="number" min="0" max="100" step="0.01" value="10" />
+            </div>
+          </div>
+
+          <div class="grid two" id="refiWrap" style="display:none">
+            <div>
+              <div class="label">Current loan balance</div>
+              <input id="currBalance" type="number" min="0" step="0.01" value="400000" />
+            </div>
+            <div>
+              <div class="label">Cash‑out amount (optional)</div>
+              <input id="cashOut" type="number" min="0" step="0.01" value="0" />
             </div>
           </div>
 
@@ -70,6 +92,60 @@
           </div>
         </div>
 
+        <div class="section" id="insuranceSection">
+          <div class="inline" style="justify-content:space-between">
+            <div>
+              <div class="label">Mortgage insurance</div>
+              <div class="small" id="insuranceHelp">Applied automatically if LTV > 80%.</div>
+            </div>
+            <div class="toggle" id="usInsToggle" style="display:none">
+              <button type="button" data-ins="fha" class="active">FHA</button>
+              <button type="button" data-ins="pmi">Conventional PMI</button>
+            </div>
+          </div>
+
+          <div class="grid two" id="canadaToggles" style="margin-top:8px; display:none">
+            <div class="inline">
+              <input id="financePremium" type="checkbox" checked />
+              <label for="financePremium" class="small">Finance CMHC premium into mortgage</label>
+            </div>
+            <div class="small">Note: CMHC generally applies to purchases, not refinances.</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="grid two">
+            <div>
+              <div class="label">Property tax (monthly)</div>
+              <input id="taxMonthly" type="number" min="0" step="1" value="400" />
+            </div>
+            <div>
+              <div class="label">Condo fee (monthly)</div>
+              <input id="condo" type="number" min="0" step="1" value="300" />
+            </div>
+          </div>
+          <div class="grid three">
+            <div>
+              <div class="label">Water (monthly)</div>
+              <input id="water" type="number" min="0" step="1" value="40" />
+            </div>
+            <div>
+              <div class="label">Electricity (monthly)</div>
+              <input id="electricity" type="number" min="0" step="1" value="120" />
+            </div>
+            <div>
+              <div class="label">Heating (monthly)</div>
+              <input id="heating" type="number" min="0" step="1" value="100" />
+            </div>
+          </div>
+          <div class="grid two">
+            <div>
+              <div class="label">Home insurance (monthly, optional)</div>
+              <input id="homeIns" type="number" min="0" step="1" value="0" />
+            </div>
+          </div>
+        </div>
+
         <div class="section">
           <button class="btn" id="prefillCanada">Prefill Canada</button>
           <button class="btn" id="prefillUSA">Prefill USA</button>
@@ -81,7 +157,7 @@
 
         <div class="grid two">
           <div class="stat">
-            <div class="label">Per‑period payment</div>
+            <div class="label">Per‑period mortgage payment (P&I)</div>
             <div class="hero" id="perPeriod">—</div>
             <div class="small" id="perPeriodNote">Based on chosen schedule</div>
           </div>
@@ -90,6 +166,12 @@
             <div class="hero" id="monthlyOut">—</div>
             <div class="small">Converted for easy comparison</div>
           </div>
+        </div>
+
+        <div class="section">
+          <div class="label">Estimated Monthly Cost of Ownership</div>
+          <div class="hero" id="ownershipTotal">—</div>
+          <div class="list" id="breakdown"></div>
         </div>
 
         <div class="section">
