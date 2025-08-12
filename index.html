@@ -4,16 +4,17 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mortgage Calculator — Canada & USA</title>
-  <meta name="description" content="Minimal, mobile‑first mortgage calculator for Canada and the USA showing full monthly cost of ownership." />
+  <meta name="description" content="Light, mobile-first mortgage calculator for Canada and the USA with full monthly ownership cost and dynamic city/province suggestions." />
   <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
   <div class="wrap">
     <header>
       <h1>Mortgage Calculator — Canada & USA</h1>
-      <nav class="inline" role="navigation">
-        <a class="btn" href="gst-hst.html">GST/HST Calculator</a>
-      </nav>
+      <div class="toggle" id="countryToggle" aria-live="polite">
+        <button type="button" data-country="canada" class="active">Canada (CAD)</button>
+        <button type="button" data-country="usa">USA (USD)</button>
+      </div>
     </header>
 
     <div class="row">
@@ -32,7 +33,7 @@
               <div class="label">City & Province/State (type to search)</div>
               <input id="region" placeholder="e.g., Toronto, ON or San Francisco, CA" autocomplete="off" />
               <div id="region-list" class="ac-list" style="display:none"></div>
-              <div class="small">Tip: type at least 2 letters (try “Tor” or “Sun”).</div>
+              <div class="small">Tip: type at least 2 letters (try Tor, Van, Sun).</div>
             </div>
             <div>
               <div class="label">Term (years)</div>
@@ -184,13 +185,13 @@
 
         <div class="section">
           <div class="label">Amortization</div>
-          <canvas id="spark" width="600" height="120" aria-label="Amortization sparkline"></canvas>
+          <canvas id="spark" width="800" height="160" aria-label="Amortization chart"></canvas>
           <div class="help">Balance trend and payment split by principal vs interest for the chosen frequency.</div>
-<div class="small amort-legend"><span style="display:inline-block;width:12px;height:4px;background:#2563eb;margin-right:6px;border-radius:2px;"></span>Balance <span style="display:inline-block;width:12px;height:4px;background:#10b981;margin:0 6px;border-radius:2px;"></span>Principal portion <span style="display:inline-block;width:12px;height:4px;background:#f59e0b;margin:0 6px;border-radius:2px;"></span>Interest portion</div>
-        </div>
-
-        <div class="section disclosure">
-          Calculations are estimates. Canadian rates use semi‑annual compounding; US uses monthly. FHA and PMI values use default tables; confirm with lender. CMHC PST (ON/QC/MB) is paid at closing and not financed by default.
+          <div class="small amort-legend">
+            <span class="key key-blue"></span>Balance
+            <span class="key key-green"></span>Principal portion
+            <span class="key key-amber"></span>Interest portion
+          </div>
         </div>
       </section>
     </div>
@@ -200,6 +201,6 @@
     </div>
   </div>
   <script src="assets/app.js"></script>
-  <script src="assets/places.js"></script>
+  <script src="assets/suggest.js"></script>
 </body>
 </html>

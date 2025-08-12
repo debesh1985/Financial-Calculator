@@ -13,7 +13,7 @@ header{display:flex; gap:12px; align-items:center; justify-content:space-between
 h1{font-size:22px; margin:0; font-weight:700}
 .row{display:grid; grid-template-columns:1fr; gap:16px}
 @media(min-width:900px){ .row{grid-template-columns: 420px 1fr; align-items:start} }
-.card{overflow:visible; background:var(--card); border:1px solid var(--border); border-radius:var(--br); padding:14px; box-shadow:var(--shadow)}
+.card{background:var(--card); border:1px solid var(--border); border-radius:var(--br); padding:14px; box-shadow:var(--shadow); overflow:visible}
 .section{border-top:1px solid var(--border); margin-top:10px; padding-top:10px}
 .section:first-child{border-top:none; padding-top:0}
 .label{font-size:12px; color:var(--muted); margin-bottom:6px}
@@ -35,14 +35,18 @@ input:focus,select:focus{outline:2px solid rgba(37,99,235,.25); border-color:#bf
 .item{display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:#ffffff; border:1px solid var(--border); border-radius:12px}
 .muted{color:var(--muted)}
 .footer{color:var(--muted); font-size:12px; margin-top:10px}
-canvas{width:100%; height:90px; background:#ffffff; border:1px solid var(--border); border-radius:12px}
+canvas{width:100%; height:160px; background:#ffffff; border:1px solid var(--border); border-radius:12px}
 .row-actions{display:flex; gap:8px; align-items:center; justify-content:space-between}
 .btn{background:#1f2937; color:#ffffff; border:1px solid #111827; padding:8px 12px; border-radius:10px; cursor:pointer; text-decoration:none; box-shadow:var(--shadow)}
 .btn:hover{filter:brightness(1.05)}
-.disclosure{font-size:12px; color:var(--muted)}
-/* Autocomplete dropdown */
+.disclosure{font-size:12px; color:#8b92a6}
+/* Autocomplete */
 .autocomplete{position:relative}
-.ac-list{position:absolute; z-index: 99999; top:100%; left:0; right:0; background:#ffffff; border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); max-height:220px; overflow:auto; margin-top:6px}
+.ac-list{position:absolute; z-index:99999; top:100%; left:0; right:0; background:#ffffff; border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); max-height:260px; overflow:auto; margin-top:6px}
 .ac-item{padding:8px 10px; cursor:pointer}
 .ac-item:hover, .ac-item.active{background:#f3f4f6}
 .small{font-size:11px; color:var(--muted)}
+.key{display:inline-block;width:14px;height:6px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.key-blue{background:#2563eb}
+.key-green{background:#10b981}
+.key-amber{background:#f59e0b}
