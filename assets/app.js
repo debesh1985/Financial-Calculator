@@ -197,6 +197,32 @@ function drawChart(principal, i_p, n_p, pay){
   // axis baseline
   ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(8,H-8); ctx.lineTo(W-8,H-8); ctx.stroke();
 
+  // Determine frequency for year tick mapping
+  const freqEl = document.getElementById('frequency');
+  const sel = FREQUENCIES[(freqEl && freqEl.value) || 'monthly'] || FREQUENCIES['monthly'];
+  const ppy = sel.ppy;
+  const totalYears = n_p / ppy;
+
+  // Draw X-axis ticks with years (max ~10 labels)
+  ctx.fillStyle = '#6b7280';
+  ctx.font = '10px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif';
+  const maxLabels = 10;
+  const stepRaw = Math.max(1, Math.ceil(totalYears / maxLabels));
+  // Pick a nice step (1,2,5,10,15,20...)
+  const niceSteps = [1,2,5,10,15,20,25,30];
+  let yearStep = niceSteps.find(s => s >= stepRaw) || stepRaw;
+  for (let yr = 0; yr <= Math.round(totalYears); yr += yearStep) {
+    const x = 8 + (yr / totalYears) * (W - 16);
+    ctx.beginPath();
+    ctx.moveTo(x, H - 8);
+    ctx.lineTo(x, H - 12);
+    ctx.strokeStyle = '#9ca3af';
+    ctx.stroke();
+    const label = String(yr);
+    const tw = ctx.measureText(label).width;
+    ctx.fillText(label, x - tw/2, H - 2);
+  }
+
   // Simulate per period
   const steps = Math.min(400, Math.floor(n_p));
   const stepN = Math.max(1, Math.floor(n_p/steps));
@@ -207,6 +233,39 @@ function drawChart(principal, i_p, n_p, pay){
     const princ = Math.max(0, pay - interest);
     bal = Math.max(0, bal - princ);
     if(k % stepN === 0){ balS.push(bal); princS.push(Math.max(0,princ)); intS.push(Math.max(0,interest)); }
+    if(bal<=0) break;
+  }
+  const xStep = (W-16)/Math.max(1, balS.length-1);
+  const maxB = principal;
+  const maxComp = Math.max(...princS, ...intS, 1);
+
+  // balance line (blue)
+  ctx.strokeStyle = '#2563eb'; ctx.lineWidth=2; ctx.beginPath();
+  balS.forEach((b,idx)=>{
+    const x = 8 + idx*xStep;
+    const yInv = H - (8 + (H-16) * (b/(maxB+1e-6)));
+    if(idx===0) ctx.moveTo(x,yInv); else ctx.lineTo(x,yInv);
+  });
+  ctx.stroke();
+
+  // principal (green)
+  ctx.strokeStyle = '#10b981'; ctx.lineWidth=1.5; ctx.beginPath();
+  princS.forEach((p,idx)=>{
+    const x = 8 + idx*xStep;
+    const yInv = H - (8 + (H-16) * (p/maxComp));
+    if(idx===0) ctx.moveTo(x,yInv); else ctx.lineTo(x,yInv);
+  });
+  ctx.stroke();
+
+  // interest (amber)
+  ctx.strokeStyle = '#f59e0b'; ctx.lineWidth=1.5; ctx.beginPath();
+  intS.forEach((p,idx)=>{
+    const x = 8 + idx*xStep;
+    const yInv = H - (8 + (H-16) * (p/maxComp));
+    if(idx===0) ctx.moveTo(x,yInv); else ctx.lineTo(x,yInv);
+  });
+  ctx.stroke();
+}
     if(bal<=0) break;
   }
   const xStep = (W-16)/Math.max(1, balS.length-1);
