@@ -22,7 +22,7 @@ h1{font-size:22px; margin:0; font-weight:700}
 input,select{width:100%; padding:10px 12px; background:#fff; border:1px solid var(--border); border-radius:10px; color:var(--text)}
 input:focus,select:focus{outline:2px solid rgba(37,99,235,.25); border-color:#bfdbfe}
 .inline{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
-.toggle{display:inline-flex; background:#f8fafc; border:1px solid var(--border); border-radius:10px; overflow:hidden}
+.toggle{display:inline-flex; background:#f8fafc; border:1px solid var(--border); border-radius:10px; overflow:hidden; min-width: 200px;}
 .toggle button{padding:8px 12px; border:0; background:transparent; color:var(--muted); cursor:pointer}
 .toggle button.active{background:#e5edff; color:#1e3a8a}
 .btn{background:#1f2937; color:#fff; border:1px solid #111827; padding:8px 12px; border-radius:10px; cursor:pointer; text-decoration:none; box-shadow:var(--shadow)}
