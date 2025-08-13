@@ -137,12 +137,59 @@
   </script>
   
   <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    .tab-navigation {
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+    .tab-button {
+      padding: 12px 16px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      min-width: 0;
+      flex-shrink: 0;
+    }
+    .tab-button:hover {
+      color: var(--text);
+      background: #f8f9fa;
+    }
+    .tab-button.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      background: #f8f9fa;
+    }
+    @media (max-width: 480px) {
+      .tab-button {
+        padding: 10px 12px;
+        font-size: 13px;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <nav class="breadcrumbs" style="font-size: 12px; margin-bottom: 8px; color: #666;">
-        <span>Home</span> > <span>Financial Tools</span> > <span>Mortgage Calculator</span> | <a href="youtube-calculator.html" style="color: #ef4444; text-decoration: none;">YouTube Monetization Calculator</a>
+      <nav class="tab-navigation" style="margin-bottom: 16px;">
+        <div class="tabs">
+          <button class="tab-button active" data-tab="mortgage">
+            🏠 Mortgage Calculator
+          </button>
+          <button class="tab-button" data-tab="youtube" onclick="window.location.href='youtube-calculator.html'">
+            💰 YouTube Calculator
+          </button>
+        </div>
       </nav>
       <h1>🏠 #1 Free Mortgage Calculator 2024 — Canada & USA</h1>
       <p class="header-description" style="margin: 8px 0 16px 0; font-size: 16px; color: #555; line-height: 1.4;">
