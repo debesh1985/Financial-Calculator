@@ -87,7 +87,7 @@
     {label:'Little Rock, AR', code:'AR'},{label:'Augusta, GA', code:'GA'},{label:'Amarillo, TX', code:'TX'},
     {label:'Glendale, CA', code:'CA'},{label:'Grand Rapids, MI', code:'MI'},{label:'Salt Lake City, UT', code:'UT'},
     {label:'Tallahassee, FL', code:'FL'},{label:'Huntsville, AL', code:'AL'},{label:'Grand Prairie, TX', code:'TX'},
-    {little:'Overland Park, KS', code:'KS'},{label:'Knoxville, TN', code:'TN'},{label:'Worcester, MA', code:'MA'},
+    {label:'Overland Park, KS', code:'KS'},{label:'Knoxville, TN', code:'TN'},{label:'Worcester, MA', code:'MA'},
     {label:'Newport News, VA', code:'VA'},{label:'Brownsville, TX', code:'TX'},{label:'Santa Clarita, CA', code:'CA'},
     {label:'Providence, RI', code:'RI'},{label:'Fort Lauderdale, FL', code:'FL'},{label:'Chattanooga, TN', code:'TN'},
     {label:'Tempe, AZ', code:'AZ'},{label:'Oceanside, CA', code:'CA'},{label:'Garden Grove, CA', code:'CA'},
@@ -103,7 +103,7 @@
     {label:'Hartford, CT', code:'CT'},{label:'Kent, WA', code:'WA'},{label:'Lafayette, LA', code:'LA'},
     {label:'Midland, TX', code:'TX'},{label:'Thousand Oaks, CA', code:'CA'},{label:'Roseville, CA', code:'CA'},
     {label:'Thornton, CO', code:'CO'},{label:'Allentown, PA', code:'PA'},{label:'Waco, TX', code:'TX'},
-    {label:'Charleston, SC', code:'SC'},{label:'Visalia, CA', code:'CA'},{little:'Dayton, OH', code:'OH'},
+    {label:'Charleston, SC', code:'SC'},{label:'Visalia, CA', code:'CA'},{label:'Dayton, OH', code:'OH'},
     
     // USA - All States
     {label:'Alabama (AL)', code:'AL'},{label:'Alaska (AK)', code:'AK'},{label:'Arizona (AZ)', code:'AZ'},
@@ -131,15 +131,41 @@
     if(!input || !list) return;
 
     let activeIndex = -1;
+    let currentItems = [];
 
-    function close(){ list.style.display='none'; list.innerHTML=''; activeIndex=-1; }
+    function close(){ 
+      list.style.display='none'; 
+      list.innerHTML=''; 
+      activeIndex=-1; 
+      currentItems = [];
+    }
+    
     function render(items){
+      currentItems = items;
       list.innerHTML='';
       items.forEach((it, idx)=>{
         const div = document.createElement('div');
         div.className = 'ac-item';
         div.textContent = it.label;
-        const choose = (e)=>{ e.preventDefault(); input.value = it.label; close(); onPick && onPick(it); };
+        
+        const choose = (e)=>{ 
+          e.preventDefault(); 
+          input.value = it.label; 
+          close(); 
+          if(onPick) onPick(it);
+          
+          // Auto-detect country based on location format
+          const isUS = /,\s[A-Z]{2}$/.test(it.label) && !/\([A-Z]{2}\)/.test(it.label);
+          const isCanada = /,\s[A-Z]{2}$/.test(it.label) && /\([A-Z]{2}\)/.test(it.label) || 
+                          ['ON','QC','BC','AB','MB','SK','NS','NB','PE','NL','YT','NT','NU'].some(prov => it.label.includes(prov));
+          
+          if(isUS && document.querySelector('#countryToggle [data-country="usa"]')){
+            document.querySelector('#countryToggle [data-country="usa"]').click();
+          } else if(isCanada && document.querySelector('#countryToggle [data-country="canada"]')){
+            document.querySelector('#countryToggle [data-country="canada"]').click();
+          }
+        };
+        
         div.addEventListener('pointerdown', choose, {passive:false});
         div.addEventListener('touchstart', choose, {passive:false});
         div.addEventListener('mousedown', choose);
@@ -151,28 +177,63 @@
 
     function search(q){
       const qq = q.trim().toLowerCase();
-      if(qq.length<2) return [];
+      if(qq.length < 1) return [];
+      
       const starts = [], contains = [];
       for(const x of locations){
         const lab = x.label.toLowerCase();
-        if(lab.startsWith(qq) || lab.split(/[,\s]+/).some(tok=>tok.startsWith(qq))) starts.push(x);
-        else if(lab.includes(qq)) contains.push(x);
+        if(lab.startsWith(qq) || lab.split(/[,\s()]+/).some(tok=>tok.startsWith(qq))) {
+          starts.push(x);
+        } else if(lab.includes(qq)) {
+          contains.push(x);
+        }
       }
       return [...starts, ...contains].slice(0, 20);
     }
 
-    input.addEventListener('input', ()=>{ render(search(input.value)); });
-    input.addEventListener('focus', ()=>{ if(input.value.trim().length>=2) render(search(input.value)); else render(locations.slice(0,12)); });
+    input.addEventListener('input', ()=>{ 
+      const searchResults = search(input.value);
+      render(searchResults);
+    });
+    
+    input.addEventListener('focus', ()=>{ 
+      if(input.value.trim().length >= 1) {
+        render(search(input.value)); 
+      } else {
+        render(locations.slice(0,12)); 
+      }
+    });
+    
     input.addEventListener('keydown', (e)=>{
       const items = Array.from(list.querySelectorAll('.ac-item'));
       if(!items.length) return;
-      if(e.key==='ArrowDown'){ activeIndex=Math.min(items.length-1, activeIndex+1); e.preventDefault(); }
-      else if(e.key==='ArrowUp'){ activeIndex=Math.max(0, activeIndex-1); e.preventDefault(); }
-      else if(e.key==='Enter' && activeIndex>=0){ e.preventDefault(); items[activeIndex].dispatchEvent(new Event('click')); }
-      items.forEach((el,i)=>el.classList.toggle('active', i===activeIndex));
+      
+      if(e.key==='ArrowDown'){ 
+        activeIndex = Math.min(items.length-1, activeIndex+1); 
+        e.preventDefault(); 
+      } else if(e.key==='ArrowUp'){ 
+        activeIndex = Math.max(0, activeIndex-1); 
+        e.preventDefault(); 
+      } else if(e.key==='Enter' && activeIndex>=0){ 
+        e.preventDefault(); 
+        items[activeIndex].dispatchEvent(new Event('click')); 
+      } else if(e.key==='Escape'){
+        close();
+      }
+      
+      items.forEach((el,i) => el.classList.toggle('active', i===activeIndex));
     });
-    input.addEventListener('blur', ()=> setTimeout(close, 160));
+    
+    input.addEventListener('blur', ()=> setTimeout(close, 200));
   }
 
-  attachAutocomplete('region','region-list');
+  // Initialize autocomplete when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    attachAutocomplete('region','region-list');
+    
+    // Also handle GST page if it exists
+    if(document.getElementById('gsRegion')) {
+      attachAutocomplete('gsRegion','gsRegion-list');
+    }
+  });
 })();
