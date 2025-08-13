@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>YouTube Monetization Calculator — Estimate Creator Earnings (USD)</title>
+  <meta name="description" content="Mobile-friendly YouTube Monetization Calculator to estimate earnings for organic, policy-safe content. Supports Long-form, Shorts, and Premium revenue in USD." />
+  <meta name="color-scheme" content="light" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>YouTube Monetization Calculator</h1>
+      <p>Estimate earnings in <strong>USD</strong> for <strong>organic, policy-safe</strong> videos. Toggle format, add your inputs, and see results instantly.</p>
+    </header>
+
+    <!-- Format Toggle -->
+    <div class="toolbar" role="tablist" aria-label="Content format">
+      <div class="toggle" id="formatToggle">
+        <input type="radio" name="format" id="fmt-long" value="long" checked>
+        <label for="fmt-long" role="tab" aria-selected="true">Long‑form</label>
+        <input type="radio" name="format" id="fmt-shorts" value="shorts">
+        <label for="fmt-shorts" role="tab" aria-selected="false">Shorts</label>
+        <input type="radio" name="format" id="fmt-both" value="both">
+        <label for="fmt-both" role="tab" aria-selected="false">Both</label>
+      </div>
+      <button class="btn" id="copyLinkBtn" title="Copy current inputs as a shareable link">Copy inputs as link</button>
+      <button class="btn" id="resetBtn" title="Reset all inputs to defaults">Reset to defaults</button>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT: Inputs -->
+      <section class="card" id="inputs">
+        <h3>1) Channel & Video Monetization Settings</h3>
+        <div class="checkbox"><input type="checkbox" id="mod-watch" checked><label for="mod-watch">Watch Page Ads (Long‑form)</label></div>
+        <div class="checkbox"><input type="checkbox" id="mod-shorts" checked><label for="mod-shorts">Shorts Ads</label></div>
+        <div class="checkbox"><input type="checkbox" id="mod-premium" checked><label for="mod-premium">YouTube Premium revenue</label></div>
+        <div class="row"><label for="videoLength">Video length (minutes)</label><input type="number" id="videoLength" min="0" step="1" value="10"></div>
+        <div class="row"><label for="midrolls">Mid‑rolls count <span class="help" title="Mid‑rolls are only available at 8+ minutes.">ⓘ</span></label><input type="number" id="midrolls" min="0" step="1" value="1"></div>
+        <div class="checkbox"><input type="checkbox" id="preRoll" checked><label for="preRoll">Enable pre‑roll</label></div>
+        <div class="checkbox"><input type="checkbox" id="postRoll"><label for="postRoll">Enable post‑roll</label></div>
+        <div class="checkbox"><input type="checkbox" id="manualImpToggle"><label for="manualImpToggle">Manually set ad impressions per view (override)</label></div>
+        <div class="row hidden" id="manualImpRow"><label for="impressionsPerView">Ad impressions per view (Long‑form)</label><input type="number" id="impressionsPerView" min="0" step="0.1" value="2"></div>
+        <p class="hint">Auto logic: pre‑roll adds 1; each mid‑roll adds 1; post‑roll adds up to 1. Reasonable cap applied.</p>
+
+        <hr class="divider">
+        <h3>2) Viewer & Context</h3>
+        <div class="row lf-only"><label for="lfViews">Long‑form views</label><input type="number" id="lfViews" min="0" step="1" value="100000"></div>
+        <div class="row sh-only"><label for="shViews">Shorts views</label><input type="number" id="shViews" min="0" step="1" value="500000"></div>
+        <div class="row lf-only"><label for="monetizableRate">Monetizable view rate (%) <span class="help" title="% of non‑Premium Long‑form views eligible for ads.">ⓘ</span></label><input type="number" id="monetizableRate" min="0" max="100" step="1" value="85"></div>
+        <div class="row lf-only"><label for="fillRate">Ad fill rate (%)</label><input type="number" id="fillRate" min="0" max="100" step="1" value="90"></div>
+        <div class="row"><label for="premiumPct">YouTube Premium views (%)</label><input type="number" id="premiumPct" min="0" max="100" step="1" value="5"></div>
+        <div class="row"><label for="premiumRPM">Premium RPM (USD / 1K Premium views)</label><input type="number" id="premiumRPM" min="0" step="0.01" value="3.00"></div>
+
+        <hr class="divider">
+        <h3>3) Auction & Demand</h3>
+        <div class="row lf-only"><label for="cpm">Average ad CPM (USD)</label><input type="number" id="cpm" min="0" step="0.01" value="8.00"></div>
+        <div class="row lf-only"><label for="seasonality">Seasonality / demand multiplier (%)</label><input type="number" id="seasonality" min="50" max="150" step="1" value="100"></div>
+
+        <hr class="divider">
+        <h3>4) Content Classification</h3>
+        <div class="row lf-only"><label for="inventoryAvail">Advertiser inventory availability (%)</label><input type="number" id="inventoryAvail" min="50" max="100" step="1" value="100"></div>
+
+        <hr class="divider">
+        <h3>5) Rights & Revenue Splits</h3>
+        <div class="row lf-only"><label for="creatorShareLF">Creator revenue share — Long‑form (%)</label><input type="number" id="creatorShareLF" min="0" max="100" step="1" value="55"></div>
+        <div class="row sh-only"><label for="creatorShareSH">Creator revenue share — Shorts (%)</label><input type="number" id="creatorShareSH" min="0" max="100" step="1" value="45"></div>
+        <div class="row"><label for="additionalShare">Additional revenue sharing reductions (%)</label><input type="number" id="additionalShare" min="0" max="50" step="1" value="0"></div>
+
+        <hr class="divider">
+        <h3>6) Format‑specific variables</h3>
+        <div class="row lf-only"><label for="capImp">Cap impressions per view (0 = auto)</label><input type="number" id="capImp" min="0" max="6" step="1" value="4"></div>
+        <div class="row sh-only"><label for="shortsRPM">Shorts RPM (creator take, USD / 1K views)</label><input type="number" id="shortsRPM" min="0" step="0.01" value="0.80"></div>
+      </section>
+
+      <!-- RIGHT: Results -->
+      <aside class="card results" aria-live="polite">
+        <h3>Estimated Results</h3>
+        <div class="kpis">
+          <div class="kpi">
+            <div class="label">Estimated Earnings (USD)</div>
+            <div class="big" id="estTotal">$0.00</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Overall RPM (USD per 1,000 total views)</div>
+            <div class="big" id="overallRPM">$0.00</div>
+          </div>
+        </div>
+        <div class="breakdown">
+          <div class="brow"><span class="name">Long‑form Ads</span><span class="val" id="estLF">$0.00 (0%)</span></div>
+          <div class="brow"><span class="name">Shorts Ads</span><span class="val" id="estSH">$0.00 (0%)</span></div>
+          <div class="brow"><span class="name">YouTube Premium</span><span class="val" id="estPR">$0.00 (0%)</span></div>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="recalcBtn">Recalculate</button>
+          <button class="btn" id="zeroBtn">Zero views</button>
+        </div>
+        <p class="footer">Disclaimer: This is an approximate estimate for <strong>organic, policy‑safe</strong> content. Actual earnings vary by auction demand, geography, and policy enforcement. <strong>Check YouTube Studio for your actual revenue.</strong></p>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Sticky mobile summary bar -->
+  <div class="stickybar" role="status" aria-live="polite">
+    <span>Estimated: <span class="sum" id="stickyTotal">$0.00</span></span>
+    <div>
+      <button class="btn" id="stickyReset">Reset</button>
+      <button class="btn primary" id="stickyCopy">Copy link</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
