@@ -1,0 +1,7 @@
+
+User-agent: *
+Allow: /
+Sitemap: https://yourdomain.com/sitemap.xml
+
+# Allow crawling of CSS and JS files
+Allow: /assets/
