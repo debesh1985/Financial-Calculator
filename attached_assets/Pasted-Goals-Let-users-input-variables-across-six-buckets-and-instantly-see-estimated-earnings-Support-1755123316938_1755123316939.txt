@@ -1,0 +1,126 @@
+Goals
+Let users input variables across six buckets and instantly see estimated earnings.
+
+Support Long-form (Watch Page) and Shorts with a toggle.
+
+Show a clear breakdown (Long-form Ads, Shorts Ads, YouTube Premium) and an overall RPM.
+
+Include a brief disclaimer about approximation and link users back to YouTube Studio for actuals.
+
+Layout & UI
+Header: Title “YouTube Monetization Calculator” and a one-line subtitle “Estimate earnings for organic, policy-safe content.”
+
+Format toggle: Radio or segmented control: Long-form, Shorts, Both.
+
+Accordion or tabbed sections for the six variable groups below. On mobile, show them stacked; on desktop, two-column layout.
+
+Instant results card pinned/sticky near the top on mobile scroll:
+
+Estimated Earnings (USD) — large number, updates live.
+
+Breakdown: Long-form Ads, Shorts Ads, YouTube Premium (each line shows $ and % of total).
+
+Derived metrics: Overall RPM (USD per 1,000 views).
+
+Buttons: “Reset to defaults” and “Copy inputs as link” (serialize state to URL querystring).
+
+Theme: Light, clean, plenty of whitespace, accessible color contrast, system font stack.
+
+Accessibility: Labels tied to inputs, keyboardable controls, aria-live region for the result.
+
+Inputs (organize under the six buckets)
+Channel & Video Monetization Settings
+
+Modules enabled: checkboxes
+
+“Watch Page Ads (Long-form)”
+
+“Shorts Ads”
+
+“YouTube Premium revenue”
+
+Ad formats (Long-form): checkboxes for Pre-roll, Mid-roll, Post-roll
+
+Video length (minutes) (number input)
+
+Mid-rolls count (number input; enable only if length ≥ 8; default 0)
+
+Viewer & Context
+
+Total views (Long-form) (number)
+
+Total views (Shorts) (number)
+
+Monetizable view rate % (slider 0–100, default 85)
+
+Ad fill rate % (slider 0–100, default 90)
+
+YouTube Premium views % (slider 0–100, default 5)
+
+Premium RPM (USD per 1K Premium views) (number, default 3.00)
+
+Auction & Demand
+
+Average ad CPM (USD) (number, default 8.00) — applies to Long-form Watch Page ads
+
+Seasonality/Demand multiplier % (slider 50–150, default 100)
+
+Content Classification (Ad-suitability intensity)
+
+Advertiser inventory availability % (slider 50–100, default 100)
+Represents how broadly advertisers can bid on this content even when policy-safe.
+
+Rights & Revenue Splits
+
+Creator revenue share % (Long-form) (number, default 55)
+
+Creator revenue share % (Shorts) (number, default 45)
+
+Additional revenue sharing reductions % (e.g., music/license splits; slider 0–50, default 0)
+
+Format-specific variables
+
+Ad impressions per view (Long-form) (number, default auto-computed from ad format choices; but allow manual override checkbox)
+
+Auto logic: pre-roll = up to 1; each mid-roll adds +1; post-roll optional +0–1. Cap at reasonable max (e.g., 4).
+
+Estimated Shorts RPM (USD per 1K views) (number, default 0.80) — simplifies the Shorts pool math for users.
+
+Calculations (show in code comments & tooltips)
+Long-form Ads revenue
+LF_Ads_Revenue = LF_Views × (MonetizableRate% / 100) × (AdImpressionsPerView) × (FillRate% / 100) × (CPM_USD / 1000) × (Seasonality% / 100) × (InventoryAvailability% / 100) × (CreatorShare_LF% / 100) × (1 - AdditionalSharing% / 100)
+
+Shorts revenue (simplified with RPM)
+Shorts_Revenue = Shorts_Views × (Shorts_RPM_USD / 1000)
+(We already assume the 45% creator share baked into the default RPM; if user changes CreatorShare_Short% or AdditionalSharing%, multiply those in as well.)
+
+Premium revenue
+Premium_Revenue = (LF_Views + Shorts_Views) × (PremiumViews% / 100) × (Premium_RPM_USD / 1000)
+
+Total revenue (USD) = LF_Ads_Revenue + Shorts_Revenue + Premium_Revenue
+
+Overall RPM (USD per 1K views)
+Overall_RPM = Total_Revenue / ((LF_Views + Shorts_Views) / 1000)
+
+Behavior & Defaults
+Pre-populate fields with realistic defaults (see above).
+
+Update results on input (debounce 150ms).
+
+If a module is disabled, exclude it from both inputs and results.
+
+Validate numbers (no negatives; caps where sensible). Show inline helper text for each input.
+
+If Both formats are selected, show both Long-form and Shorts sections; otherwise show only the relevant one.
+
+Results & Copy
+Results card shows:
+
+Estimated Earnings (USD) in large font.
+
+Breakdown list: Long-form Ads, Shorts Ads, YouTube Premium (each with $ and %).
+
+Overall RPM (USD/1K views).
+
+Small footnote under results:
+“This is an approximate estimate for organic, policy-safe content. Actual earnings vary by auction demand, geography, and policies. Check YouTube Studio for your actual revenue.”
