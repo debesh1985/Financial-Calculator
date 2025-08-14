@@ -1,28 +1,16 @@
-
 User-agent: *
 Allow: /
-
-
-# Additional SEO directives
-Crawl-delay: 1
-Request-rate: 1/10s
-
-# Allow specific bot crawlers
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-# Block common bad bots while allowing good ones
-User-agent: AhrefsBot
-Disallow: /
-
-User-agent: MJ12bot
-Disallow: /
-
-
-Sitemap: https://yourdomain.com/sitemap.xml
-
-# Allow crawling of CSS and JS files
+Allow: /index.html
+Allow: /youtube-calculator.html
+Allow: /gst-html.html
 Allow: /assets/
+
+# Sitemap
+Sitemap: /sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Block unnecessary paths
+Disallow: /attached_assets/
+Disallow: /.config/
