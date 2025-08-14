@@ -1,0 +1,285 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Facebook Monetization Calculator 2024 - Free Creator Earnings Tool</title>
+  <meta name="description" content="★ #1 FREE Facebook Monetization Calculator 2024 ★ Estimate creator earnings from Stars, Subscriptions, Reels Ads, Long-form Ads & Branded Content. Mobile-friendly. Used by 50K+ creators. Try now!" />
+  <meta name="keywords" content="facebook monetization calculator, facebook creator earnings, facebook revenue calculator, facebook ads calculator, facebook stars calculator, facebook subscription calculator, reels monetization calculator, meta creator bonus, facebook creator fund, facebook ad revenue, social media monetization, creator economy calculator, influencer earnings calculator" />
+  <meta name="author" content="FunDu Web Co." />
+  <meta name="robots" content="index, follow" />
+  <meta name="color-scheme" content="light" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Facebook Monetization Calculator — Estimate Creator Earnings (USD)" />
+  <meta property="og:description" content="Calculate Facebook creator earnings from Stars, Subscriptions, Reels ads, and branded content. Free tool for content creators." />
+
+  <!-- Performance and Loading Hints -->
+  <link rel="preconnect" href="https://www.facebook.com" />
+  <link rel="dns-prefetch" href="//www.facebook.com" />
+  <meta name="theme-color" content="#1877f2" />
+  
+  <!-- Mobile App Meta -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Facebook Calculator" />
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="" />
+
+  <link rel="stylesheet" href="assets/facebook-styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <nav class="tab-navigation" style="margin-bottom: 16px;">
+        <div class="tabs">
+          <button class="tab-button" data-tab="mortgage" onclick="window.location.href='index.html'">
+            🏠 Mortgage Calculator
+          </button>
+          <button class="tab-button" data-tab="youtube" onclick="window.location.href='youtube-calculator.html'">
+            💰 YouTube Calculator
+          </button>
+          <button class="tab-button active" data-tab="facebook">
+            📘 Facebook Calculator
+          </button>
+        </div>
+      </nav>
+      <h1>Facebook Monetization Calculator</h1>
+      <p>Estimate earnings in <strong>USD</strong> for <strong>organic, policy-safe</strong> content across Stars, Subscriptions, Reels, Long-form ads, and Branded content.</p>
+    </header>
+
+    <!-- Eligibility Checklist -->
+    <section class="card" id="eligibilitySection" style="margin-bottom: var(--space-lg);">
+      <h3>📋 Eligibility Requirements</h3>
+      <p class="small-text">All requirements must be met to use the calculator:</p>
+      <div class="eligibility-checklist">
+        <div class="checkbox">
+          <input type="checkbox" id="eligibility1" checked>
+          <label for="eligibility1">Country/tool availability ✓</label>
+        </div>
+        <div class="checkbox">
+          <input type="checkbox" id="eligibility2" checked>
+          <label for="eligibility2">Partner Monetization Policies & Content Monetization Policies ✓</label>
+        </div>
+        <div class="checkbox">
+          <input type="checkbox" id="eligibility3" checked>
+          <label for="eligibility3">Advertiser-friendly suitability ✓</label>
+        </div>
+        <div class="checkbox">
+          <input type="checkbox" id="eligibility4" checked>
+          <label for="eligibility4">Originality (no reposting/limited originality) ✓</label>
+        </div>
+        <div class="checkbox">
+          <input type="checkbox" id="eligibility5" checked>
+          <label for="eligibility5">Payout setup & account health ✓</label>
+        </div>
+      </div>
+      <div class="eligibility-warning hidden" id="eligibilityWarning">
+        <small>⚠️ You must meet all eligibility requirements to use Facebook monetization features.</small>
+      </div>
+    </section>
+
+    <!-- Scenario Selector -->
+    <div class="toolbar" role="tablist" aria-label="Monetization scenarios">
+      <div class="toggle" id="scenarioToggle">
+        <input type="radio" name="scenario" id="scenario-all" value="all" checked>
+        <label for="scenario-all" role="tab" aria-selected="true">All</label>
+        <input type="radio" name="scenario" id="scenario-stars" value="stars">
+        <label for="scenario-stars" role="tab" aria-selected="false">Stars</label>
+        <input type="radio" name="scenario" id="scenario-subscriptions" value="subscriptions">
+        <label for="scenario-subscriptions" role="tab" aria-selected="false">Subscriptions</label>
+        <input type="radio" name="scenario" id="scenario-reels" value="reels">
+        <label for="scenario-reels" role="tab" aria-selected="false">Reels</label>
+        <input type="radio" name="scenario" id="scenario-longform" value="longform">
+        <label for="scenario-longform" role="tab" aria-selected="false">Long-form</label>
+        <input type="radio" name="scenario" id="scenario-branded" value="branded">
+        <label for="scenario-branded" role="tab" aria-selected="false">Branded</label>
+      </div>
+      <button class="btn" id="copyLinkBtn" title="Copy current inputs as a shareable link">Copy inputs as link</button>
+      <button class="btn" id="resetBtn" title="Reset all inputs to defaults">Reset to defaults</button>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT: Inputs -->
+      <section class="card" id="inputs">
+        
+        <!-- Stars Section -->
+        <div class="scenario-section" id="starsSection">
+          <h3>⭐ Facebook Stars</h3>
+          <div class="input-group">
+            <label for="starsReceived">Stars received (monthly) <span class="info" title="Number of Stars received from viewers per month">ⓘ</span></label>
+            <input type="number" id="starsReceived" min="0" step="1" value="5000">
+          </div>
+        </div>
+
+        <!-- Subscriptions Section -->
+        <div class="scenario-section" id="subscriptionsSection">
+          <h3>💳 Subscriptions</h3>
+          <div class="input-group">
+            <label for="activeSubscribers">Active subscribers <span class="info" title="Number of active paying subscribers">ⓘ</span></label>
+            <input type="number" id="activeSubscribers" min="0" step="1" value="200">
+          </div>
+          <div class="input-group">
+            <label for="monthlyPrice">Monthly price (USD) <span class="info" title="Subscription price per month">ⓘ</span></label>
+            <input type="number" id="monthlyPrice" min="0" step="0.01" value="4.99">
+          </div>
+          <div class="input-group">
+            <label for="appStorePurchases">Purchases via app stores (%) <span class="info" title="Percentage of purchases through mobile apps">ⓘ</span></label>
+            <div class="slider-group">
+              <input type="range" id="appStorePurchases" min="0" max="100" value="70">
+              <input type="number" id="appStorePurchasesNum" min="0" max="100" value="70" class="slider-num">
+              <span>%</span>
+            </div>
+          </div>
+          <div class="input-group">
+            <label for="appStoreFee">App store fee (%) <span class="info" title="App store commission (30% or 15% for year-2)">ⓘ</span></label>
+            <input type="number" id="appStoreFee" min="0" max="50" value="30">
+          </div>
+          <div class="input-group">
+            <label for="webPurchases">Web purchases (%) <span class="info" title="Percentage of purchases through web (auto-calculated)">ⓘ</span></label>
+            <input type="number" id="webPurchases" min="0" max="100" value="30" readonly>
+          </div>
+          <div class="input-group">
+            <label for="platformFee">Platform/other fee (%) <span class="info" title="Additional platform fees for web purchases">ⓘ</span></label>
+            <input type="number" id="platformFee" min="0" max="50" value="0">
+          </div>
+        </div>
+
+        <!-- Reels Section -->
+        <div class="scenario-section" id="reelsSection">
+          <h3>🎵 Ads on Reels</h3>
+          <div class="input-group">
+            <label for="reelsPlays">Qualified Reels plays (monthly) <span class="info" title="Number of qualified plays on your Reels">ⓘ</span></label>
+            <input type="number" id="reelsPlays" min="0" step="1" value="100000">
+          </div>
+          <div class="input-group">
+            <label for="reelsRPM">Effective RPM (USD per 1K plays) <span class="info" title="Revenue per 1000 Reels plays">ⓘ</span></label>
+            <input type="number" id="reelsRPM" min="0" step="0.01" value="0.90">
+          </div>
+        </div>
+
+        <!-- Long-form Section -->
+        <div class="scenario-section" id="longformSection">
+          <h3>📹 Long-form Video Ads</h3>
+          <div class="input-group">
+            <label for="longformViews">Total long-form views <span class="info" title="Total views on long-form video content">ⓘ</span></label>
+            <input type="number" id="longformViews" min="0" step="1" value="50000">
+          </div>
+          <div class="input-group">
+            <label for="monetizableRate">Monetizable view rate (%) <span class="info" title="Percentage of views eligible for monetization">ⓘ</span></label>
+            <div class="slider-group">
+              <input type="range" id="monetizableRate" min="0" max="100" value="85">
+              <input type="number" id="monetizableRateNum" min="0" max="100" value="85" class="slider-num">
+              <span>%</span>
+            </div>
+          </div>
+          <div class="input-group">
+            <label for="fillRate">Fill rate (%) <span class="info" title="Percentage of ad slots that get filled">ⓘ</span></label>
+            <div class="slider-group">
+              <input type="range" id="fillRate" min="0" max="100" value="90">
+              <input type="number" id="fillRateNum" min="0" max="100" value="90" class="slider-num">
+              <span>%</span>
+            </div>
+          </div>
+          <div class="input-group">
+            <label for="adImpressions">Ad impressions per view <span class="info" title="Average number of ad impressions per video view">ⓘ</span></label>
+            <input type="number" id="adImpressions" min="0" step="0.1" value="1.5">
+          </div>
+          <div class="input-group">
+            <label for="eCPM">eCPM (USD) <span class="info" title="Effective cost per thousand impressions">ⓘ</span></label>
+            <input type="number" id="eCPM" min="0" step="0.01" value="6.00">
+          </div>
+          <div class="input-group">
+            <label for="creatorShare">Creator share (%) <span class="info" title="Creator's share of ad revenue">ⓘ</span></label>
+            <input type="number" id="creatorShare" min="0" max="100" value="55">
+          </div>
+          <div class="input-group">
+            <label for="additionalReductions">Additional revenue sharing reductions (%) <span class="info" title="Music licensing and other deductions">ⓘ</span></label>
+            <div class="slider-group">
+              <input type="range" id="additionalReductions" min="0" max="50" value="0">
+              <input type="number" id="additionalReductionsNum" min="0" max="50" value="0" class="slider-num">
+              <span>%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Branded Content Section -->
+        <div class="scenario-section" id="brandedSection">
+          <h3>🤝 Branded Content</h3>
+          <div class="input-group">
+            <label for="guaranteedImpressions">Guaranteed impressions <span class="info" title="Expected impressions for branded content">ⓘ</span></label>
+            <input type="number" id="guaranteedImpressions" min="0" step="1" value="50000">
+          </div>
+          <div class="input-group">
+            <label for="brandedCPM">CPM (USD) <span class="info" title="Cost per thousand impressions for branded content">ⓘ</span></label>
+            <input type="number" id="brandedCPM" min="0" step="0.01" value="15.00">
+          </div>
+          <div class="input-group">
+            <label for="usageRightsFee">Usage rights fee (USD, optional) <span class="info" title="Additional fee for usage rights">ⓘ</span></label>
+            <input type="number" id="usageRightsFee" min="0" step="0.01" value="0">
+          </div>
+          <div class="input-group">
+            <label for="deliverablesFee">Deliverables fee (USD, optional) <span class="info" title="Fee for specific deliverables">ⓘ</span></label>
+            <input type="number" id="deliverablesFee" min="0" step="0.01" value="0">
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Results -->
+      <section class="card" id="results">
+        <div class="sticky-results">
+          <h3>Estimated Monthly Earnings</h3>
+          <div class="total-earnings" id="estTotal" aria-live="polite">$0</div>
+          <div class="breakdown" aria-live="polite">
+            <div class="breakdown-item">
+              <span>Stars:</span>
+              <strong id="estStars">$0 (0%)</strong>
+            </div>
+            <div class="breakdown-item">
+              <span>Subscriptions:</span>
+              <strong id="estSubscriptions">$0 (0%)</strong>
+            </div>
+            <div class="breakdown-item">
+              <span>Reels Ads:</span>
+              <strong id="estReels">$0 (0%)</strong>
+            </div>
+            <div class="breakdown-item">
+              <span>Long-form Ads:</span>
+              <strong id="estLongform">$0 (0%)</strong>
+            </div>
+            <div class="breakdown-item">
+              <span>Branded Content:</span>
+              <strong id="estBranded">$0 (0%)</strong>
+            </div>
+            <div class="breakdown-item total-line">
+              <span>Overall RPM:</span>
+              <strong id="overallRPM">$0</strong>
+            </div>
+          </div>
+          <div class="disclaimer">
+            <small>This is an approximate amount based on the organic content, to get actual amount check your Meta Professional Dashboard → Monetization for actual payouts.</small>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Mobile Sticky Bar -->
+    <div class="mobile-sticky" id="mobileStickyBar">
+      <div class="mobile-total">
+        <span class="label">Estimated:</span>
+        <span class="amount" id="stickyTotal">$0</span>
+      </div>
+      <button class="btn" id="resetBtnMobile">Reset</button>
+    </div>
+
+    <footer class="footer">
+      © FunDu Web Co. | <a href="index.html">Mortgage Calculator</a> | <a href="youtube-calculator.html">YouTube Calculator</a> | <a href="https://www.facebook.com/business/help/monetization" target="_blank" rel="noopener">Meta Monetization Policies</a> | No data collected.
+    </footer>
+  </div>
+
+  <script src="assets/facebook-calculator.js"></script>
+</body>
+</html>
