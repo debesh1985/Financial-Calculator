@@ -120,13 +120,18 @@ class TermInsuranceCalculatorUS {
     const { age, gender, coverage, term, health, smoking, occupation } = this.getInputValues();
     
     // Validate inputs
-    if (age < 18 || age > 75) {
+    if (isNaN(age) || age < 18 || age > 75) {
       this.showError('Age must be between 18 and 75 years');
       return;
     }
     
-    if (coverage < 50000 || coverage > 10000000) {
+    if (isNaN(coverage) || coverage < 50000 || coverage > 10000000) {
       this.showError('Coverage amount must be between $50,000 and $10,000,000');
+      return;
+    }
+
+    if (isNaN(term) || term < 10 || term > 30) {
+      this.showError('Policy term must be between 10 and 30 years');
       return;
     }
 
@@ -214,13 +219,18 @@ class TermInsuranceCalculatorUS {
 
   showError(message) {
     const resultsSection = document.getElementById('resultsSection');
-    resultsSection.style.display = 'block';
-    resultsSection.innerHTML = `
-      <div style="background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px; padding: 16px; color: #dc2626;">
-        <h3>⚠️ Input Error</h3>
-        <p>${message}</p>
-      </div>
-    `;
+    if (resultsSection) {
+      resultsSection.style.display = 'block';
+      resultsSection.innerHTML = `
+        <div style="background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px; padding: 16px; color: #dc2626;">
+          <h3>⚠️ Input Error</h3>
+          <p>${message}</p>
+        </div>
+      `;
+    } else {
+      console.error('Results section not found:', message);
+      alert(`Error: ${message}`);
+    }
   }
 
   trackEvent(eventName, properties) {
