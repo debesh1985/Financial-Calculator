@@ -90,22 +90,37 @@ class TermInsuranceCalculator {
   }
 
   getInputValues() {
-    const age = parseInt(document.getElementById('age').value) || 30;
-    const gender = document.getElementById('gender').value;
-    const coverageSelect = document.getElementById('coverage').value;
+    const ageInput = document.getElementById('age');
+    const age = ageInput ? parseInt(ageInput.value) : NaN;
+    
+    const genderInput = document.getElementById('gender');
+    const gender = genderInput ? genderInput.value : 'male';
+    
+    const coverageSelect = document.getElementById('coverage');
+    const coverageValue = coverageSelect ? coverageSelect.value : '250000';
     
     let coverage;
-    if (coverageSelect === 'custom') {
-      coverage = parseInt(document.getElementById('customCoverage').value) || 250000;
+    if (coverageValue === 'custom') {
+      const customInput = document.getElementById('customCoverage');
+      coverage = customInput ? parseInt(customInput.value) : NaN;
     } else {
-      coverage = parseInt(coverageSelect);
+      coverage = parseInt(coverageValue);
     }
     
-    const term = parseInt(document.getElementById('term').value) || 20;
-    const health = document.getElementById('health').value;
-    const smoking = document.getElementById('smoking').value;
-    const occupation = document.getElementById('occupation').value;
-    const country = document.getElementById('country').value;
+    const termInput = document.getElementById('term');
+    const term = termInput ? parseInt(termInput.value) : NaN;
+    
+    const healthInput = document.getElementById('health');
+    const health = healthInput ? healthInput.value : 'excellent';
+    
+    const smokingInput = document.getElementById('smoking');
+    const smoking = smokingInput ? smokingInput.value : 'never';
+    
+    const occupationInput = document.getElementById('occupation');
+    const occupation = occupationInput ? occupationInput.value : 'low';
+    
+    const countryInput = document.getElementById('country');
+    const country = countryInput ? countryInput.value : 'usa';
 
     return { age, gender, coverage, term, health, smoking, occupation, country };
   }
@@ -131,13 +146,18 @@ class TermInsuranceCalculator {
     const { age, gender, coverage, term, health, smoking, occupation, country } = this.getInputValues();
     
     // Validate inputs
-    if (age < 18 || age > 75) {
+    if (isNaN(age) || age < 18 || age > 75) {
       this.showError('Age must be between 18 and 75 years');
       return;
     }
     
-    if (coverage < 50000 || coverage > 10000000) {
+    if (isNaN(coverage) || coverage < 50000 || coverage > 10000000) {
       this.showError('Coverage amount must be between $50,000 and $10,000,000');
+      return;
+    }
+
+    if (isNaN(term) || term < 10 || term > 30) {
+      this.showError('Policy term must be between 10 and 30 years');
       return;
     }
 
@@ -221,13 +241,18 @@ class TermInsuranceCalculator {
 
   showError(message) {
     const resultsSection = document.getElementById('resultsSection');
-    resultsSection.style.display = 'block';
-    resultsSection.innerHTML = `
-      <div style="background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px; padding: 16px; color: #dc2626;">
-        <h3>⚠️ Input Error</h3>
-        <p>${message}</p>
-      </div>
-    `;
+    if (resultsSection) {
+      resultsSection.style.display = 'block';
+      resultsSection.innerHTML = `
+        <div style="background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px; padding: 16px; color: #dc2626;">
+          <h3>⚠️ Input Error</h3>
+          <p>${message}</p>
+        </div>
+      `;
+    } else {
+      console.error('Results section not found:', message);
+      alert(`Error: ${message}`);
+    }
   }
 }
 
