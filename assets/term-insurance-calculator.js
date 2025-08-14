@@ -63,9 +63,19 @@ class TermInsuranceCalculator {
   initializeEventListeners() {
     const calculateBtn = document.getElementById('calculateBtn');
     const coverageSelect = document.getElementById('coverage');
+    const ageSlider = document.getElementById('age');
+    const ageDisplay = document.getElementById('ageValue');
     
     calculateBtn.addEventListener('click', () => this.calculatePremium());
     coverageSelect.addEventListener('change', () => this.handleCustomCoverage());
+    
+    // Update age display when slider changes
+    if (ageSlider && ageDisplay) {
+      ageSlider.addEventListener('input', () => {
+        ageDisplay.textContent = ageSlider.value;
+        this.calculatePremium();
+      });
+    }
     
     // Real-time calculation on input change
     const inputs = ['age', 'gender', 'coverage', 'customCoverage', 'term', 'health', 'smoking', 'occupation', 'country'];
@@ -164,8 +174,8 @@ class TermInsuranceCalculator {
       return;
     }
     
-    if (age < 18 || age > 75) {
-      this.showError(`Age must be between 18 and 75 years (you entered: ${age})`);
+    if (age < 18 || age > 70) {
+      this.showError(`Age must be between 18 and 70 years for insurance coverage (you entered: ${age})`);
       return;
     }
     

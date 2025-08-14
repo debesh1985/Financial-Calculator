@@ -280,9 +280,9 @@
 
       <div class="form-grid">
         <div class="input-group">
-          <label for="age">Age</label>
-          <input type="number" id="age" min="18" max="75" value="30" />
-          <div class="input-help">Age between 18-75 years</div>
+          <label for="age">Age: <span id="ageValue">30</span> years</label>
+          <input type="range" id="age" min="0" max="70" value="30" style="width: 100%; height: 8px; background: #e1e5e9; border-radius: 4px; outline: none; cursor: pointer;" />
+          <div class="input-help">Age between 0-70 years (minimum 18 for insurance)</div>
         </div>
 
         <div class="input-group">
