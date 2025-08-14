@@ -237,6 +237,17 @@ class UniversalLifeCalculator {
     return "20-29";
   }
 
+  getDurationMultiplier(duration) {
+    // Coverage duration multipliers - longer periods require higher premiums
+    // due to increased risk and guaranteed coverage periods
+    if (duration <= 15) return 1.0;      // 10-15 years: base rate
+    if (duration <= 20) return 1.05;     // 16-20 years: 5% increase
+    if (duration <= 25) return 1.12;     // 21-25 years: 12% increase
+    if (duration <= 30) return 1.20;     // 26-30 years: 20% increase
+    if (duration <= 35) return 1.30;     // 31-35 years: 30% increase
+    return 1.42;                          // 36-40 years: 42% increase
+  }
+
   getInputValues() {
     const age = this.getCurrentAge();
     const gender = document.getElementById('gender').value;
@@ -325,6 +336,10 @@ class UniversalLifeCalculator {
     inputs.medicalConditions.forEach(condition => {
       totalRiskMultiplier *= this.config.RISK.medical[condition] || 1.0;
     });
+    
+    // Coverage duration multiplier - longer coverage periods cost more
+    const durationMultiplier = this.getDurationMultiplier(inputs.coverageDuration);
+    totalRiskMultiplier *= durationMultiplier;
     
     // Calculate monthly COI
     const units = Math.ceil(faceAmount / 1000);
