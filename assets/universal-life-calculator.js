@@ -11,91 +11,91 @@ class UniversalLifeCalculator {
 
   getConfig() {
     return {
-      // UL Base COI Rates (monthly $ per $1,000 of Net Amount at Risk)
+      // UL Base COI Rates (monthly $ per $1,000 of Net Amount at Risk) - Updated to 2024 market rates
       UL_BASE: {
         USA: {
           YRT: {
             female: { 
-              nonsmoker: { "20-29": 0.06, "30-39": 0.09, "40-49": 0.18, "50-59": 0.42, "60-70": 1.05 },
-              smoker: { "20-29": 0.10, "30-39": 0.16, "40-49": 0.32, "50-59": 0.78, "60-70": 1.95 }
+              nonsmoker: { "20-29": 0.18, "30-39": 0.28, "40-49": 0.52, "50-59": 1.15, "60-70": 2.85 },
+              smoker: { "20-29": 0.32, "30-39": 0.54, "40-49": 1.05, "50-59": 2.25, "60-70": 5.10 }
             },
             male: { 
-              nonsmoker: { "20-29": 0.07, "30-39": 0.11, "40-49": 0.22, "50-59": 0.52, "60-70": 1.25 },
-              smoker: { "20-29": 0.12, "30-39": 0.19, "40-49": 0.38, "50-59": 0.92, "60-70": 2.25 }
+              nonsmoker: { "20-29": 0.22, "30-39": 0.35, "40-49": 0.68, "50-59": 1.48, "60-70": 3.55 },
+              smoker: { "20-29": 0.42, "30-39": 0.68, "40-49": 1.35, "50-59": 2.85, "60-70": 6.45 }
             },
             other: { 
-              nonsmoker: { "20-29": 0.065, "30-39": 0.10, "40-49": 0.20, "50-59": 0.47, "60-70": 1.15 },
-              smoker: { "20-29": 0.11, "30-39": 0.175, "40-49": 0.35, "50-59": 0.85, "60-70": 2.10 }
+              nonsmoker: { "20-29": 0.20, "30-39": 0.315, "40-49": 0.60, "50-59": 1.315, "60-70": 3.20 },
+              smoker: { "20-29": 0.37, "30-39": 0.61, "40-49": 1.20, "50-59": 2.55, "60-70": 5.775 }
             }
           },
           LEVEL: {
             female: { 
-              nonsmoker: { "20-29": 0.09, "30-39": 0.13, "40-49": 0.24, "50-59": 0.55, "60-70": 1.30 },
-              smoker: { "20-29": 0.15, "30-39": 0.22, "40-49": 0.42, "50-59": 1.00, "60-70": 2.35 }
+              nonsmoker: { "20-29": 0.25, "30-39": 0.38, "40-49": 0.68, "50-59": 1.45, "60-70": 3.25 },
+              smoker: { "20-29": 0.45, "30-39": 0.72, "40-49": 1.38, "50-59": 2.85, "60-70": 6.15 }
             },
             male: { 
-              nonsmoker: { "20-29": 0.10, "30-39": 0.15, "40-49": 0.28, "50-59": 0.68, "60-70": 1.55 },
-              smoker: { "20-29": 0.18, "30-39": 0.27, "40-49": 0.50, "50-59": 1.20, "60-70": 2.75 }
+              nonsmoker: { "20-29": 0.32, "30-39": 0.48, "40-49": 0.88, "50-59": 1.85, "60-70": 4.15 },
+              smoker: { "20-29": 0.58, "30-39": 0.92, "40-49": 1.75, "50-59": 3.65, "60-70": 7.85 }
             },
             other: { 
-              nonsmoker: { "20-29": 0.095, "30-39": 0.14, "40-49": 0.26, "50-59": 0.615, "60-70": 1.425 },
-              smoker: { "20-29": 0.165, "30-39": 0.245, "40-49": 0.46, "50-59": 1.10, "60-70": 2.55 }
+              nonsmoker: { "20-29": 0.285, "30-39": 0.43, "40-49": 0.78, "50-59": 1.65, "60-70": 3.70 },
+              smoker: { "20-29": 0.515, "30-39": 0.82, "40-49": 1.565, "50-59": 3.25, "60-70": 7.00 }
             }
           }
         },
         CAN: {
           YRT: {
             female: { 
-              nonsmoker: { "20-29": 0.065, "30-39": 0.095, "40-49": 0.19, "50-59": 0.44, "60-70": 1.10 },
-              smoker: { "20-29": 0.105, "30-39": 0.17, "40-49": 0.34, "50-59": 0.82, "60-70": 2.05 }
+              nonsmoker: { "20-29": 0.16, "30-39": 0.24, "40-49": 0.44, "50-59": 0.98, "60-70": 2.45 },
+              smoker: { "20-29": 0.28, "30-39": 0.46, "40-49": 0.89, "50-59": 1.92, "60-70": 4.35 }
             },
             male: { 
-              nonsmoker: { "20-29": 0.075, "30-39": 0.115, "40-49": 0.23, "50-59": 0.54, "60-70": 1.30 },
-              smoker: { "20-29": 0.125, "30-39": 0.20, "40-49": 0.40, "50-59": 0.96, "60-70": 2.35 }
+              nonsmoker: { "20-29": 0.19, "30-39": 0.30, "40-49": 0.58, "50-59": 1.26, "60-70": 3.05 },
+              smoker: { "20-29": 0.36, "30-39": 0.58, "40-49": 1.15, "50-59": 2.43, "60-70": 5.50 }
             },
             other: { 
-              nonsmoker: { "20-29": 0.07, "30-39": 0.105, "40-49": 0.21, "50-59": 0.49, "60-70": 1.20 },
-              smoker: { "20-29": 0.115, "30-39": 0.185, "40-49": 0.37, "50-59": 0.89, "60-70": 2.20 }
+              nonsmoker: { "20-29": 0.175, "30-39": 0.27, "40-49": 0.51, "50-59": 1.12, "60-70": 2.75 },
+              smoker: { "20-29": 0.32, "30-39": 0.52, "40-49": 1.02, "50-59": 2.175, "60-70": 4.925 }
             }
           },
           LEVEL: {
             female: { 
-              nonsmoker: { "20-29": 0.095, "30-39": 0.135, "40-49": 0.25, "50-59": 0.57, "60-70": 1.35 },
-              smoker: { "20-29": 0.155, "30-39": 0.23, "40-49": 0.44, "50-59": 1.05, "60-70": 2.45 }
+              nonsmoker: { "20-29": 0.22, "30-39": 0.32, "40-49": 0.58, "50-59": 1.24, "60-70": 2.78 },
+              smoker: { "20-29": 0.38, "30-39": 0.61, "40-49": 1.18, "50-59": 2.43, "60-70": 5.25 }
             },
             male: { 
-              nonsmoker: { "20-29": 0.105, "30-39": 0.155, "40-49": 0.29, "50-59": 0.70, "60-70": 1.60 },
-              smoker: { "20-29": 0.185, "30-39": 0.28, "40-49": 0.52, "50-59": 1.25, "60-70": 2.85 }
+              nonsmoker: { "20-29": 0.27, "30-39": 0.41, "40-49": 0.75, "50-59": 1.58, "60-70": 3.55 },
+              smoker: { "20-29": 0.49, "30-39": 0.78, "40-49": 1.49, "50-59": 3.10, "60-70": 6.70 }
             },
             other: { 
-              nonsmoker: { "20-29": 0.10, "30-39": 0.145, "40-49": 0.27, "50-59": 0.635, "60-70": 1.475 },
-              smoker: { "20-29": 0.17, "30-39": 0.255, "40-49": 0.48, "50-59": 1.15, "60-70": 2.65 }
+              nonsmoker: { "20-29": 0.245, "30-39": 0.365, "40-49": 0.665, "50-59": 1.41, "60-70": 3.165 },
+              smoker: { "20-29": 0.435, "30-39": 0.695, "40-49": 1.335, "50-59": 2.765, "60-70": 5.975 }
             }
           }
         }
       },
 
-      // Risk multipliers
+      // Risk multipliers - Updated to reflect actual underwriting impact
       RISK: {
-        gender: { female: 1.00, male: 1.08, other: 1.04 },
-        smoking: { never: 1.00, former: 1.20, current: 2.00 },
-        alcohol: { none: 1.00, moderate: 1.05, heavy: 1.20 },
-        job: { low: 1.00, medium: 1.10, high: 1.25, very_high: 1.60 },
+        gender: { female: 1.00, male: 1.12, other: 1.06 },
+        smoking: { never: 1.00, former: 1.35, current: 2.25 }, // Higher smoking penalty
+        alcohol: { none: 1.00, moderate: 1.08, heavy: 1.35 },
+        job: { low: 1.00, medium: 1.15, high: 1.40, very_high: 1.85 },
         medical: { 
-          hypertension: 1.10, 
-          diabetes2: 1.20, 
-          asthma: 1.05, 
-          high_chol: 1.10,
-          depression: 1.05, 
-          heart_disease: 1.75, 
-          cancer_history: 1.40 
+          hypertension: 1.25, 
+          diabetes2: 1.55, 
+          asthma: 1.15, 
+          high_chol: 1.20,
+          depression: 1.12, 
+          heart_disease: 2.25, 
+          cancer_history: 1.85 
         }
       },
 
-      // Policy loads & fees
+      // Policy loads & fees - Updated to current market standards
       LOADS: {
-        percent_of_premium: 0.08, // 8% default
-        monthly_policy_fee: { USA: 8.00, CAN: 10.00 },
+        percent_of_premium: 0.12, // 12% default (more realistic for UL policies)
+        monthly_policy_fee: { USA: 15.00, CAN: 18.00 }, // Higher admin fees
         rider_monthly: 0.00
       },
 
@@ -351,11 +351,15 @@ class UniversalLifeCalculator {
     const grossMonthly = monthlyCOI + policyFee + inputs.riderCharges;
     const monthlyPremiumPreInterest = grossMonthly / (1 - (inputs.premiumLoad / 100));
     
-    // Interest crediting effect
-    const creditAdjFactor = Math.max(0.85, 1 - (inputs.creditedRate / 100) * 0.5);
-    const monthlyPremium = monthlyPremiumPreInterest * creditAdjFactor;
+    // Interest crediting effect (reduced impact)
+    const creditAdjFactor = Math.max(0.92, 1 - (inputs.creditedRate / 100) * 0.3);
+    let monthlyPremium = monthlyPremiumPreInterest * creditAdjFactor;
     
-    return Math.max(0, monthlyPremium);
+    // Add minimum premium floor based on face amount (realistic market minimums)
+    const minimumPremium = Math.max(25, faceAmount * 0.0008); // $25 or 0.08% of face amount monthly
+    monthlyPremium = Math.max(monthlyPremium, minimumPremium);
+    
+    return monthlyPremium;
   }
 
   calculate() {
