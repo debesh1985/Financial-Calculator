@@ -122,8 +122,17 @@ class UniversalLifeCalculator {
       btn.addEventListener('click', () => {
         document.querySelectorAll('#countryToggle button').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        const previousCountry = this.country;
         this.country = btn.dataset.country;
         this.currency = this.country === 'usa' ? '$' : 'CA$';
+        
+        // Update policy fee default when country changes
+        if (previousCountry !== this.country) {
+          const defaultFee = this.config.LOADS.monthly_policy_fee[this.country.toUpperCase()];
+          document.getElementById('monthlyPolicyFee').value = defaultFee;
+        }
+        
+        // Force recalculation with new country
         this.calculate();
       });
     });
@@ -347,7 +356,7 @@ class UniversalLifeCalculator {
     const monthlyCOI = riskedRate * units;
     
     // Calculate monthly premium before interest
-    const policyFee = this.config.LOADS.monthly_policy_fee[countryKey] || inputs.monthlyPolicyFee;
+    const policyFee = parseFloat(inputs.monthlyPolicyFee) || this.config.LOADS.monthly_policy_fee[countryKey];
     const grossMonthly = monthlyCOI + policyFee + inputs.riderCharges;
     const monthlyPremiumPreInterest = grossMonthly / (1 - (inputs.premiumLoad / 100));
     
