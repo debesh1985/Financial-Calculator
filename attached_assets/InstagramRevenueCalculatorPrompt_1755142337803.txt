@@ -1,0 +1,121 @@
+Goals
+Let users estimate revenue across three scenarios:
+
+Gifts (on Reels/Live)
+
+Subscriptions (monthly fan support)
+
+Reels performance payouts (modeled via effective RPM)
+
+Include an eligibility checklist (must all be true to enable calculations).
+
+Show a Total (USD), a scenario breakdown, and an Overall RPM.
+
+Include the required disclaimer (see exact text below).
+
+Layout & UX
+Header: Title “Instagram Monetization Calculator” + subtitle “Estimate creator earnings (USD) for organic, policy-safe content.”
+
+Eligibility checklist (all toggles must be ON to enable inputs & results):
+
+Professional account (Creator/Business) ✓
+
+Partner/Content Monetization Policies compliant ✓
+
+Tool available in your country ✓
+
+Payout setup complete ✓
+
+Account health OK (no policy strikes) ✓
+
+Scenario selector: Segmented control with Gifts • Subscriptions • Reels and an All option that shows all three sections stacked.
+
+Results card (sticky on desktop, visible near top on mobile):
+
+Estimated Earnings (USD) — large number, live-updating
+
+Breakdown: Gifts, Subscriptions, Reels (each $ and % of total)
+
+Overall RPM (USD per 1,000 plays) — based on Reels plays only
+
+Controls: “Reset to defaults” and “Copy inputs as link” (serialize state to URL querystring).
+
+Accessibility: Proper <label> for inputs, keyboardable controls, and an aria-live="polite" region for results.
+
+Inputs & Formulas (with sensible defaults + tooltips)
+Gifts
+Inputs:
+
+Stars (Gifts) received (per period) — default 10,000
+Formula (show in code comments + tooltip):
+
+
+Gifts_Revenue = Stars_received × 0.01
+Subscriptions
+Inputs:
+
+Active subscribers — default 500
+
+Monthly price (USD) — default 4.99
+
+Purchases via app stores (%) — default 70
+
+App store fee (%) — default 30 (let users change to 15 for year-2)
+
+Web purchases (%) — auto = 100 − app%
+
+Platform/other fee (%) — default 0
+Formulas:
+
+
+Gross          = Subscribers × Price
+Net_app        = (App_% × Gross) × (1 - App_fee%/100)
+Net_web        = (Web_% × Gross) × (1 - Platform_fee%/100)
+Subscriptions_Revenue = Net_app + Net_web
+Reels performance payouts
+Inputs:
+
+Qualified Reels plays (period total) — default 1,000,000
+
+Effective RPM (USD per 1K plays) — default 0.90 (editable)
+Formula:
+
+
+Reels_Revenue = Plays × (Effective_RPM / 1000)
+Totals & Derived Metrics
+
+Total_Revenue = Gifts_Revenue + Subscriptions_Revenue + Reels_Revenue
+Overall_RPM   = if (Reels_plays > 0)
+                  then Total_Revenue / (Reels_plays / 1000)
+                  else "—"
+If a scenario is toggled OFF or has empty inputs, exclude it from totals and omit it from the RPM denominator.
+
+Recalculate on input (debounce ~150 ms).
+
+UI Details
+Light theme with a clean system font stack, rounded cards, subtle shadows, and accessible contrast.
+
+Each scenario lives in a card with brief helper text (ⓘ tooltips) and validated numeric inputs (no negatives; sensible caps).
+
+Sticky mobile footer (visible under 900px wide) showing Estimated Total and quick Reset / Copy link buttons.
+
+URL State & Sharing
+Serialize all inputs + which scenarios are ON into the querystring.
+
+Copy inputs as link copies the current URL with state.
+
+Footer & Disclaimer
+Footer links: “View Instagram monetization policies” (placeholder text).
+
+Disclaimer (include verbatim first sentence):
+“This is an approximate amount based on the organic content, to get actual amount check check in instagram.”
+Add: “For actual payouts, see Professional Dashboard → Monetization inside Instagram.”
+
+Technical
+Ship three files: index.html, styles.css, script.js (no external libraries).
+
+Keep functions small and commented; put formulas directly above the related code.
+
+Include a small README explaining inputs, formulas, and limitations.
+
+Deliver the complete static site ready to upload to any host.
