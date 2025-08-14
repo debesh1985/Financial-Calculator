@@ -250,6 +250,53 @@ function compute(){
   drawChart(schedule.yearly, principal);
 }
 
+// Update results
+function updateResults() {
+  const results = calculate(); // Assuming calculate() returns an object with mortgage details
+
+  if (!results) {
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('amortizationSection').style.display = 'none';
+    return;
+  }
+
+  // Show results
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('amortizationSection').style.display = 'block';
+
+  // Update payment breakdown
+  document.getElementById('principalInterest').textContent = formatCurrency(results.principalInterest);
+  document.getElementById('propertyTaxResult').textContent = formatCurrency(results.propertyTax);
+  document.getElementById('homeInsuranceResult').textContent = formatCurrency(results.homeInsurance);
+  document.getElementById('cmhcInsuranceResult').textContent = formatCurrency(results.cmhcInsurance);
+  document.getElementById('condoFeesResult').textContent = formatCurrency(results.condoFees);
+  document.getElementById('utilitiesResult').textContent = formatCurrency(results.utilities);
+  document.getElementById('totalPayment').textContent = formatCurrency(results.totalPayment);
+
+  // Update loan summary
+  document.getElementById('loanAmount').textContent = formatCurrency(results.loanAmount);
+  document.getElementById('totalInterest').textContent = formatCurrency(results.totalInterest);
+  document.getElementById('totalCost').textContent = formatCurrency(results.totalCost);
+  document.getElementById('numberOfPayments').textContent = results.numberOfPayments;
+
+  // Update down payment percentage display
+  const downPaymentPercent = ((results.downPayment / results.homePrice) * 100).toFixed(1);
+  document.getElementById('downPaymentPercent').textContent = downPaymentPercent + '%';
+
+  // Update KPI sidebar if it exists
+  const downPaymentPercentKPI = document.getElementById('downPaymentPercentKPI');
+  const interestRateKPI = document.getElementById('interestRateKPI');
+  const amortizationKPI = document.getElementById('amortizationKPI');
+
+  if (downPaymentPercentKPI) downPaymentPercentKPI.textContent = downPaymentPercent + '%';
+  if (interestRateKPI) interestRateKPI.textContent = results.interestRate + '%';
+  if (amortizationKPI) amortizationKPI.textContent = results.amortization + ' years';
+
+  // Generate amortization table
+  generateAmortizationTable(results);
+}
+
+
 function bind(){
   // Country toggle
   document.querySelectorAll('#countryToggle button').forEach(btn=>{
