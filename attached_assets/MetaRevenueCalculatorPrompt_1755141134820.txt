@@ -1,0 +1,170 @@
+Goals
+Let users estimate revenue across five scenarios (Stars, Subscriptions, Ads on Reels, Long-form video ads, Branded content).
+
+Provide an eligibility checklist (all must be true to enable the calculator).
+
+Show a total and a scenario breakdown, with overall RPM (USD per 1,000 views/plays).
+
+Include a disclaimer (see text below).
+
+Ship as a fast, accessible, light theme web page.
+
+Layout & UX
+Header: Title “Facebook Monetization Calculator” + subtitle “Estimate creator earnings (USD) for organic, policy-safe content.”
+
+Eligibility checklist (toggles; if any unchecked, disable Calculate & show a small note):
+
+Country/tool availability ✓
+
+Partner Monetization Policies & Content Monetization Policies ✓
+
+Advertiser-friendly suitability ✓
+
+Originality (no reposting/limited originality) ✓
+
+Payout setup & account health ✓
+
+Scenario selector: tabs or segmented control: Stars • Subscriptions • Ads on Reels • Long-form video ads • Branded content. Also allow “All” to show every section stacked.
+
+Instant results card (sticky on desktop):
+
+Estimated Earnings (USD) — big number, live updates
+
+Breakdown — Stars, Subscriptions, Reels, Long-form, Branded (each $ and %)
+
+Overall RPM (USD / 1K total views/plays)
+
+Controls: “Reset to defaults” and “Copy inputs as link” (serialize state to URL querystring).
+
+Accessibility: Labels tied to inputs, keyboardable, aria-live for results.
+
+Inputs & Calculations (per scenario)
+Show helper tooltips (ⓘ) and sensible defaults.
+
+Stars
+Inputs:
+
+Stars received (number; monthly)
+Calculation:
+
+ini
+Copy
+Edit
+Stars_Revenue = Stars_received × 0.01
+Subscriptions
+Inputs:
+
+Active subscribers
+
+Monthly price (USD) (default 4.99)
+
+Purchases via app stores (%) (default 70)
+
+App store fee (%) (default 30; let user change to 15 for year-2)
+
+Web purchases (%) (auto = 100 − app%)
+
+Platform/other fee (%) (default 0)
+Calculations:
+
+ini
+Copy
+Edit
+Gross = Subscribers × Price
+Net_app = (App_% × Gross) × (1 - App_fee%/100)
+Net_web = (Web_% × Gross) × (1 - Platform_fee%/100)
+Subscriptions_Revenue = Net_app + Net_web
+Ads on Reels (performance-based)
+Inputs:
+
+Qualified Reels plays (period total)
+
+Effective RPM (USD per 1K plays) (default 0.90)
+Calculation:
+
+ini
+Copy
+Edit
+Reels_Revenue = Plays × (Effective_RPM / 1000)
+Long-form video ads (for enrolled/legacy In-Stream; keep as a modeling tool)
+Inputs:
+
+Total long-form views
+
+Monetizable view rate (%) (default 85)
+
+Fill rate (%) (default 90)
+
+Ad impressions per view (default 1.5; allow override)
+
+eCPM (USD) (default 6.00)
+
+Creator share (%) (default 55)
+
+Additional revenue sharing reductions (%) (default 0)
+Calculation:
+
+ini
+Copy
+Edit
+Eligible_views = Views × (Monetizable%/100)
+Impressions    = Eligible_views × (Fill%/100) × Ads_per_view
+Ad_revenue     = Impressions × (eCPM / 1000)
+Longform_Revenue = Ad_revenue × (Creator_share%/100) × (1 - Additional%/100)
+Branded content (paid partnerships)
+Inputs:
+
+Guaranteed impressions (or expected)
+
+CPM (USD) (default 15.00)
+
+Usage rights fee (USD) (optional)
+
+Deliverables fee (USD) (optional)
+Calculation:
+
+ini
+Copy
+Edit
+Branded_Revenue = (Impressions / 1000) × CPM + Usage_rights_fee + Deliverables_fee
+Totals & Derived Metrics
+ini
+Copy
+Edit
+Total_Revenue = Stars_Revenue + Subscriptions_Revenue + Reels_Revenue + Longform_Revenue + Branded_Revenue
+Overall_RPM   = Total_Revenue / ( (Total_reels_plays + Total_longform_views) / 1000 )
+If a scenario has no inputs or is toggled OFF, exclude it from the sum and the denominator.
+
+Update results on input (debounce 150ms).
+
+UI Details
+Cards with rounded corners, subtle shadows, generous spacing.
+
+Light theme using system font stack; accessible contrast.
+
+Sticky mobile footer with the current Estimated Total and quick actions (Reset / Copy link).
+
+Inline validation (no negatives; caps where sensible).
+
+URL State
+Serialize every input (including which scenarios are ON) to the querystring.
+
+“Copy inputs as link” copies the current URL.
+
+Footer & Disclaimers
+Footer links to official Meta monetization policies pages (placeholder link text).
+
+Disclaimer text (include verbatim first sentence):
+“This is an approximate amount based on the organic content, to get actual amount check check in youtube.”
+Add a second sentence for clarity: “For Facebook, check your Meta Professional Dashboard → Monetization for actual payouts.”
+
+Technical
+Plain, semantic HTML; separate index.html, styles.css, script.js.
+
+Keep functions small and commented; include formula comments above each computation.
+
+No external libraries; no backend.
+
+Provide a simple README explaining inputs and formulas.
+
+Deliver the complete static site ready to upload to any host.
