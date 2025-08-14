@@ -38,6 +38,97 @@
       <p>Estimate earnings in <strong>USD</strong> for <strong>organic, policy-safe</strong> videos. Toggle format, add your inputs, and see results instantly.</p>
     </header>
 
+    <!-- Channel URL Estimation Section -->
+    <section class="card" id="channelEstimator" style="margin-bottom: var(--space-lg);">
+      <h3>📊 Estimate by Channel URL</h3>
+      <div class="channel-input-group">
+        <input type="text" id="channelInput" placeholder="Paste a YouTube channel URL or @handle..." class="channel-url-input">
+        <button class="btn" id="fetchChannelBtn">Fetch</button>
+      </div>
+      
+      <div class="time-window-controls">
+        <div class="radio-group">
+          <input type="radio" id="time30" name="timeWindow" value="30" checked>
+          <label for="time30">Last 30 days</label>
+          <input type="radio" id="time90" name="timeWindow" value="90">
+          <label for="time90">Last 90 days</label>
+          <input type="radio" id="time365" name="timeWindow" value="365">
+          <label for="time365">Last 365 days</label>
+          <input type="radio" id="timeCustom" name="timeWindow" value="custom">
+          <label for="timeCustom">Custom range</label>
+        </div>
+        <div class="custom-date-range hidden" id="customDateRange">
+          <input type="date" id="startDate" class="date-input">
+          <span>to</span>
+          <input type="date" id="endDate" class="date-input">
+        </div>
+      </div>
+
+      <details class="advanced-options">
+        <summary>Advanced options</summary>
+        <div class="advanced-content">
+          <div class="input-group">
+            <label for="maxVideos">Max videos to scan <span class="info" title="Maximum number of videos to analyze (API quota limit)">ⓘ</span></label>
+            <input type="number" id="maxVideos" min="1" max="1000" value="500">
+          </div>
+          <div class="input-group">
+            <label for="shortsRule">Shorts detection rule <span class="info" title="How to classify videos as Shorts">ⓘ</span></label>
+            <select id="shortsRule">
+              <option value="60">Duration ≤ 60s → Short</option>
+              <option value="30">Duration ≤ 30s → Short</option>
+              <option value="90">Duration ≤ 90s → Short</option>
+            </select>
+          </div>
+        </div>
+      </details>
+
+      <div class="status-line" id="statusLine"></div>
+
+      <div class="channel-summary hidden" id="channelSummary">
+        <div class="channel-header">
+          <img id="channelAvatar" class="channel-avatar" alt="Channel avatar">
+          <div class="channel-info">
+            <h4><a id="channelTitle" href="" target="_blank" rel="noopener">Channel Name</a></h4>
+            <div class="channel-stats">
+              <span id="channelSubs">0 subscribers</span> • 
+              <span id="channelVideos">0 videos</span> • 
+              <span id="dateRange">Last 30 days</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="channel-kpis">
+          <div class="kpi-card">
+            <div class="kpi-label">Estimated Revenue</div>
+            <div class="kpi-value" id="channelRevenue">$0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Overall RPM</div>
+            <div class="kpi-value" id="channelRPM">$0</div>
+          </div>
+        </div>
+
+        <div class="revenue-breakdown">
+          <div class="breakdown-item">
+            <span>Long-form Ads:</span>
+            <strong id="channelLF">$0 (0%)</strong>
+          </div>
+          <div class="breakdown-item">
+            <span>Shorts Ads:</span>
+            <strong id="channelSH">$0 (0%)</strong>
+          </div>
+          <div class="breakdown-item">
+            <span>YouTube Premium:</span>
+            <strong id="channelPR">$0 (0%)</strong>
+          </div>
+        </div>
+
+        <div class="channel-disclaimer">
+          <small>Approximate, organic content assumed. Check YouTube Studio for actuals.</small>
+        </div>
+      </div>
+    </section>
+
     <!-- Format Toggle -->
     <div class="toolbar" role="tablist" aria-label="Content format">
       <div class="toggle" id="formatToggle">

@@ -300,6 +300,26 @@ const bindEvents = ()=>{
   $('#resetBtnMobile').addEventListener('click', resetToDefaults);
   $('#copyLinkBtn').addEventListener('click', copyInputsAsLink);
   
+  // Channel URL events
+  $('#fetchChannelBtn').addEventListener('click', analyzeChannel);
+  $('#channelInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') analyzeChannel();
+  });
+  
+  // Time window controls
+  $$('input[name="timeWindow"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      $('#customDateRange').classList.toggle('hidden', radio.value !== 'custom');
+    });
+  });
+  
+  // Set default dates
+  const today = new Date();
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(today.getDate() - 30);
+  $('#endDate').value = today.toISOString().split('T')[0];
+  $('#startDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+  
   // Mobile sticky bar visibility
   const handleScroll = () => {
     const results = $('#results');
@@ -311,6 +331,299 @@ const bindEvents = ()=>{
   };
   
   window.addEventListener('scroll', debounce(handleScroll, 50));
+};
+
+// ===== YouTube API Integration =====
+const YT_API_KEY = process.env.YOUTUBE_API_KEY || window.YT_API_KEY;
+
+const parseChannelInput = (input) => {
+  const trimmed = input.trim();
+  
+  // Direct channel ID (UC...)
+  if (trimmed.match(/^UC[a-zA-Z0-9_-]{22}$/)) {
+    return { type: 'channelId', value: trimmed };
+  }
+  
+  // Channel URL with ID
+  const channelIdMatch = trimmed.match(/youtube\.com\/channel\/(UC[a-zA-Z0-9_-]{22})/);
+  if (channelIdMatch) {
+    return { type: 'channelId', value: channelIdMatch[1] };
+  }
+  
+  // Handle (@username or youtube.com/@username)
+  const handleMatch = trimmed.match(/(?:youtube\.com\/)?@([a-zA-Z0-9_.-]+)/);
+  if (handleMatch) {
+    return { type: 'handle', value: handleMatch[1] };
+  }
+  
+  // Legacy username
+  const userMatch = trimmed.match(/youtube\.com\/user\/([a-zA-Z0-9_.-]+)/);
+  if (userMatch) {
+    return { type: 'username', value: userMatch[1] };
+  }
+  
+  // Try as handle if it starts with @
+  if (trimmed.startsWith('@')) {
+    return { type: 'handle', value: trimmed.substring(1) };
+  }
+  
+  return null;
+};
+
+const fetchChannelId = async (input) => {
+  const parsed = parseChannelInput(input);
+  if (!parsed) throw new Error('Invalid channel URL or handle format');
+  
+  if (parsed.type === 'channelId') {
+    return parsed.value;
+  }
+  
+  if (parsed.type === 'username') {
+    try {
+      const response = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=id&forUsername=${parsed.value}&key=${YT_API_KEY}`);
+      const data = await response.json();
+      if (data.items && data.items.length > 0) {
+        return data.items[0].id;
+      }
+    } catch (e) {
+      // Fall through to handle search
+    }
+  }
+  
+  // Search for handle
+  const query = parsed.type === 'handle' ? `@${parsed.value}` : parsed.value;
+  const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${encodeURIComponent(query)}&key=${YT_API_KEY}&maxResults=10`);
+  const data = await response.json();
+  
+  if (!data.items || data.items.length === 0) {
+    throw new Error('Channel not found');
+  }
+  
+  // Look for exact handle match
+  for (const item of data.items) {
+    if (item.snippet.customUrl === `@${parsed.value}` || 
+        item.snippet.title.toLowerCase() === parsed.value.toLowerCase()) {
+      return item.snippet.channelId;
+    }
+  }
+  
+  // Return first result if no exact match
+  return data.items[0].snippet.channelId;
+};
+
+const fetchChannelData = async (channelId) => {
+  const response = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,contentDetails,statistics&id=${channelId}&key=${YT_API_KEY}`);
+  const data = await response.json();
+  
+  if (!data.items || data.items.length === 0) {
+    throw new Error('Channel data not found');
+  }
+  
+  return data.items[0];
+};
+
+const fetchVideos = async (playlistId, maxVideos, publishedAfter, publishedBefore, onProgress) => {
+  const videos = [];
+  let nextPageToken = '';
+  let processed = 0;
+  
+  while (videos.length < maxVideos) {
+    const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails,snippet&playlistId=${playlistId}&maxResults=50${nextPageToken ? `&pageToken=${nextPageToken}` : ''}&key=${YT_API_KEY}`;
+    
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    if (!data.items) break;
+    
+    // Filter by date
+    const filteredItems = data.items.filter(item => {
+      const publishedAt = new Date(item.snippet.publishedAt);
+      return publishedAt >= publishedAfter && publishedAt <= publishedBefore;
+    });
+    
+    if (filteredItems.length > 0) {
+      // Get video details in batches of 50
+      for (let i = 0; i < filteredItems.length; i += 50) {
+        const batch = filteredItems.slice(i, i + 50);
+        const videoIds = batch.map(item => item.contentDetails.videoId).join(',');
+        
+        const videoResponse = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=contentDetails,statistics,snippet&id=${videoIds}&key=${YT_API_KEY}`);
+        const videoData = await videoResponse.json();
+        
+        if (videoData.items) {
+          videos.push(...videoData.items);
+          processed += videoData.items.length;
+          onProgress(`Fetching videos ${Math.min(processed, maxVideos)}/${maxVideos}...`);
+          
+          if (videos.length >= maxVideos) break;
+        }
+      }
+    }
+    
+    if (!data.nextPageToken || videos.length >= maxVideos) break;
+    nextPageToken = data.nextPageToken;
+  }
+  
+  return videos.slice(0, maxVideos);
+};
+
+const parseDuration = (duration) => {
+  const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!match) return 0;
+  
+  const hours = parseInt(match[1] || '0');
+  const minutes = parseInt(match[2] || '0');
+  const seconds = parseInt(match[3] || '0');
+  
+  return hours * 3600 + minutes * 60 + seconds;
+};
+
+const analyzeChannel = async () => {
+  const input = $('#channelInput').value.trim();
+  if (!input) {
+    setStatus('Please enter a channel URL or handle', 'error');
+    return;
+  }
+  
+  if (!YT_API_KEY) {
+    setStatus('YouTube API key not configured. Please add your API key as a secret.', 'error');
+    return;
+  }
+  
+  try {
+    setStatus('Looking up channel...', 'loading');
+    const channelId = await fetchChannelId(input);
+    
+    setStatus('Fetching channel data...', 'loading');
+    const channelData = await fetchChannelData(channelId);
+    
+    const uploadsPlaylistId = channelData.contentDetails.relatedPlaylists.uploads;
+    const maxVideos = parseInt($('#maxVideos').value) || 500;
+    const shortsRule = parseInt($('#shortsRule').value) || 60;
+    
+    // Calculate date range
+    const timeWindow = $('input[name="timeWindow"]:checked').value;
+    let publishedAfter, publishedBefore;
+    
+    publishedBefore = new Date();
+    if (timeWindow === 'custom') {
+      publishedAfter = new Date($('#startDate').value);
+      publishedBefore = new Date($('#endDate').value);
+    } else {
+      publishedAfter = new Date();
+      publishedAfter.setDate(publishedAfter.getDate() - parseInt(timeWindow));
+    }
+    
+    setStatus('Fetching recent videos...', 'loading');
+    const videos = await fetchVideos(uploadsPlaylistId, maxVideos, publishedAfter, publishedBefore, setStatus);
+    
+    if (videos.length === 0) {
+      setStatus('No videos found in the selected time range', 'error');
+      return;
+    }
+    
+    // Analyze videos
+    let longFormViews = 0;
+    let shortsViews = 0;
+    let longFormCount = 0;
+    let shortsCount = 0;
+    
+    videos.forEach(video => {
+      const duration = parseDuration(video.contentDetails.duration);
+      const views = parseInt(video.statistics.viewCount || '0');
+      
+      if (duration <= shortsRule) {
+        shortsViews += views;
+        shortsCount++;
+      } else {
+        longFormViews += views;
+        longFormCount++;
+      }
+    });
+    
+    // Calculate revenue using current calculator settings
+    const { lfAdsUSD, shortsUSD, premiumUSD, total, overallRPM } = calculateChannelRevenue(longFormViews, shortsViews);
+    
+    // Display results
+    displayChannelResults(channelData, {
+      longFormViews,
+      shortsViews,
+      longFormCount,
+      shortsCount,
+      totalViews: longFormViews + shortsViews,
+      revenue: { lfAdsUSD, shortsUSD, premiumUSD, total, overallRPM },
+      timeWindow,
+      publishedAfter,
+      publishedBefore
+    });
+    
+    setStatus(`Analysis complete: ${videos.length} videos analyzed`, 'success');
+    
+  } catch (error) {
+    console.error('Channel analysis error:', error);
+    setStatus(`Error: ${error.message}`, 'error');
+  }
+};
+
+const calculateChannelRevenue = (longFormViews, shortsViews) => {
+  // Use current calculator settings for revenue calculation
+  const oldLF = inputs.viewsLF();
+  const oldSH = inputs.viewsShorts();
+  
+  // Temporarily override views
+  $('#viewsLF').value = longFormViews;
+  $('#viewsShorts').value = shortsViews;
+  
+  // Calculate with both formats
+  const oldFormat = inputs.format();
+  $('input[value="both"]').checked = true;
+  
+  const result = calc();
+  
+  // Restore original values
+  $('#viewsLF').value = oldLF;
+  $('#viewsShorts').value = oldSH;
+  $(`input[value="${oldFormat}"]`).checked = true;
+  
+  return result;
+};
+
+const displayChannelResults = (channelData, analysis) => {
+  const summary = $('#channelSummary');
+  
+  // Channel header
+  $('#channelAvatar').src = channelData.snippet.thumbnails.default.url;
+  $('#channelTitle').textContent = channelData.snippet.title;
+  $('#channelTitle').href = `https://youtube.com/channel/${channelData.id}`;
+  
+  const subs = parseInt(channelData.statistics.subscriberCount || '0');
+  const videos = parseInt(channelData.statistics.videoCount || '0');
+  $('#channelSubs').textContent = `${subs.toLocaleString()} subscribers`;
+  $('#channelVideos').textContent = `${videos.toLocaleString()} total videos`;
+  
+  const timeDesc = analysis.timeWindow === 'custom' 
+    ? `${analysis.publishedAfter.toLocaleDateString()} - ${analysis.publishedBefore.toLocaleDateString()}`
+    : `Last ${analysis.timeWindow} days`;
+  $('#dateRange').textContent = `${timeDesc} (${analysis.longFormCount + analysis.shortsCount} videos analyzed)`;
+  
+  // KPIs
+  $('#channelRevenue').textContent = fmtUSD(analysis.revenue.total);
+  $('#channelRPM').textContent = fmtUSD(analysis.revenue.overallRPM);
+  
+  // Breakdown
+  const total = analysis.revenue.total || 1;
+  const pct = (x) => `${Math.round((x/total)*100)}%`;
+  $('#channelLF').textContent = `${fmtUSD(analysis.revenue.lfAdsUSD)} (${pct(analysis.revenue.lfAdsUSD)})`;
+  $('#channelSH').textContent = `${fmtUSD(analysis.revenue.shortsUSD)} (${pct(analysis.revenue.shortsUSD)})`;
+  $('#channelPR').textContent = `${fmtUSD(analysis.revenue.premiumUSD)} (${pct(analysis.revenue.premiumUSD)})`;
+  
+  summary.classList.remove('hidden');
+};
+
+const setStatus = (message, type = '') => {
+  const statusLine = $('#statusLine');
+  statusLine.textContent = message;
+  statusLine.className = `status-line ${type}`;
 };
 
 // ===== Initialization =====
