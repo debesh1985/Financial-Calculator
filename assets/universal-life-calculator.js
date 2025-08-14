@@ -128,7 +128,8 @@ class UniversalLifeCalculator {
         
         // Update policy fee default when country changes
         if (previousCountry !== this.country) {
-          const defaultFee = this.config.LOADS.monthly_policy_fee[this.country.toUpperCase()];
+          const countryKey = this.country === 'usa' ? 'USA' : 'CAN';
+          const defaultFee = this.config.LOADS.monthly_policy_fee[countryKey];
           document.getElementById('monthlyPolicyFee').value = defaultFee;
         }
         
@@ -328,7 +329,7 @@ class UniversalLifeCalculator {
     const liabilitiesTotal = inputs.mortgage + inputs.autoLoan + inputs.personalLoan + 
                             inputs.creditCard + inputs.lineOfCredit;
     const incomeReplacement = inputs.monthlyIncome * 12 * inputs.incomeReplacementYears;
-    const finalExpenses = this.config.FINAL_EXPENSES[this.country.toUpperCase()];
+    const finalExpenses = this.config.FINAL_EXPENSES[this.country === 'usa' ? 'USA' : 'CAN'];
     
     const recommendedCoverage = Math.max(0, 
       liabilitiesTotal + incomeReplacement + finalExpenses - inputs.existingInsurance
@@ -338,7 +339,7 @@ class UniversalLifeCalculator {
   }
 
   calculatePremium(inputs, faceAmount) {
-    const countryKey = this.country.toUpperCase();
+    const countryKey = this.country === 'usa' ? 'USA' : 'CAN';
     const ageBand = this.getAgeBand(inputs.age);
     
     // Get base COI rate
