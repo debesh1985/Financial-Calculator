@@ -178,11 +178,13 @@ header p {
 }
 
 .result-item {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.2);
   padding: var(--space-md);
   border-radius: 8px;
   text-align: center;
   backdrop-filter: blur(10px);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .result-item.primary {
@@ -194,12 +196,14 @@ header p {
   font-size: 0.9rem;
   opacity: 0.9;
   margin-bottom: 8px;
+  color: white;
 }
 
 .result-value {
   font-size: 2rem;
   font-weight: 800;
   margin-bottom: 4px;
+  color: white;
 }
 
 @media (max-width: 768px) {
@@ -211,6 +215,7 @@ header p {
 .result-note {
   font-size: 0.8rem;
   opacity: 0.8;
+  color: white;
 }
 
 /* Premium Breakdown */

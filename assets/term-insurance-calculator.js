@@ -73,19 +73,11 @@ class TermInsuranceCalculator {
     if (ageSlider && ageDisplay) {
       ageSlider.addEventListener('input', () => {
         ageDisplay.textContent = ageSlider.value;
-        this.calculatePremium();
+        // Remove auto-calculation - user must click Calculate button
       });
     }
     
-    // Real-time calculation on input change
-    const inputs = ['age', 'gender', 'coverage', 'customCoverage', 'term', 'health', 'smoking', 'occupation', 'country'];
-    inputs.forEach(id => {
-      const element = document.getElementById(id);
-      if (element) {
-        element.addEventListener('input', () => this.calculatePremium());
-        element.addEventListener('change', () => this.calculatePremium());
-      }
-    });
+    // Remove real-time calculation - user must click Calculate button
   }
 
   handleCustomCoverage() {
