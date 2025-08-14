@@ -477,6 +477,11 @@ input:focus,select:focus{
     right: 0;
     left: auto;
     max-width: calc(100vw - 24px);
+    transform: translateX(0) translateY(-10px);
+  }
+
+  .dropdown-menu.show {
+    transform: translateX(0) translateY(0);
   }
 
   .dropdown-item {
