@@ -451,11 +451,119 @@ h3:not(:first-child) {
   }
 }
 
+/* Hamburger Menu Styles */
+.header-with-menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space);
+}
+
+.hamburger-menu {
+  position: relative;
+}
+
+.hamburger-button {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 10;
+}
+
+.hamburger-button span {
+  width: 24px;
+  height: 3px;
+  background: var(--fg);
+  border-radius: 2px;
+  transition: all 0.3s linear;
+  position: relative;
+  transform-origin: 1px;
+}
+
+.hamburger-button.active span:first-child {
+  transform: rotate(45deg);
+}
+
+.hamburger-button.active span:nth-child(2) {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.hamburger-button.active span:nth-child(3) {
+  transform: rotate(-45deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  min-width: 200px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+  z-index: 1000;
+  margin-top: 4px;
+}
+
+.dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-item {
+  display: block;
+  padding: 12px 16px;
+  color: var(--fg);
+  text-decoration: none;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover {
+  background: var(--accent-2);
+  color: var(--accent);
+}
+
+.dropdown-item.active {
+  background: var(--accent);
+  color: white;
+}
+
+.header-content {
+  flex: 1;
+  text-align: center;
+}
+
+/* Hide hamburger on larger screens where navigation is inline */
+@media (min-width: 768px) {
+  .hamburger-menu {
+    display: none;
+  }
+}
+
 /* Print styles */
 @media print {
   .mobile-sticky,
   .toolbar,
-  .footer {
+  .footer,
+  .hamburger-menu {
     display: none;
   }
   .card {
