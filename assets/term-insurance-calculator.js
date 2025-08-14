@@ -1,38 +1,38 @@
 
 // Term Insurance Premium Calculator Logic
 
-// Base premium rates per $1000 of coverage per year by age and gender
+// Base premium rates per $1000 of coverage per year by age and gender (2024 market rates)
 const BASE_RATES = {
   male: {
-    18: 0.15, 20: 0.16, 25: 0.18, 30: 0.22, 35: 0.28, 40: 0.38, 45: 0.55, 
-    50: 0.85, 55: 1.35, 60: 2.15, 65: 3.45, 70: 5.85, 75: 9.85
+    18: 0.45, 20: 0.48, 25: 0.52, 30: 0.68, 35: 0.88, 40: 1.25, 45: 1.85, 
+    50: 2.95, 55: 4.85, 60: 7.95, 65: 13.25, 70: 22.50, 75: 38.95
   },
   female: {
-    18: 0.12, 20: 0.13, 25: 0.14, 30: 0.17, 35: 0.22, 40: 0.30, 45: 0.42, 
-    50: 0.65, 55: 1.05, 60: 1.65, 65: 2.75, 70: 4.65, 75: 7.85
+    18: 0.38, 20: 0.41, 25: 0.44, 30: 0.56, 35: 0.72, 40: 1.02, 45: 1.48, 
+    50: 2.28, 55: 3.68, 60: 5.95, 65: 9.85, 70: 16.75, 75: 28.95
   }
 };
 
-// Risk multipliers
+// Risk multipliers (2024 market standards)
 const HEALTH_MULTIPLIERS = {
   excellent: 1.0,
-  good: 1.2,
-  average: 1.5,
-  poor: 2.2
+  good: 1.25,
+  average: 1.65,
+  poor: 2.85
 };
 
 const SMOKING_MULTIPLIERS = {
   never: 1.0,
-  former: 1.3,
-  recent: 1.8,
-  current: 2.5
+  former: 1.45,
+  recent: 2.15,
+  current: 3.25
 };
 
 const OCCUPATION_MULTIPLIERS = {
   low: 1.0,
-  medium: 1.15,
-  high: 1.4,
-  extreme: 1.8
+  medium: 1.25,
+  high: 1.75,
+  extreme: 2.45
 };
 
 const COUNTRY_MULTIPLIERS = {

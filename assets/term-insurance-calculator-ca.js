@@ -1,38 +1,38 @@
 
 // Term Insurance Premium Calculator Logic - Canada Version
 
-// Base premium rates per $1000 of coverage per year by age and gender (Canadian rates - typically 15% lower than US)
+// Base premium rates per $1000 of coverage per year by age and gender (Canadian rates - 2024 market)
 const BASE_RATES = {
   male: {
-    18: 0.13, 20: 0.14, 25: 0.15, 30: 0.19, 35: 0.24, 40: 0.32, 45: 0.47, 
-    50: 0.72, 55: 1.15, 60: 1.83, 65: 2.93, 70: 4.97, 75: 8.37
+    18: 0.38, 20: 0.41, 25: 0.44, 30: 0.58, 35: 0.75, 40: 1.06, 45: 1.57, 
+    50: 2.51, 55: 4.12, 60: 6.76, 65: 11.26, 70: 19.13, 75: 33.11
   },
   female: {
-    18: 0.10, 20: 0.11, 25: 0.12, 30: 0.14, 35: 0.19, 40: 0.26, 45: 0.36, 
-    50: 0.55, 55: 0.89, 60: 1.40, 65: 2.34, 70: 3.95, 75: 6.67
+    18: 0.32, 20: 0.35, 25: 0.37, 30: 0.48, 35: 0.61, 40: 0.87, 45: 1.26, 
+    50: 1.94, 55: 3.13, 60: 5.06, 65: 8.37, 70: 14.24, 75: 24.61
   }
 };
 
-// Risk multipliers for Canadian market
+// Risk multipliers for Canadian market (2024 standards)
 const HEALTH_MULTIPLIERS = {
   excellent: 1.0,
-  good: 1.2,
-  average: 1.5,
-  poor: 2.2
+  good: 1.22,
+  average: 1.58,
+  poor: 2.68
 };
 
 const SMOKING_MULTIPLIERS = {
   never: 1.0,
-  former: 1.3,
-  recent: 1.8,
-  current: 2.5
+  former: 1.38,
+  recent: 2.05,
+  current: 3.05
 };
 
 const OCCUPATION_MULTIPLIERS = {
   low: 1.0,
-  medium: 1.15,
-  high: 1.4,
-  extreme: 1.8
+  medium: 1.22,
+  high: 1.68,
+  extreme: 2.28
 };
 
 // Term length multipliers (longer terms cost more due to level premiums)
