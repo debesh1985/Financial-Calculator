@@ -42,13 +42,19 @@
   <url>
     <loc>/instagram-calculator.html</loc>
     <lastmod>2024-12-19</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.94</priority>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
     <image:image>
       <image:loc>/assets/instagram-calculator-preview.jpg</image:loc>
       <image:title>Instagram Monetization Calculator 2024 - Creator Earnings Tool</image:title>
       <image:caption>Calculate Instagram creator earnings from Gifts, Subscriptions, and Reels performance payouts</image:caption>
     </image:image>
+  </url>
+  <url>
+    <loc>/term-insurance-calculator.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>/gst-hst.html</loc>
