@@ -1,0 +1,167 @@
+New UI (top of page, under header)
+Card: “Estimate by Channel URL”
+
+Text input (full width on mobile): placeholder “Paste a YouTube channel URL or @handle…”
+
+Fetch button.
+
+Time window controls: radio buttons (Last 30 days, Last 90 days, Last 365 days, Custom range with date pickers).
+
+Advanced options (collapsible):
+
+“Max videos to scan” (default 500; show note about API quota).
+
+“Shorts detection rule” (default: duration ≤ 60s → Short).
+
+Status line for progress/errors (e.g., “Fetching uploads 150/500…”).
+
+Channel summary card (after fetch)
+
+Channel avatar + title (link to channel), subscribers, total public videos, date range analyzed.
+
+Two tall KPIs:
+
+Estimated Revenue (USD) (big number)
+
+Overall RPM (USD / 1K views)
+
+Breakdown list: Long-form Ads, Shorts Ads, YouTube Premium (each $ and %).
+
+Small footnote: “Approximate, organic content assumed. Check YouTube Studio for actuals.”
+
+Behavior
+Parse input:
+
+Accept:
+
+https://www.youtube.com/channel/UC… → extract channelId
+
+https://www.youtube.com/@handle or @handle → resolve via Search API (type=channel, query = handle) then take exact/displayHandle match.
+
+Legacy usernames (/user/Name): try channels.list(forUsername=…) as fallback.
+
+Fetch channel metadata with YouTube Data API v3 (client-side with API key):
+
+channels.list(part=snippet,contentDetails,statistics,id=CHANNEL_ID)
+
+Keep: title, thumbnails, stats (subscriberCount, videoCount), uploads playlist ID.
+
+Collect uploads:
+
+playlistItems.list(part=contentDetails,snippet,playlistId=UPLOADS,maxResults=50) → page through up to “Max videos to scan”.
+
+For each batch, call videos.list(part=contentDetails,statistics,snippet,id=ID1,ID2,… up to 50) to get:
+
+statistics.viewCount
+
+contentDetails.duration (ISO-8601)
+
+snippet.publishedAt
+
+Filter to time window (publishedAt within selected range).
+
+Classify Shorts vs Long-form:
+
+Default rule: if duration ≤ 60s → Shorts, else Long-form. (Provide a tooltip noting it’s an approximation.)
+
+Aggregate views:
+
+Sum LF_Views and SH_Views over the window.
+
+Estimate revenue using the existing six-bucket variables already on the page (use the current slider/input values live):
+
+Long-form Ads
+
+matlab
+Copy
+Edit
+LF_Ads = LF_Views
+         × (1 - Premium%/100)
+         × (MonetizableRate%/100)
+         × (ImpressionsPerView)
+         × (FillRate%/100)
+         × (CPM/1000)
+         × (Seasonality%/100)
+         × (InventoryAvailability%/100)
+         × (CreatorShare_LF%/100)
+         × (1 - AdditionalSharing%/100)
+Shorts Ads (RPM model)
+
+sql
+Copy
+Edit
+Shorts = SH_Views × (Shorts_RPM/1000)
+         × (CreatorShare_SH / 45)   // normalize if user changes from 45%
+         × (1 - AdditionalSharing%/100)
+Premium
+
+makefile
+Copy
+Edit
+Premium = (LF_Views + SH_Views)
+          × (Premium%/100)
+          × (Premium_RPM/1000)
+Totals
+
+ini
+Copy
+Edit
+Total = LF_Ads + Shorts + Premium
+Overall_RPM = Total / ((LF_Views + SH_Views)/1000)
+Render results into the existing Results card (reuse the same big numbers/breakdown), and mirror the total into the sticky mobile bar.
+
+URL state: Persist channelId and date range in querystring (e.g., chid, from, to). Keep existing state serialization for all sliders/toggles so users can share a pre-filled link.
+
+Edge cases & UX:
+
+Missing API key: show inline notice + compact instructions: “Set window.YT_API_KEY = 'YOUR_KEY' in config.js.”
+
+Hidden/disabled stats or quota exceeded: gracefully fall back to sampling (first N and last N uploads), show a banner “Estimated from sample N of M videos.”
+
+No videos in window → show zeros with an explanatory note.
+
+Invalid URL/handle → inline error under the input.
+
+Tech Notes (client-side only)
+Add config.js with:
+
+js
+Copy
+Edit
+// Set your restricted key (HTTP referrer restriction recommended)
+window.YT_API_KEY = "YOUR_YOUTUBE_DATA_API_KEY";
+In script.js, add a ChannelEstimator module:
+
+parseChannelInput(str) → { channelId | handle }
+
+resolveChannelId({ channelId, handle }) using:
+
+If channelId present → use channels.list(id=...)
+
+Else use search.list(type=channel,q=handle) and pick best match by snippet.channelTitle and (if available) snippet.customUrl / handle.
+
+Fallback channels.list(forUsername=...) for legacy names.
+
+fetchUploads(channelId) → paginate playlistItems, then batch videos.list (50 IDs per request).
+
+classifyShort(durationISO) → boolean (≤ 60s).
+
+aggregateByWindow(videos, from, to) → { lfViews, shViews, counts }.
+
+estimateRevenue({lfViews, shViews}, currentInputs) → reuse existing calculator functions.
+
+Show a small “Powered by YouTube” text and comply with YouTube API branding rules.
+
+Keep everything accessible (labels for inputs, aria-live for status), and no external frameworks.
+
+Visual Style
+Match the current light theme cards, shadows, rounded corners.
+
+On mobile: input and button stack; progress/status line visible; results scroll to view after fetch.
+
+Keep Copy inputs as link working (now also includes chid/from/to).
+
+Disclaimer (under channel results)
+“Estimates assume organic, policy-safe content and rely on public data via YouTube Data API v3. Actual revenue varies. Check YouTube Studio for real earnings.”
+
+Deliver updated index.html, styles.css, script.js, and a new config.js placeholder. No backend.
