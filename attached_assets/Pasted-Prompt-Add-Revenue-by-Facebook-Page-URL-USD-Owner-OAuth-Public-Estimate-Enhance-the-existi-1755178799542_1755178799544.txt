@@ -1,0 +1,153 @@
+Prompt: “Add Revenue by Facebook Page URL (USD) — Owner OAuth + Public Estimate”
+
+Enhance the existing Facebook Monetization Calculator with a new feature where a user pastes a Facebook Page URL or @handle and sees revenue in USD for Last 30 / 90 / 365 days or a Custom range. Implement two modes:
+
+Owner Mode (recommended) — pulls real earnings via Meta Graph API after the Page owner signs in and grants access.
+
+Public Estimate Mode — when the user can’t/doesn’t authorize, estimate revenue from public metrics + user-provided RPMs.
+
+Keep the site mobile-first, light theme, and vanilla HTML/CSS/JS (no frameworks). Front end stays static; use a tiny serverless function for OAuth/token exchange to keep the App Secret safe.
+
+UX & Flow
+
+New card at top: “Estimate by Facebook Page URL”
+
+Text input (full width on mobile): placeholder “Paste Facebook Page URL or @handle…”
+
+Buttons: Get Revenue (Owner login) and Estimate Without Login
+
+Date range: presets 30 / 90 / 365 days + Custom (from/to date pickers)
+
+Status line: progress/errors (e.g., “Fetching earnings…”, “Missing permission: read_insights”)
+
+Results card (sticky on desktop):
+
+Total Revenue (USD) — big number
+
+Breakdown (bars/list): Reels / Video / Posts/Other / Stars / Subscriptions (each $ + % of total)
+
+CSV download of line items (date, metric, amount, source)
+
+Badge: “Owner Mode” or “Estimate Mode”
+
+Disclaimers (small under results):
+
+Owner Mode: “Figures use Meta’s earnings metrics for your Page.”
+
+Estimate Mode: “Approximate only; check your Monetization → Earnings tab for actual payouts.”
+
+Owner Mode (real earnings)
+
+Permissions & roles
+
+Request Facebook Login and ask for: read_insights, pages_show_list, pages_read_engagement.
+
+User must select the Page where they have the ANALYZE (or equivalent insights) task.
+
+Perform OAuth on the serverless endpoint to keep the App Secret private; return a Page access token to the browser.
+
+API calls (serverless proxy)
+
+Resolve Page ID from URL/handle:
+GET /{page-username}?fields=id,name,link
+
+Earnings (date-bounded):
+
+GET /{page-id}/insights?metric=content_monetization_earnings&since=YYYY-MM-DD&until=YYYY-MM-DD
+
+If available, also try monetization_approximate_earnings for cross-checking.
+
+Breakdowns (optional, if surfaced in your app): call relevant insights for Stars count, Subscriptions net, and Reels/video earnings metrics if exposed; otherwise show earnings total plus content-type mixes from Insights.
+
+Currency
+
+Normalize to USD. If an endpoint returns local currency, convert with a server-side FX table (simple daily JSON you maintain). Show the applied rate in a tooltip.
+
+Error handling
+
+Missing permissions → show action chip: “Grant read_insights”.
+
+Page not monetized / metric null → fall back to Estimate Mode with clear message.
+
+Token issues → prompt re-auth.
+
+Public Estimate Mode (no login)
+
+Fetch public metrics
+
+Resolve Page ID from URL/handle.
+
+Pull recent videos/Reels IDs (where accessible) and fetch basic play metrics (or ask user to paste counts if API limits apply).
+
+User inputs for modeling
+
+Effective RPM for Reels ($ per 1K plays) — default 0.90 (editable)
+
+Effective RPM for Video (long-form) — default 1.50 (editable) or hide if not relevant
+
+Stars (count in range) → pay $0.01 each
+
+Subscriptions: average active subs, price, net% (fees), months in range
+
+Calculations
+
+Reels = plays × (reelsRPM / 1000)
+
+Video = views × (videoRPM / 1000) (or skip if unknown)
+
+Stars = stars × 0.01
+
+Subs = subsAvg × price × net% × monthsInRange
+
+Total = Reels + Video + Stars + Subs
+Label clearly as estimate.
+
+UI Details
+
+Input validation: URLs/handles, date range sanity, nonnegative numbers.
+
+Accessibility: labels tied to inputs; aria-live="polite" for totals.
+
+Sticky mobile footer: current total + quick actions (Reset / Copy link).
+
+Copy state as link: serialize all inputs + mode + date range into querystring.
+
+Security & Architecture
+
+Serverless OAuth (Vercel/Netlify function):
+
+Exchange code → user token → Page access token.
+
+Never expose App Secret on the client.
+
+Rate-limit and cache (per Page+range) for a few minutes to reduce API calls.
+
+Front end remains static; all Graph API calls go through the serverless proxy.
+
+Deliverables
+
+Update index.html / styles.css / script.js.
+
+Add /api/auth and /api/graph examples (serverless).
+
+A config.js for toggles: default RPMs, FX table, feature flags.
+
+README section:
+
+How to create the Facebook App, add permissions, set redirect URI, and obtain App ID/Secret.
+
+How to deploy serverless endpoints and set environment vars.
+
+What data is cached and for how long.
+
+Acceptance Criteria
+
+Paste a valid Page URL → Owner Mode login → choose Page → see Total USD and breakdown for 30/90/365/custom.
+
+Without login → Estimate Mode visible, computes totals from plays + RPMs + Stars + Subs.
+
+CSV download works; totals match API data (Owner Mode) for a test Page.
+
+Errors and permission prompts are human-readable.
+
+Mobile layout is clean; totals are readable; keyboard-only use works.
