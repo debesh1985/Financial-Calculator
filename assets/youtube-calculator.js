@@ -334,7 +334,7 @@ const bindEvents = ()=>{
 };
 
 // ===== YouTube API Integration =====
-const YT_API_KEY = process.env.YOUTUBE_API_KEY || window.YT_API_KEY;
+const YT_API_KEY = window.YT_API_KEY;
 
 const parseChannelInput = (input) => {
   const trimmed = input.trim();
@@ -381,11 +381,18 @@ const fetchChannelId = async (input) => {
   if (parsed.type === 'username') {
     try {
       const response = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=id&forUsername=${parsed.value}&key=${YT_API_KEY}`);
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+      }
       const data = await response.json();
+      if (data.error) {
+        throw new Error(`API Error: ${data.error.message}`);
+      }
       if (data.items && data.items.length > 0) {
         return data.items[0].id;
       }
     } catch (e) {
+      console.warn('Username lookup failed:', e);
       // Fall through to handle search
     }
   }
@@ -393,7 +400,16 @@ const fetchChannelId = async (input) => {
   // Search for handle
   const query = parsed.type === 'handle' ? `@${parsed.value}` : parsed.value;
   const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${encodeURIComponent(query)}&key=${YT_API_KEY}&maxResults=10`);
+  
+  if (!response.ok) {
+    throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+  }
+  
   const data = await response.json();
+  
+  if (data.error) {
+    throw new Error(`API Error: ${data.error.message}`);
+  }
   
   if (!data.items || data.items.length === 0) {
     throw new Error('Channel not found');
@@ -413,7 +429,16 @@ const fetchChannelId = async (input) => {
 
 const fetchChannelData = async (channelId) => {
   const response = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,contentDetails,statistics&id=${channelId}&key=${YT_API_KEY}`);
+  
+  if (!response.ok) {
+    throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+  }
+  
   const data = await response.json();
+  
+  if (data.error) {
+    throw new Error(`API Error: ${data.error.message}`);
+  }
   
   if (!data.items || data.items.length === 0) {
     throw new Error('Channel data not found');
@@ -431,7 +456,16 @@ const fetchVideos = async (playlistId, maxVideos, publishedAfter, publishedBefor
     const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails,snippet&playlistId=${playlistId}&maxResults=50${nextPageToken ? `&pageToken=${nextPageToken}` : ''}&key=${YT_API_KEY}`;
     
     const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+    }
+    
     const data = await response.json();
+    
+    if (data.error) {
+      throw new Error(`API Error: ${data.error.message}`);
+    }
     
     if (!data.items) break;
     
@@ -448,7 +482,16 @@ const fetchVideos = async (playlistId, maxVideos, publishedAfter, publishedBefor
         const videoIds = batch.map(item => item.contentDetails.videoId).join(',');
         
         const videoResponse = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=contentDetails,statistics,snippet&id=${videoIds}&key=${YT_API_KEY}`);
+        
+        if (!videoResponse.ok) {
+          throw new Error(`Video API request failed: ${videoResponse.status} ${videoResponse.statusText}`);
+        }
+        
         const videoData = await videoResponse.json();
+        
+        if (videoData.error) {
+          throw new Error(`Video API Error: ${videoData.error.message}`);
+        }
         
         if (videoData.items) {
           videos.push(...videoData.items);
