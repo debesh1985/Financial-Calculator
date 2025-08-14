@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -132,6 +133,128 @@
         padding: 10px 12px;
         font-size: 13px;
       }
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    
+    .input-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .input-group label {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    
+    .input-group input,
+    .input-group select {
+      padding: 12px;
+      border: 2px solid #e1e5e9;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.2s ease;
+    }
+    
+    .input-group input:focus,
+    .input-group select:focus {
+      outline: none;
+      border-color: #4f46e5;
+    }
+    
+    .input-help {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+    
+    .calculate-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 16px 24px;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    
+    .calculate-btn:hover {
+      transform: translateY(-2px);
+    }
+    
+    .results-section {
+      margin-top: 32px;
+    }
+    
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .result-item {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .result-item.primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .result-label {
+      font-size: 14px;
+      margin-bottom: 8px;
+      opacity: 0.8;
+    }
+    
+    .result-value {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    
+    .result-note {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+    
+    .premium-breakdown {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    
+    .premium-breakdown h4 {
+      margin-bottom: 16px;
+      color: #333;
+    }
+    
+    .breakdown-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid #e1e5e9;
+    }
+    
+    .breakdown-item.total {
+      border-top: 2px solid #333;
+      border-bottom: none;
+      margin-top: 12px;
+      padding-top: 12px;
     }
   </style>
 </head>
