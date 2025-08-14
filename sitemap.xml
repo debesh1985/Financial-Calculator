@@ -1,87 +1,52 @@
+
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/</loc>
+    <loc>https://financialcalculator.replit.app/</loc>
     <lastmod>2024-12-19</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-    <image:image>
-      <image:loc>/assets/mortgage-calculator-preview.jpg</image:loc>
-      <image:title>Free Mortgage Calculator 2024 - Canada USA Europe Australia Asia</image:title>
-      <image:caption>Calculate monthly mortgage payments globally with CMHC, FHA, PMI insurance options</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-    <lastmod>2024-12-19</lastmod>
-    <changefreq>daily</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>/youtube-calculator.html</loc>
+    <loc>https://financialcalculator.replit.app/youtube-calculator.html</loc>
     <lastmod>2024-12-19</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.98</priority>
-    <image:image>
-      <image:loc>/assets/youtube-calculator-preview.jpg</image:loc>
-      <image:title>YouTube Monetization Calculator 2024 - Free Creator Earnings Tool</image:title>
-      <image:caption>Calculate YouTube ad revenue, RPM, CPM for Long-form videos and Shorts worldwide</image:caption>
-    </image:image>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>/facebook-calculator.html</loc>
+    <loc>https://financialcalculator.replit.app/facebook-calculator.html</loc>
     <lastmod>2024-12-19</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.96</priority>
-    <image:image>
-      <image:loc>/assets/facebook-calculator-preview.jpg</image:loc>
-      <image:title>Facebook Monetization Calculator 2024 - Creator Earnings Tool</image:title>
-      <image:caption>Calculate Facebook creator earnings from Stars, Subscriptions, Reels, and branded content</image:caption>
-    </image:image>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>/instagram-calculator.html</loc>
+    <loc>https://financialcalculator.replit.app/instagram-calculator.html</loc>
     <lastmod>2024-12-19</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://financialcalculator.replit.app/term-insurance-calculator.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://financialcalculator.replit.app/universal-life-calculator.html</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://financialcalculator.replit.app/us/term-life-insurance-premium-calculator/</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <image:image>
-      <image:loc>/assets/instagram-calculator-preview.jpg</image:loc>
-      <image:title>Instagram Monetization Calculator 2024 - Creator Earnings Tool</image:title>
-      <image:caption>Calculate Instagram creator earnings from Gifts, Subscriptions, and Reels performance payouts</image:caption>
-    </image:image>
   </url>
   <url>
-    <loc>/us/term-life-insurance-premium-calculator/</loc>
+    <loc>https://financialcalculator.replit.app/ca/term-life-insurance-premium-calculator/</loc>
     <lastmod>2024-12-19</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
-    <image:image>
-      <image:loc>/og-image.png</image:loc>
-      <image:title>Term Life Insurance Premium Calculator USA - Free Monthly Cost Estimator</image:title>
-      <image:caption>Calculate term life insurance premiums for USA with instant estimates based on age, health, coverage amount</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>/ca/term-life-insurance-premium-calculator/</loc>
-    <lastmod>2024-12-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
-    <image:image>
-      <image:loc>/og-image.png</image:loc>
-      <image:title>Term Life Insurance Premium Calculator Canada - Free Monthly Cost Estimator</image:title>
-      <image:caption>Calculate term life insurance premiums for Canada with instant estimates in CAD based on age, health, coverage</image:caption>
-    </image:image>
-  </url>
-  <url>
-    <loc>/term-insurance-calculator.html</loc>
-    <lastmod>2024-12-19</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>/gst-hst.html</loc>
-    <lastmod>2024-12-19</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
 </urlset>

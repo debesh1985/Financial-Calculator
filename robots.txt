@@ -1,42 +1,6 @@
-
 User-agent: *
 Allow: /
-Allow: /index.html
-Allow: /youtube-calculator.html
-Allow: /facebook-calculator.html
-Allow: /instagram-calculator.html
-Allow: /term-insurance-calculator.html
-Allow: /us/term-life-insurance-premium-calculator/
-Allow: /ca/term-life-insurance-premium-calculator/
-Allow: /gst-hst.html
-Allow: /assets/
-Allow: /sitemap.xml
-
-# Priority crawling for main calculators
-User-agent: Googlebot
-Allow: /
-Allow: /index.html
-Allow: /youtube-calculator.html
-Allow: /facebook-calculator.html
-Allow: /instagram-calculator.html
-Crawl-delay: 0.5
-
-User-agent: Bingbot
-Allow: /
-Allow: /index.html
-Allow: /youtube-calculator.html
-Allow: /facebook-calculator.html
-Allow: /instagram-calculator.html
-Crawl-delay: 1
-
-# Sitemap
-Sitemap: /sitemap.xml
-
-# Block unnecessary paths
 Disallow: /attached_assets/
 Disallow: /.config/
-Disallow: /.replit
-Disallow: /README.txt
 
-# Crawl-delay for respectful crawling
-Crawl-delay: 1
+Sitemap: https://financialcalculator.replit.app/sitemap.xml

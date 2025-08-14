@@ -155,20 +155,25 @@ input:focus,select:focus{
   overflow:hidden; 
   width:100%;
   min-width:200px;
+  min-height:48px;
 }
 @media(min-width:480px){ 
   .toggle{width:auto;} 
 }
 
 .toggle button{
-  padding:10px 8px; 
+  padding:12px 8px; 
   border:0; 
   background:transparent; 
   color:var(--muted); 
   cursor:pointer;
   flex:1;
-  font-size:13px;
+  font-size:14px;
   text-align:center;
+  min-height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 @media(min-width:480px){ 
   .toggle button{padding:8px 12px; flex:none; font-size:14px;} 
@@ -192,6 +197,10 @@ input:focus,select:focus{
   width:100%;
   margin:4px 0;
   text-align:center;
+  min-height:48px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
 }
 @media(min-width:480px){ 
   .btn{width:auto; display:inline-block; margin:0 4px 0 0; padding:8px 12px;} 
