@@ -187,8 +187,19 @@ class UniversalLifeCalculator {
     inputs.forEach(id => {
       const element = document.getElementById(id);
       if (element) {
-        element.addEventListener('input', () => this.calculate());
-        element.addEventListener('change', () => this.calculate());
+        element.addEventListener('input', () => {
+          console.log(`Input changed: ${id} = ${element.value}`);
+          this.calculate();
+        });
+        element.addEventListener('change', () => {
+          console.log(`Change event: ${id} = ${element.value}`);
+          this.calculate();
+        });
+        element.addEventListener('keyup', () => {
+          this.calculate();
+        });
+      } else {
+        console.warn(`Element not found: ${id}`);
       }
     });
 
@@ -374,6 +385,7 @@ class UniversalLifeCalculator {
   calculate() {
     try {
       const inputs = this.getInputValues();
+      console.log('Calculating with inputs:', inputs);
       
       // Calculate recommended coverage
       const recommendedCoverage = this.calculateCoverageNeed(inputs);
@@ -381,6 +393,7 @@ class UniversalLifeCalculator {
       
       // Calculate base premium
       const basePremium = this.calculatePremium(inputs, faceAmount);
+      console.log('Base premium calculated:', basePremium);
       
       // Calculate per-insurer premiums
       const insurerPremiums = this.config.INSURERS.map(insurer => ({
@@ -393,6 +406,8 @@ class UniversalLifeCalculator {
       const avgPremium = premiums.reduce((a, b) => a + b, 0) / premiums.length;
       const minPremium = Math.min(...premiums);
       const maxPremium = Math.max(...premiums);
+      
+      console.log('Premium stats:', { avgPremium, minPremium, maxPremium });
       
       // Update UI
       this.updateResults({
@@ -410,6 +425,8 @@ class UniversalLifeCalculator {
   }
 
   updateResults(results) {
+    console.log('Updating results with:', results);
+    
     const formatter = new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: this.country === 'usa' ? 'USD' : 'CAD',
@@ -425,10 +442,23 @@ class UniversalLifeCalculator {
     });
 
     // Update main results
-    document.getElementById('recommendedCoverage').textContent = formatter.format(results.recommendedCoverage);
-    document.getElementById('averagePremium').textContent = premiumFormatter.format(results.avgPremium);
-    document.getElementById('premiumRange').textContent = 
-      `${premiumFormatter.format(results.minPremium)} – ${premiumFormatter.format(results.maxPremium)}`;
+    const recommendedCoverageEl = document.getElementById('recommendedCoverage');
+    const averagePremiumEl = document.getElementById('averagePremium');
+    const premiumRangeEl = document.getElementById('premiumRange');
+    
+    if (recommendedCoverageEl) {
+      recommendedCoverageEl.textContent = formatter.format(results.recommendedCoverage);
+      console.log('Updated recommended coverage:', recommendedCoverageEl.textContent);
+    }
+    
+    if (averagePremiumEl) {
+      averagePremiumEl.textContent = premiumFormatter.format(results.avgPremium);
+      console.log('Updated average premium:', averagePremiumEl.textContent);
+    }
+    
+    if (premiumRangeEl) {
+      premiumRangeEl.textContent = `${premiumFormatter.format(results.minPremium)} – ${premiumFormatter.format(results.maxPremium)}`;
+    }
 
     // Update insurer breakdown
     results.insurerPremiums.forEach((insurer, index) => {
@@ -441,10 +471,16 @@ class UniversalLifeCalculator {
 
     // Update assumptions
     const assumptionsText = `Age: ${results.inputs.age}, COI: ${results.inputs.coiType}, Rate: ${results.inputs.creditedRate}%, Duration: ${results.inputs.coverageDuration} years`;
-    document.getElementById('assumptionsText').textContent = assumptionsText;
+    const assumptionsEl = document.getElementById('assumptionsText');
+    if (assumptionsEl) {
+      assumptionsEl.textContent = assumptionsText;
+    }
 
     // Update mobile sticky bar
-    document.getElementById('stickyPremium').textContent = premiumFormatter.format(results.avgPremium);
+    const stickyPremiumEl = document.getElementById('stickyPremium');
+    if (stickyPremiumEl) {
+      stickyPremiumEl.textContent = premiumFormatter.format(results.avgPremium);
+    }
   }
 
   reset() {
