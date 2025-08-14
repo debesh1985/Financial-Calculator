@@ -347,6 +347,64 @@ h3 {
   line-height: 1.4;
 }
 
+/* Page URL Section */
+.date-presets .btn-small {
+  padding: 6px 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.date-presets .btn-small:hover {
+  background: var(--accent-2);
+  border-color: var(--accent);
+}
+.date-presets .btn-small.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+.custom-dates {
+  display: flex;
+  gap: 8px;
+}
+.estimate-controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.status-line {
+  padding: 8px 12px;
+  background: var(--card);
+  border-radius: 6px;
+  font-size: 14px;
+  border: 1px solid var(--border);
+}
+.status-line.loading {
+  background: #e3f2fd;
+  border-color: #2196f3;
+  color: #1976d2;
+}
+.status-line.error {
+  background: #ffebee;
+  border-color: #f44336;
+  color: #c62828;
+}
+.status-line.success {
+  background: #e8f5e8;
+  border-color: #4caf50;
+  color: #2e7d32;
+}
+.estimate-disclaimer {
+  background: #fff3cd;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #f39c12;
+  margin-top: 12px;
+}
+
 /* Mobile Sticky Bar */
 .mobile-sticky {
   position: fixed;

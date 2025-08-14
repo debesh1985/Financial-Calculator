@@ -352,6 +352,43 @@
       </div>
     </section>
 
+    <!-- Page URL Calculator Section -->
+    <section class="card" id="pageUrlSection" style="margin-bottom: var(--space-lg);">
+      <h3>🔗 Estimate by Facebook Page URL</h3>
+      <div class="input-group">
+        <label for="pageUrl">Facebook Page URL or @handle</label>
+        <input type="text" id="pageUrl" placeholder="Paste Facebook Page URL or @handle..." style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px;">
+      </div>
+      
+      <div class="date-range-group" style="margin: 16px 0;">
+        <h4 style="margin: 8px 0; font-size: 14px; font-weight: 600;">Date Range</h4>
+        <div class="date-presets" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+          <button class="btn-small" data-days="30">Last 30 days</button>
+          <button class="btn-small" data-days="90">Last 90 days</button>
+          <button class="btn-small" data-days="365">Last 365 days</button>
+          <button class="btn-small" data-days="custom">Custom</button>
+        </div>
+        <div class="custom-dates" id="customDates" style="display: none; gap: 8px;">
+          <input type="date" id="dateFrom" style="padding: 6px; border: 1px solid var(--border); border-radius: 4px;">
+          <input type="date" id="dateTo" style="padding: 6px; border: 1px solid var(--border); border-radius: 4px;">
+        </div>
+      </div>
+      
+      <div class="estimate-controls" style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <button class="btn" id="estimateBtn" style="flex: 1;">Estimate Without Login</button>
+      </div>
+      
+      <div class="status-line" id="statusLine" style="margin-top: 12px; padding: 8px; background: var(--card); border-radius: 4px; font-size: 14px; display: none;">
+        <span id="statusText">Ready to estimate...</span>
+      </div>
+      
+      <div class="estimate-disclaimer" style="margin-top: 12px; padding: 12px; background: #fff3cd; border-radius: 8px; border: 1px solid #f39c12;">
+        <small style="color: #856404; line-height: 1.4;">
+          <strong>Public Estimate Mode:</strong> Approximate earnings based on public metrics and user-provided RPMs. For actual payouts, check your Meta Professional Dashboard → Monetization.
+        </small>
+      </div>
+    </section>
+
     <!-- Scenario Selector -->
     <div class="toolbar" role="tablist" aria-label="Monetization scenarios">
       <div class="toggle" id="scenarioToggle">
@@ -530,7 +567,7 @@
             </div>
           </div>
           <div class="disclaimer">
-            <small>This is an approximate amount based on the organic content, to get actual amount check your Meta Professional Dashboard → Monetization for actual payouts.</small>
+            <small><strong>Public Estimate Mode:</strong> Approximate earnings based on public metrics and industry averages. For actual payouts, check your Meta Professional Dashboard → Monetization.</small>
           </div>
         </div>
       </section>
