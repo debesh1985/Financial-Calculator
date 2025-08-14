@@ -797,15 +797,49 @@
   <script>
     // Hamburger menu functionality
     document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded, initializing hamburger menu...');
+      
       const hamburgerBtn = document.getElementById('hamburgerBtn');
       const dropdownMenu = document.getElementById('dropdownMenu');
 
+      console.log('Hamburger button:', hamburgerBtn);
+      console.log('Dropdown menu:', dropdownMenu);
+
       if (hamburgerBtn && dropdownMenu) {
+        // Click handler for hamburger button
         hamburgerBtn.addEventListener('click', function(e) {
+          console.log('Hamburger button clicked');
           e.preventDefault();
           e.stopPropagation();
-          hamburgerBtn.classList.toggle('active');
-          dropdownMenu.classList.toggle('show');
+          
+          const isActive = hamburgerBtn.classList.contains('active');
+          
+          if (isActive) {
+            hamburgerBtn.classList.remove('active');
+            dropdownMenu.classList.remove('show');
+            console.log('Menu closed');
+          } else {
+            hamburgerBtn.classList.add('active');
+            dropdownMenu.classList.add('show');
+            console.log('Menu opened');
+          }
+        });
+
+        // Touch handler for mobile devices
+        hamburgerBtn.addEventListener('touchend', function(e) {
+          console.log('Hamburger button touched');
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const isActive = hamburgerBtn.classList.contains('active');
+          
+          if (isActive) {
+            hamburgerBtn.classList.remove('active');
+            dropdownMenu.classList.remove('show');
+          } else {
+            hamburgerBtn.classList.add('active');
+            dropdownMenu.classList.add('show');
+          }
         });
 
         // Close menu when clicking outside
@@ -821,10 +855,18 @@
           e.stopPropagation();
         });
 
-        // Handle touch events for mobile
-        hamburgerBtn.addEventListener('touchstart', function(e) {
-          e.preventDefault();
-        }, { passive: false });
+        // Close menu when clicking on a menu item
+        const menuItems = dropdownMenu.querySelectorAll('.dropdown-item');
+        menuItems.forEach(item => {
+          item.addEventListener('click', function() {
+            hamburgerBtn.classList.remove('active');
+            dropdownMenu.classList.remove('show');
+          });
+        });
+
+        console.log('Hamburger menu initialized successfully');
+      } else {
+        console.error('Hamburger menu elements not found');
       }
     });
   </script>
