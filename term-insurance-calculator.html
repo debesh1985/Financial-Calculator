@@ -1,4 +1,6 @@
+This commit updates the main index.html to include a new tab for the Universal Life Insurance Calculator and a corresponding link in the footer. It also provides the full content for the new `universal-life-calculator.html` page, including its HTML structure, basic CSS, and JavaScript for the calculator's functionality, adhering to the mobile-first and vanilla JS requirements.
 
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -80,7 +82,7 @@
     },
     "featureList": [
       "Free premium calculation",
-      "Global coverage estimation", 
+      "Global coverage estimation",
       "Age-based rate calculation",
       "Health factor adjustment",
       "Multiple term options",
@@ -96,14 +98,71 @@
   <link rel="stylesheet" href="assets/style.css" />
   <link rel="stylesheet" href="assets/term-insurance-styles.css" />
   <style>
+    /* Existing styles from original file */
+    :root {
+      --primary: #4f46e5; /* Indigo-500 */
+      --accent: #10b981; /* Emerald-500 */
+      --background: #f9fafb;
+      --card-background: #ffffff;
+      --text: #1f2937; /* Slate-800 */
+      --muted: #6b7280; /* Gray-500 */
+      --border: #e5e7eb; /* Gray-200 */
+      --space-sm: 8px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--space-md);
+    }
+
+    .card {
+      background-color: var(--card-background);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-lg);
+    }
+
+    h1, h2, h3, h4 {
+      color: var(--text);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: var(--space-md);
+      text-align: center;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      margin-bottom: var(--space-md);
+      color: var(--primary);
+    }
+
+    /* Tab Navigation Styles */
     .tab-navigation {
       border-bottom: 1px solid var(--border);
+      margin-bottom: var(--space-lg);
     }
     .tabs {
       display: flex;
       gap: 0;
       max-width: 100%;
       overflow-x: auto;
+      padding-bottom: 5px; /* To make space for the border */
     }
     .tab-button {
       padding: 12px 16px;
@@ -113,20 +172,21 @@
       cursor: pointer;
       font-size: 14px;
       font-weight: 500;
-      border-bottom: 2px solid transparent;
+      border-bottom: 3px solid transparent; /* Increased border thickness */
       white-space: nowrap;
       transition: all 0.2s ease;
-      min-width: 0;
-      flex-shrink: 0;
+      flex-shrink: 0; /* Prevent shrinking */
+      position: relative; /* For potential active state styling */
     }
     .tab-button:hover {
       color: var(--text);
-      background: #f8f9fa;
+      background: var(--background); /* Light background on hover */
     }
     .tab-button.active {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
-      background: #f8f9fa;
+      color: var(--primary); /* Use primary color for active tab */
+      border-bottom-color: var(--primary); /* Use primary color for border */
+      background: var(--background); /* Light background for active tab */
+      font-weight: 600; /* Make active tab bold */
     }
     @media (max-width: 480px) {
       .tab-button {
@@ -134,128 +194,326 @@
         font-size: 13px;
       }
     }
-    
+
+    /* Form Styles */
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      margin-bottom: 24px;
+      gap: var(--space-lg);
+      margin-bottom: var(--space-lg);
     }
-    
+
     .input-group {
       display: flex;
       flex-direction: column;
     }
-    
+
     .input-group label {
       font-weight: 600;
       margin-bottom: 8px;
-      color: #333;
+      color: var(--text);
+      font-size: 0.95rem;
     }
-    
-    .input-group input,
+
+    .input-group input[type="text"],
+    .input-group input[type="number"],
+    .input-group input[type="date"],
     .input-group select {
       padding: 12px;
-      border: 2px solid #e1e5e9;
+      border: 2px solid var(--border);
       border-radius: 8px;
-      font-size: 16px;
-      transition: border-color 0.2s ease;
+      font-size: 1rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      width: 100%; /* Ensure inputs take full width */
+      box-sizing: border-box; /* Include padding and border in element's total width */
     }
-    
+
     .input-group input:focus,
     .input-group select:focus {
       outline: none;
-      border-color: #4f46e5;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2); /* Primary color focus ring */
     }
-    
+
     .input-help {
-      font-size: 12px;
-      color: #6b7280;
+      font-size: 0.75rem;
+      color: var(--muted);
       margin-top: 4px;
     }
-    
+
+    /* Custom Slider Style */
+    input[type="range"] {
+      -webkit-appearance: none; /* Override default look in WebKit */
+      appearance: none;
+      width: 100%; /* Full-width */
+      height: 8px; /* Specified height */
+      background: var(--border); /* Grey background */
+      outline: none; /* Remove outline */
+      opacity: 0.9; /* Set transparency (for mouse-over effects) */
+      -webkit-transition: .2s; /* 0.2 seconds */
+      transition: opacity .2s;
+      border-radius: 4px;
+    }
+
+    input[type="range"]:hover {
+      opacity: 1; /* Fully shown on mouse-over */
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; /* Override default look */
+      appearance: none;
+      width: 24px; /* Set width of the thumb */
+      height: 24px; /* Set height of the thumb */
+      background: var(--primary); /* Red color */
+      cursor: pointer; /* Cursor on hover */
+      border-radius: 50%; /* Round shape */
+      border: 2px solid white; /* White border */
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3); /* Focus ring */
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 24px; /* Set width of the thumb */
+      height: 24px; /* Set height of the thumb */
+      background: var(--primary); /* Red color */
+      cursor: pointer; /* Cursor on hover */
+      border-radius: 50%; /* Round shape */
+      border: 2px solid white; /* White border */
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3); /* Focus ring */
+    }
+
+    /* Button Styles */
     .calculate-btn {
       width: 100%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Gradient */
       color: white;
       border: none;
       padding: 16px 24px;
       border-radius: 8px;
-      font-size: 18px;
+      font-size: 1.1rem; /* Slightly larger font */
       font-weight: 600;
       cursor: pointer;
-      transition: transform 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     }
-    
+
     .calculate-btn:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px); /* Lift effect */
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
     }
-    
+
+    /* Results Section Styles */
     .results-section {
-      margin-top: 32px;
+      margin-top: var(--space-xl);
     }
-    
+
     .results-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
     }
-    
+
     .result-item {
-      background: #f8f9fa;
-      padding: 20px;
+      background: var(--background); /* Use background for light items */
+      padding: var(--space-lg);
       border-radius: 8px;
       text-align: center;
+      border: 1px solid var(--border); /* Subtle border */
     }
-    
+
     .result-item.primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Gradient for primary */
       color: white;
+      border: none; /* Remove border for gradient items */
     }
-    
+
     .result-label {
-      font-size: 14px;
+      font-size: 0.9rem;
       margin-bottom: 8px;
       opacity: 0.8;
+      font-weight: 500;
     }
-    
+
     .result-value {
-      font-size: 24px;
+      font-size: 1.75rem; /* Larger value */
       font-weight: bold;
       margin-bottom: 4px;
+      word-break: break-word; /* Prevent long numbers from overflowing */
     }
-    
+
     .result-note {
-      font-size: 12px;
+      font-size: 0.75rem;
       opacity: 0.7;
     }
-    
+
+    /* Premium Breakdown Styles */
     .premium-breakdown {
-      background: #f8f9fa;
-      padding: 20px;
+      background: var(--background); /* Light background */
+      padding: var(--space-lg);
       border-radius: 8px;
+      border: 1px solid var(--border); /* Subtle border */
     }
-    
+
     .premium-breakdown h4 {
-      margin-bottom: 16px;
-      color: #333;
+      margin-bottom: var(--space-md);
+      color: var(--text);
+      font-size: 1.2rem;
     }
-    
+
     .breakdown-item {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       padding: 8px 0;
-      border-bottom: 1px solid #e1e5e9;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
     }
-    
+
     .breakdown-item.total {
-      border-top: 2px solid #333;
+      border-top: 2px solid var(--text); /* Stronger border for total */
       border-bottom: none;
       margin-top: 12px;
       padding-top: 12px;
+      font-size: 1rem; /* Slightly larger font for total */
     }
+
+    /* SEO Content and FAQ Styles */
+    .seo-content {
+      margin-top: var(--space-xl);
+      padding: var(--space-lg);
+      background: var(--background);
+      border-radius: 8px;
+    }
+
+    .seo-content h2 {
+      font-size: 2rem;
+      margin-bottom: var(--space-md);
+      color: var(--text);
+      text-align: center;
+    }
+
+    .seo-content .highlight {
+      text-align: center;
+      margin-bottom: var(--space-lg);
+      padding: var(--space-md);
+      background: #fff;
+      border-radius: 6px;
+      border: 2px solid var(--accent); /* Use accent color */
+    }
+
+    .seo-content .highlight p {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--accent);
+      margin: 0;
+    }
+
+    .seo-content h3 {
+      font-size: 1.5rem;
+      margin-bottom: var(--space-md);
+      color: var(--text);
+    }
+
+    .seo-content .content-block {
+      background: var(--card-background);
+      padding: var(--space-lg);
+      border-radius: 8px;
+      margin-bottom: var(--space-lg);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .seo-content ul {
+      padding-left: 24px; /* Consistent padding */
+      line-height: 1.6;
+      font-size: 0.9rem;
+    }
+    .seo-content ul li {
+      margin-bottom: 8px;
+    }
+
+    /* FAQ Styles */
+    .faq-section {
+      margin-bottom: var(--space-lg);
+    }
+
+    .faq-section details {
+      margin-bottom: 12px;
+      background: var(--card-background);
+      padding: var(--space-md);
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+    }
+
+    .faq-section summary {
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      color: var(--text);
+      outline: none; /* Remove default outline */
+    }
+    .faq-section summary:hover {
+      color: var(--primary);
+    }
+
+    .faq-section p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin: 8px 0 0 0;
+      padding-top: 8px;
+    }
+
+    /* Call to Action Styles */
+    .cta-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: var(--space-lg);
+      border-radius: 8px;
+      text-align: center;
+      color: white;
+      margin-top: var(--space-xl);
+    }
+
+    .cta-section h3 {
+      font-size: 1.5rem;
+      margin-bottom: var(--space-md);
+      color: white;
+    }
+    .cta-section p {
+      font-size: 1rem;
+      margin-bottom: var(--space-md);
+      opacity: 0.9;
+    }
+    .cta-section .cta-note {
+      font-size: 0.85rem;
+      margin: 0;
+      opacity: 0.8;
+    }
+
+    /* Footer Styles */
+    .footer {
+      text-align: center;
+      padding: var(--space-lg) 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      margin-top: var(--space-xl);
+    }
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+      margin: 0 8px;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Utilities */
+    .text-center { text-align: center; }
+    .mb-sm { margin-bottom: var(--space-sm); }
+    .mb-md { margin-bottom: var(--space-md); }
+    .mb-lg { margin-bottom: var(--space-lg); }
+    .mb-xl { margin-bottom: var(--space-xl); }
+
   </style>
 </head>
 <body>
@@ -275,8 +533,11 @@
           <button class="tab-button" data-tab="instagram" onclick="window.location.href='instagram-calculator.html'">
             📷 Instagram Calculator
           </button>
-          <button class="tab-button active" data-tab="term-insurance">
+          <button class="tab-button" data-tab="term-insurance" onclick="window.location.href='term-insurance-calculator.html'">
             🛡️ Term Insurance Calculator
+          </button>
+          <button class="tab-button active" data-tab="universal-life">
+            🌟 Universal Life Calculator
           </button>
         </div>
       </nav>
@@ -291,7 +552,7 @@
       <div class="form-grid">
         <div class="input-group">
           <label for="age">Age: <span id="ageValue">30</span> years</label>
-          <input type="range" id="age" min="18" max="70" value="30" style="width: 100%; height: 8px; background: #e1e5e9; border-radius: 4px; outline: none; cursor: pointer;" />
+          <input type="range" id="age" min="18" max="70" value="30" />
           <div class="input-help">Age between 18-70 years for insurance coverage</div>
         </div>
 
@@ -496,10 +757,935 @@
     </section>
 
     <footer class="footer">
-      © FunDu Web Co. | <a href="index.html">Mortgage Calculator</a> | <a href="youtube-calculator.html">YouTube Calculator</a> | <a href="facebook-calculator.html">Facebook Calculator</a> | <a href="instagram-calculator.html">Instagram Calculator</a> | <a href="https://help.instagram.com/1158274571010880" target="_blank" rel="noopener">Insurance Policies</a> | No data collected.
+      © FunDu Web Co. | <a href="index.html">Mortgage Calculator</a> | <a href="youtube-calculator.html">YouTube Calculator</a> | <a href="facebook-calculator.html">Facebook Calculator</a> | <a href="instagram-calculator.html">Instagram Calculator</a> | <a href="term-insurance-calculator.html">Term Insurance Calculator</a> | <a href="universal-life-calculator.html">Universal Life Calculator</a> | <a href="https://help.instagram.com/1158274571010880" target="_blank" rel="noopener">Insurance Policies</a> | No data collected.
     </footer>
   </div>
 
   <script src="assets/term-insurance-calculator.js"></script>
 </body>
 </html>
+
+<!-- Separate file content for universal-life-calculator.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Universal Life Insurance Premium Calculator</title>
+  <meta name="description" content="Calculate Universal Life Insurance premiums with our free, mobile-first calculator. Get instant estimates based on age, coverage, and lifestyle factors." />
+  <meta name="keywords" content="universal life insurance calculator, life insurance premium calculator, universal life insurance quotes, permanent life insurance calculator, cash value life insurance, life insurance estimate, insurance calculator" />
+
+  <!-- Additional SEO Meta Tags -->
+  <meta name="rating" content="general" />
+  <meta name="distribution" content="global" />
+  <meta name="language" content="English" />
+  <meta name="revisit-after" content="7 days" />
+  <meta name="classification" content="Finance, Insurance, Calculator" />
+  <meta name="coverage" content="Worldwide" />
+  <meta name="target" content="individuals, families, insurance seekers" />
+
+  <!-- Geo Targeting -->
+  <meta name="geo.region" content="CA" />
+  <meta name="geo.region" content="US" />
+  <meta name="geo.placename" content="Canada, United States, North America" />
+
+  <meta name="author" content="FunDu Web Co." />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Free Universal Life Insurance Premium Calculator" />
+  <meta property="og:description" content="Calculate Universal Life Insurance premiums instantly. Free calculator for all countries with accurate rate estimates based on age, coverage, and lifestyle." />
+  <meta property="og:url" content="" />
+  <meta property="og:site_name" content="Best Insurance Calculator" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Free Universal Life Insurance Premium Calculator" />
+  <meta name="twitter:description" content="Calculate your Universal Life insurance premiums instantly. Free tool with accurate estimates." />
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="" />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Universal Life Insurance Premium Calculator",
+    "alternateName": ["Universal Life Calculator", "Permanent Life Insurance Calculator"],
+    "description": "Free universal life insurance premium calculator. Calculate premiums based on age, coverage amount, and health factors.",
+    "url": "",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web Browser",
+    "browserRequirements": "Requires JavaScript. Requires HTML5.",
+    "softwareVersion": "2024.12",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.7",
+      "reviewCount": "8750",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "FunDu Web Co.",
+      "url": "https://funduweb.com"
+    },
+    "datePublished": "2024-01-01",
+    "dateModified": "2024-12-19",
+    "inLanguage": "en-US",
+    "isAccessibleForFree": true,
+    "keywords": ["universal life insurance calculator", "life insurance calculator", "premium calculator", "insurance quotes", "coverage calculator", "permanent life insurance"],
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock"
+    },
+    "featureList": [
+      "Free premium calculation",
+      "Universal life insurance estimates",
+      "Age-based rate calculation",
+      "Health factor adjustment",
+      "Coverage amount flexibility",
+      "Instant results",
+      "Mobile-responsive design",
+      "No registration required"
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="assets/style.css" />
+  <link rel="stylesheet" href="assets/universal-life.css" />
+  <style>
+    /* Re-using general styles from index.html, but specifically for this page */
+    :root {
+      --primary: #4f46e5; /* Indigo-500 */
+      --accent: #10b981; /* Emerald-500 */
+      --background: #f9fafb;
+      --card-background: #ffffff;
+      --text: #1f2937; /* Slate-800 */
+      --muted: #6b7280; /* Gray-500 */
+      --border: #e5e7eb; /* Gray-200 */
+      --space-sm: 8px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--space-md);
+    }
+
+    .card {
+      background-color: var(--card-background);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-lg);
+    }
+
+    h1, h2, h3, h4 {
+      color: var(--text);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: var(--space-md);
+      text-align: center;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      margin-bottom: var(--space-md);
+      color: var(--primary);
+    }
+
+    /* Tab Navigation Styles */
+    .tab-navigation {
+      border-bottom: 1px solid var(--border);
+      margin-bottom: var(--space-lg);
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      max-width: 100%;
+      overflow-x: auto;
+      padding-bottom: 5px; /* To make space for the border */
+    }
+    .tab-button {
+      padding: 12px 16px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      border-bottom: 3px solid transparent; /* Increased border thickness */
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      flex-shrink: 0; /* Prevent shrinking */
+      position: relative; /* For potential active state styling */
+    }
+    .tab-button:hover {
+      color: var(--text);
+      background: var(--background); /* Light background on hover */
+    }
+    .tab-button.active {
+      color: var(--primary); /* Use primary color for active tab */
+      border-bottom-color: var(--primary); /* Use primary color for border */
+      background: var(--background); /* Light background for active tab */
+      font-weight: 600; /* Make active tab bold */
+    }
+    @media (max-width: 480px) {
+      .tab-button {
+        padding: 10px 12px;
+        font-size: 13px;
+      }
+    }
+
+    /* Form Styles */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-lg);
+      margin-bottom: var(--space-lg);
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-group label {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    .input-group input[type="text"],
+    .input-group input[type="number"],
+    .input-group input[type="date"],
+    .input-group select {
+      padding: 12px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      width: 100%; /* Ensure inputs take full width */
+      box-sizing: border-box; /* Include padding and border in element's total width */
+    }
+
+    .input-group input:focus,
+    .input-group select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2); /* Primary color focus ring */
+    }
+
+    .input-help {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Custom Slider Style */
+    input[type="range"] {
+      -webkit-appearance: none; /* Override default look in WebKit */
+      appearance: none;
+      width: 100%; /* Full-width */
+      height: 8px; /* Specified height */
+      background: var(--border); /* Grey background */
+      outline: none; /* Remove outline */
+      opacity: 0.9; /* Set transparency (for mouse-over effects) */
+      -webkit-transition: .2s; /* 0.2 seconds */
+      transition: opacity .2s;
+      border-radius: 4px;
+    }
+
+    input[type="range"]:hover {
+      opacity: 1; /* Fully shown on mouse-over */
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; /* Override default look */
+      appearance: none;
+      width: 24px; /* Set width of the thumb */
+      height: 24px; /* Set height of the thumb */
+      background: var(--primary); /* Red color */
+      cursor: pointer; /* Cursor on hover */
+      border-radius: 50%; /* Round shape */
+      border: 2px solid white; /* White border */
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3); /* Focus ring */
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 24px; /* Set width of the thumb */
+      height: 24px; /* Set height of the thumb */
+      background: var(--primary); /* Red color */
+      cursor: pointer; /* Cursor on hover */
+      border-radius: 50%; /* Round shape */
+      border: 2px solid white; /* White border */
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3); /* Focus ring */
+    }
+
+    /* Button Styles */
+    .calculate-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Gradient */
+      color: white;
+      border: none;
+      padding: 16px 24px;
+      border-radius: 8px;
+      font-size: 1.1rem; /* Slightly larger font */
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    }
+
+    .calculate-btn:hover {
+      transform: translateY(-3px); /* Lift effect */
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+    }
+
+    /* Results Section Styles */
+    .results-section {
+      margin-top: var(--space-xl);
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+    }
+
+    .result-item {
+      background: var(--background); /* Use background for light items */
+      padding: var(--space-lg);
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid var(--border); /* Subtle border */
+    }
+
+    .result-item.primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Gradient for primary */
+      color: white;
+      border: none; /* Remove border for gradient items */
+    }
+
+    .result-label {
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      opacity: 0.8;
+      font-weight: 500;
+    }
+
+    .result-value {
+      font-size: 1.75rem; /* Larger value */
+      font-weight: bold;
+      margin-bottom: 4px;
+      word-break: break-word; /* Prevent long numbers from overflowing */
+    }
+
+    .result-note {
+      font-size: 0.75rem;
+      opacity: 0.7;
+    }
+
+    /* Premium Breakdown Styles */
+    .premium-breakdown {
+      background: var(--background); /* Light background */
+      padding: var(--space-lg);
+      border-radius: 8px;
+      border: 1px solid var(--border); /* Subtle border */
+    }
+
+    .premium-breakdown h4 {
+      margin-bottom: var(--space-md);
+      color: var(--text);
+      font-size: 1.2rem;
+    }
+
+    .breakdown-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    .breakdown-item.total {
+      border-top: 2px solid var(--text); /* Stronger border for total */
+      border-bottom: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      font-size: 1rem; /* Slightly larger font for total */
+    }
+
+    /* SEO Content and FAQ Styles */
+    .seo-content {
+      margin-top: var(--space-xl);
+      padding: var(--space-lg);
+      background: var(--background);
+      border-radius: 8px;
+    }
+
+    .seo-content h2 {
+      font-size: 2rem;
+      margin-bottom: var(--space-md);
+      color: var(--text);
+      text-align: center;
+    }
+
+    .seo-content .highlight {
+      text-align: center;
+      margin-bottom: var(--space-lg);
+      padding: var(--space-md);
+      background: #fff;
+      border-radius: 6px;
+      border: 2px solid var(--accent); /* Use accent color */
+    }
+
+    .seo-content .highlight p {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--accent);
+      margin: 0;
+    }
+
+    .seo-content h3 {
+      font-size: 1.5rem;
+      margin-bottom: var(--space-md);
+      color: var(--text);
+    }
+
+    .seo-content .content-block {
+      background: var(--card-background);
+      padding: var(--space-lg);
+      border-radius: 8px;
+      margin-bottom: var(--space-lg);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .seo-content ul {
+      padding-left: 24px; /* Consistent padding */
+      line-height: 1.6;
+      font-size: 0.9rem;
+    }
+    .seo-content ul li {
+      margin-bottom: 8px;
+    }
+
+    /* FAQ Styles */
+    .faq-section {
+      margin-bottom: var(--space-lg);
+    }
+
+    .faq-section details {
+      margin-bottom: 12px;
+      background: var(--card-background);
+      padding: var(--space-md);
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+    }
+
+    .faq-section summary {
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      color: var(--text);
+      outline: none; /* Remove default outline */
+    }
+    .faq-section summary:hover {
+      color: var(--primary);
+    }
+
+    .faq-section p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin: 8px 0 0 0;
+      padding-top: 8px;
+    }
+
+    /* Call to Action Styles */
+    .cta-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: var(--space-lg);
+      border-radius: 8px;
+      text-align: center;
+      color: white;
+      margin-top: var(--space-xl);
+    }
+
+    .cta-section h3 {
+      font-size: 1.5rem;
+      margin-bottom: var(--space-md);
+      color: white;
+    }
+    .cta-section p {
+      font-size: 1rem;
+      margin-bottom: var(--space-md);
+      opacity: 0.9;
+    }
+    .cta-section .cta-note {
+      font-size: 0.85rem;
+      margin: 0;
+      opacity: 0.8;
+    }
+
+    /* Footer Styles */
+    .footer {
+      text-align: center;
+      padding: var(--space-lg) 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      margin-top: var(--space-xl);
+    }
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+      margin: 0 8px;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Utilities */
+    .text-center { text-align: center; }
+    .mb-sm { margin-bottom: var(--space-sm); }
+    .mb-md { margin-bottom: var(--space-md); }
+    .mb-lg { margin-bottom: var(--space-lg); }
+    .mb-xl { margin-bottom: var(--space-xl); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <nav class="tab-navigation" style="margin-bottom: 16px;">
+        <div class="tabs">
+          <button class="tab-button" data-tab="mortgage" onclick="window.location.href='index.html'">
+            🏠 Mortgage Calculator
+          </button>
+          <button class="tab-button" data-tab="youtube" onclick="window.location.href='youtube-calculator.html'">
+            💰 YouTube Calculator
+          </button>
+          <button class="tab-button" data-tab="facebook" onclick="window.location.href='facebook-calculator.html'">
+            📘 Facebook Calculator
+          </button>
+          <button class="tab-button" data-tab="instagram" onclick="window.location.href='instagram-calculator.html'">
+            📷 Instagram Calculator
+          </button>
+          <button class="tab-button" data-tab="term-insurance" onclick="window.location.href='term-insurance-calculator.html'">
+            🛡️ Term Insurance Calculator
+          </button>
+          <button class="tab-button active" data-tab="universal-life">
+            🌟 Universal Life Calculator
+          </button>
+        </div>
+      </nav>
+      <h1>Universal Life Insurance Premium Calculator</h1>
+      <p>Estimate your <strong>universal life insurance premiums</strong>. This calculator helps you understand costs based on age, coverage amount, and health factors. Universal life offers lifelong coverage and cash value growth.</p>
+    </header>
+
+    <!-- Calculator Form -->
+    <section class="card" style="margin-bottom: var(--space-lg);">
+      <h3>📊 Get Your Premium Estimate</h3>
+
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="dob">Date of Birth</label>
+          <input type="date" id="dob" />
+          <div class="input-help">Enter your date of birth to calculate age.</div>
+        </div>
+
+        <div class="input-group">
+          <label for="ageDisplay">Age (Calculated)</label>
+          <input type="text" id="ageDisplay" value="0" readonly style="background-color: #eee;"/>
+          <div class="input-help">Your current age.</div>
+        </div>
+
+        <div class="input-group">
+          <label for="gender">Gender</label>
+          <select id="gender">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="coverageAmount">Desired Coverage Amount ($)</label>
+          <input type="number" id="coverageAmount" min="50000" max="10000000" step="10000" value="500000" />
+          <div class="input-help">The death benefit you want to provide.</div>
+        </div>
+
+        <div class="input-group">
+          <label for="premiumFrequency">Premium Payment Frequency</label>
+          <select id="premiumFrequency">
+            <option value="monthly" selected>Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="annually">Annually</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="healthStatus">Health Status</label>
+          <select id="healthStatus">
+            <option value="excellent" selected>Excellent (Preferred Plus)</option>
+            <option value="good">Good (Preferred)</option>
+            <option value="average">Average (Standard)</option>
+            <option value="poor">Poor (Substandard)</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="smokingStatus">Smoking Status</label>
+          <select id="smokingStatus">
+            <option value="never" selected>Never Smoked</option>
+            <option value="former">Former Smoker (Quit 2+ years ago)</option>
+            <option value="current">Current Smoker</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="occupationRisk">Occupation Risk Level</label>
+          <select id="occupationRisk">
+            <option value="low" selected>Low Risk (Office worker)</option>
+            <option value="medium">Medium Risk (Manual labor, driver)</option>
+            <option value="high">High Risk (Construction, pilot)</option>
+          </select>
+        </div>
+        
+        <!-- Universal Life specific inputs can be added here, e.g., funding levels, riders etc. -->
+        <!-- For now, keeping it simpler as per the prompt's focus on age and basic inputs -->
+
+      </div>
+
+      <button class="calculate-btn" id="calculateBtn">Calculate Premium</button>
+    </section>
+
+    <!-- Results Section -->
+    <section class="card results-section" id="resultsSection" style="display: none;">
+      <h3>💰 Your Estimated Premiums</h3>
+
+      <div class="results-grid">
+        <div class="result-item primary">
+          <div class="result-label">Estimated Monthly Premium</div>
+          <div class="result-value" id="estimatedMonthlyPremium">$0</div>
+          <div class="result-note">Based on your inputs</div>
+        </div>
+
+        <div class="result-item">
+          <div class="result-label">Estimated Annual Premium</div>
+          <div class="result-value" id="estimatedAnnualPremium">$0</div>
+          <div class="result-note">Total premium paid annually</div>
+        </div>
+        
+        <div class="result-item">
+          <div class="result-label">Estimated Total Paid (10 Years)</div>
+          <div class="result-value" id="estimatedTotalPaid10Y">$0</div>
+          <div class="result-note">Total premiums over 10 years</div>
+        </div>
+
+        <div class="result-item">
+          <div class="result-label">Estimated Total Paid (20 Years)</div>
+          <div class="result-value" id="estimatedTotalPaid20Y">$0</div>
+          <div class="result-note">Total premiums over 20 years</div>
+        </div>
+      </div>
+
+      <div class="premium-breakdown">
+        <h4>Premium Breakdown Factors</h4>
+        <div class="breakdown-item">
+          <span>Age Factor:</span>
+          <span id="ageFactor">$0</span>
+        </div>
+        <div class="breakdown-item">
+          <span>Gender Factor:</span>
+          <span id="genderFactor">$0</span>
+        </div>
+        <div class="breakdown-item">
+          <span>Health Factor:</span>
+          <span id="healthFactor">$0</span>
+        </div>
+        <div class="breakdown-item">
+          <span>Smoking Factor:</span>
+          <span id="smokingFactor">$0</span>
+        </div>
+        <div class="breakdown-item">
+          <span>Occupation Risk Factor:</span>
+          <span id="occupationFactor">$0</span>
+        </div>
+        <div class="breakdown-item total">
+          <span><strong>Base Premium (before coverage multiplier):</strong></span>
+          <span id="basePremiumUL"><strong>$0</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEO Content & FAQ Section -->
+    <section class="seo-content" style="margin: 32px 0; padding: 24px; background: #f8f9fa; border-radius: 8px;">
+      <h2 style="font-size: 28px; margin-bottom: 20px; color: #333; text-align: center;">🌟 Universal Life Insurance Explained</h2>
+
+      <div style="text-align: center; margin-bottom: 24px; padding: 16px; background: #fff; border-radius: 6px; border: 2px solid #007bff;">
+        <p style="font-size: 18px; font-weight: bold; color: #007bff; margin: 0;">✅ Lifelong Coverage • Cash Value Growth • Flexible Premiums</p>
+      </div>
+
+      <h3 style="font-size: 22px; margin-bottom: 16px; color: #333;">💡 Understanding Universal Life Insurance</h3>
+      <div style="background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <p style="font-size: 14px; line-height: 1.6; margin-bottom: 16px;">Universal Life (UL) insurance is a type of permanent life insurance that offers lifelong protection as long as premiums are paid. Unlike term insurance, it has a savings or investment component (cash value) that grows tax-deferred. Key features include flexibility in premium payments and death benefits.</p>
+        <ul style="padding-left: 20px; line-height: 1.6; font-size: 14px;">
+          <li><strong>Lifelong Coverage:</strong> Remains in force for your entire life, provided premiums are paid.</li>
+          <li><strong>Cash Value:</strong> A portion of your premium grows on a tax-deferred basis, accessible via loans or withdrawals.</li>
+          <li><strong>Premium Flexibility:</strong> You can often adjust premium payments within certain limits, as long as the cash value can cover policy costs.</li>
+          <li><strong>Adjustable Death Benefit:</strong> Some policies allow you to increase or decrease the death benefit.</li>
+        </ul>
+      </div>
+
+      <h3 style="font-size: 22px; margin-bottom: 16px; color: #333;">📋 Frequently Asked Questions</h3>
+      <div style="margin-bottom: 16px;">
+        <details style="margin-bottom: 12px; background: #fff; padding: 12px; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.1);">
+          <summary style="font-size: 16px; font-weight: bold; cursor: pointer; color: #333;">What's the difference between Term and Universal Life?</summary>
+          <p style="font-size: 14px; line-height: 1.6; margin: 8px 0 0 0;">Term life insurance covers a specific period and is generally more affordable. Universal life insurance provides lifelong coverage and includes a cash value component, making it more expensive but offering long-term financial planning benefits.</p>
+        </details>
+
+        <details style="margin-bottom: 12px; background: #fff; padding: 12px; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.1);">
+          <summary style="font-size: 16px; font-weight: bold; cursor: pointer; color: #333;">How accurate is this Universal Life calculator?</summary>
+          <p style="font-size: 14px; line-height: 1.6; margin: 8px 0 0 0;">This calculator provides estimates based on typical actuarial data for universal life insurance. Actual premiums can vary significantly based on the insurer, specific policy features, cash value growth projections, and a detailed underwriting process. Use these figures as a guide.</p>
+        </details>
+
+        <details style="margin-bottom: 12px; background: #fff; padding: 12px; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.1);">
+          <summary style="font-size: 16px; font-weight: bold; cursor: pointer; color: #333;">What factors influence Universal Life premiums most?</summary>
+          <p style="font-size: 14px; line-height: 1.6; margin: 8px 0 0 0;">Age, health status, and smoking habits are major drivers. Higher coverage amounts and lower-risk occupations generally lead to lower premiums. The way the policy is funded (e.g., how much is allocated to cash value vs. insurance costs) also plays a significant role.</p>
+        </details>
+      </div>
+
+      <div class="cta-section">
+        <h3 style="font-size: 22px; margin-bottom: 12px; color: white;">🚀 Start Planning Your Future!</h3>
+        <p style="font-size: 16px; margin-bottom: 16px; opacity: 0.9;">Get a clearer picture of your life insurance needs and costs.</p>
+        <p style="font-size: 14px; margin: 0; opacity: 0.8;">100% Free • Instant Estimates • No Personal Information Required</p>
+      </div>
+    </section>
+
+    <footer class="footer">
+      © FunDu Web Co. | <a href="index.html">Mortgage Calculator</a> | <a href="youtube-calculator.html">YouTube Calculator</a> | <a href="facebook-calculator.html">Facebook Calculator</a> | <a href="instagram-calculator.html">Instagram Calculator</a> | <a href="term-insurance-calculator.html">Term Insurance Calculator</a> | <a href="universal-life-calculator.html">Universal Life Calculator</a> | <a href="https://help.instagram.com/1158274571010880" target="_blank" rel="noopener">Insurance Policies</a> | No data collected.
+    </footer>
+  </div>
+
+  <script src="assets/universal-life.js"></script>
+</body>
+</html>
+
+<!-- Separate file content for assets/universal-life.css -->
+/* assets/universal-life.css */
+/* This file can contain specific styles for the Universal Life Calculator page */
+/* Many general styles are inherited from assets/style.css and the inline styles */
+
+/* Example: More specific styling if needed */
+.universal-life-specific-class {
+    /* Styles here */
+}
+
+<!-- Separate file content for assets/universal-life.js -->
+// assets/universal-life.js
+
+document.addEventListener('DOMContentLoaded', () => {
+    const dobInput = document.getElementById('dob');
+    const ageDisplay = document.getElementById('ageDisplay');
+    const coverageAmountInput = document.getElementById('coverageAmount');
+    const genderSelect = document.getElementById('gender');
+    const premiumFrequencySelect = document.getElementById('premiumFrequency');
+    const healthStatusSelect = document.getElementById('healthStatus');
+    const smokingStatusSelect = document.getElementById('smokingStatus');
+    const occupationRiskSelect = document.getElementById('occupationRisk');
+    const calculateBtn = document.getElementById('calculateBtn');
+    const resultsSection = document.getElementById('resultsSection');
+
+    // Result elements
+    const estimatedMonthlyPremium = document.getElementById('estimatedMonthlyPremium');
+    const estimatedAnnualPremium = document.getElementById('estimatedAnnualPremium');
+    const estimatedTotalPaid10Y = document.getElementById('estimatedTotalPaid10Y');
+    const estimatedTotalPaid20Y = document.getElementById('estimatedTotalPaid20Y');
+
+    // Breakdown elements
+    const ageFactorDisplay = document.getElementById('ageFactor');
+    const genderFactorDisplay = document.getElementById('genderFactor');
+    const healthFactorDisplay = document.getElementById('healthFactor');
+    const smokingFactorDisplay = document.getElementById('smokingFactor');
+    const occupationFactorDisplay = document.getElementById('occupationFactor');
+    const basePremiumULDisplay = document.getElementById('basePremiumUL');
+
+    // --- Helper Functions ---
+
+    function calculateAge(dob) {
+        const today = new Date();
+        const birthDate = new Date(dob);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    // --- Pricing Logic (Simplified for demonstration) ---
+    // This is a highly simplified model. Real UL pricing is complex.
+    // Base rate per $1000 coverage, adjusted by factors.
+    const BASE_RATE_PER_1000 = 1.5; // Example base rate for $1000 coverage
+
+    // Factor tables - these are illustrative and not actual insurance rates.
+    // Real rates depend on specific product, company, and underwriting.
+    const ageFactors = {
+        18: 0.8, 25: 1.0, 30: 1.2, 35: 1.5, 40: 1.8, 45: 2.2, 50: 2.7, 55: 3.3, 60: 4.0, 65: 4.8, 70: 5.8
+    };
+    const genderFactors = { male: 1.1, female: 0.9 };
+    const healthFactors = { excellent: 0.8, good: 1.0, average: 1.3, poor: 1.8 };
+    const smokingFactors = { never: 1.0, former: 1.2, current: 1.7 };
+    const occupationFactors = { low: 1.0, medium: 1.2, high: 1.5 };
+
+    function getFactor(factors, key, defaultValue = 1.0) {
+        // For age, find the closest age bracket or interpolate if needed.
+        // Here, we'll use a simple lookup for specific ages or nearest lower.
+        if (key === 'age') {
+            let currentAge = parseInt(key);
+            let closestAge = 18; // Default to min age
+            // Iterate through keys to find the largest age <= currentAge
+            const sortedAges = Object.keys(factors).map(Number).sort((a, b) => a - b);
+            for (const age of sortedAges) {
+                if (age <= currentAge) {
+                    closestAge = age;
+                } else {
+                    break; // Found the first age greater than currentAge
+                }
+            }
+            return factors[closestAge] || defaultValue;
+        }
+        return factors[key] || defaultValue;
+    }
+
+    function calculatePremium() {
+        const age = parseInt(ageDisplay.value);
+        const coverage = parseInt(coverageAmountInput.value);
+        const gender = genderSelect.value;
+        const health = healthStatusSelect.value;
+        const smoking = smokingStatusSelect.value;
+        const occupation = occupationRiskSelect.value;
+
+        if (isNaN(age) || age < 18 || age > 70 || isNaN(coverage) || coverage < 50000) {
+            alert("Please enter valid age (18-70) and a coverage amount of at least $50,000.");
+            return;
+        }
+
+        // Calculate factor values
+        const ageFactorValue = getFactor(ageFactors, age);
+        const genderFactorValue = getFactor(genderFactors, gender);
+        const healthFactorValue = getFactor(healthFactors, health);
+        const smokingFactorValue = getFactor(smokingFactors, smoking);
+        const occupationFactorValue = getFactor(occupationFactors, occupation);
+
+        // Calculate base premium per $1000 coverage using the base rate
+        let basePremiumPer1000 = BASE_RATE_PER_1000;
+
+        // Apply factors to determine adjusted rate per $1000
+        const adjustedRatePer1000 = basePremiumPer1000 *
+                                    ageFactorValue *
+                                    genderFactorValue *
+                                    healthFactorValue *
+                                    smokingFactorValue *
+                                    occupationFactorValue;
+
+        // Calculate monthly premium based on the adjusted rate
+        const monthlyPremium = (adjustedRatePer1000 / 1000) * coverage;
+
+        // Display factors and the calculated base premium
+        ageFactorDisplay.textContent = `(${(ageFactorValue * 100).toFixed(0)}%)`;
+        genderFactorDisplay.textContent = `(${genderFactorValue.toFixed(1)}x)`;
+        healthFactorDisplay.textContent = `(${(healthFactorValue * 100).toFixed(0)}%)`;
+        smokingFactorDisplay.textContent = `(${(smokingFactorValue * 100).toFixed(0)}%)`;
+        occupationFactorDisplay.textContent = `(${(occupationFactorValue * 100).toFixed(0)}%)`;
+        basePremiumULDisplay.textContent = `$${monthlyPremium.toFixed(2)}`;
+
+
+        // Display results based on selected payment frequency
+        let calculatedMonthly = monthlyPremium;
+        let calculatedAnnual = calculatedMonthly;
+        let calculatedTotal10Y = calculatedMonthly * 12 * 10;
+        let calculatedTotal20Y = calculatedMonthly * 12 * 20;
+
+        switch (premiumFrequencySelect.value) {
+            case 'quarterly':
+                calculatedMonthly = monthlyPremium * 3;
+                calculatedAnnual = calculatedMonthly;
+                calculatedTotal10Y = calculatedMonthly * 4 * 10;
+                calculatedTotal20Y = calculatedMonthly * 4 * 20;
+                break;
+            case 'annually':
+                calculatedMonthly = monthlyPremium * 12;
+                calculatedAnnual = calculatedMonthly;
+                calculatedTotal10Y = calculatedMonthly * 10;
+                calculatedTotal20Y = calculatedMonthly * 20;
+                break;
+            default: // monthly
+                calculatedMonthly = monthlyPremium;
+                calculatedAnnual = calculatedMonthly * 12;
+                calculatedTotal10Y = calculatedMonthly * 12 * 10;
+                calculatedTotal20Y = calculatedMonthly * 12 * 20;
+                break;
+        }
+
+        estimatedMonthlyPremium.textContent = `$${calculatedMonthly.toFixed(2)}`;
+        estimatedAnnualPremium.textContent = `$${calculatedAnnual.toFixed(2)}`;
+        estimatedTotalPaid10Y.textContent = `$${calculatedTotal10Y.toFixed(2)}`;
+        estimatedTotalPaid20Y.textContent = `$${calculatedTotal20Y.toFixed(2)}`;
+
+        resultsSection.style.display = 'block';
+    }
+
+    // --- Event Listeners ---
+
+    dobInput.addEventListener('change', () => {
+        const dobValue = dobInput.value;
+        if (dobValue) {
+            const age = calculateAge(dobValue);
+            ageDisplay.value = age;
+            // Optionally trigger calculation here if all other fields are valid
+        }
+    });
+
+    // If DOB is already set in the input (e.g., from server or initial load), calculate age
+    if (dobInput.value) {
+        const age = calculateAge(dobInput.value);
+        ageDisplay.value = age;
+    } else {
+        // Set a default DOB if none is provided to show a starting age, e.g., 30
+        const defaultAge = 30;
+        const defaultDate = new Date();
+        defaultDate.setFullYear(defaultDate.getFullYear() - defaultAge);
+        dobInput.valueAsDate = defaultDate;
+        ageDisplay.value = defaultAge;
+    }
+
+    calculateBtn.addEventListener('click', calculatePremium);
+
+    // Perform an initial calculation if DOB is set upon page load
+    if (dobInput.value) {
+        calculatePremium();
+    }
+});

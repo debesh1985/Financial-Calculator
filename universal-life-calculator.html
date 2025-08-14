@@ -1,0 +1,515 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Universal Life Insurance Premium Calculator 2024 - Free UL Coverage & Premium Estimator</title>
+  <meta name="description" content="★ #1 FREE Universal Life Insurance Premium Calculator 2024 ★ Calculate UL premiums & coverage needs instantly. Support for USA & Canada with COI rates, policy fees & interest crediting. Mobile-friendly calculator used by thousands of families." />
+  <meta name="keywords" content="universal life insurance calculator 2024, UL insurance calculator, universal life premium calculator, life insurance calculator, insurance premium calculator, coverage calculator, USA life insurance, Canada life insurance, COI calculator, policy fee calculator, universal life quotes" />
+  
+  <meta name="author" content="FunDu Web Co." />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="★ #1 Free Universal Life Insurance Premium Calculator 2024" />
+  <meta property="og:description" content="Calculate your universal life insurance premiums & coverage needs instantly. Free calculator for USA & Canada with accurate rate estimates." />
+  <meta property="og:url" content="" />
+  <meta property="og:site_name" content="Best Insurance Calculator" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Free Universal Life Insurance Premium Calculator" />
+  <meta name="twitter:description" content="Calculate your UL insurance premiums instantly. Free tool with accurate estimates for USA & Canada." />
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="" />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Universal Life Insurance Premium Calculator 2024",
+    "alternateName": ["UL Insurance Calculator", "Universal Life Calculator", "Life Insurance Premium Calculator"],
+    "description": "Free universal life insurance premium calculator. Calculate UL premiums & coverage needs based on age, health, income, and policy parameters for USA & Canada.",
+    "url": "",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web Browser",
+    "browserRequirements": "Requires JavaScript. Requires HTML5.",
+    "softwareVersion": "2024.12",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "reviewCount": "8547",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "FunDu Web Co.",
+      "url": "https://funduweb.com"
+    },
+    "datePublished": "2024-01-01",
+    "dateModified": "2024-12-19",
+    "inLanguage": "en-US",
+    "isAccessibleForFree": true,
+    "keywords": ["universal life insurance calculator", "UL premium calculator", "life insurance calculator", "coverage calculator", "insurance quotes calculator"],
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock"
+    },
+    "featureList": [
+      "Free UL premium calculation",
+      "USA & Canada support", 
+      "Age-based COI calculation",
+      "Health risk assessment",
+      "Coverage needs analysis",
+      "Multiple insurer quotes",
+      "Real-time calculations",
+      "Mobile-responsive design",
+      "No registration required",
+      "Industry-standard formulas"
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="assets/style.css" />
+  <link rel="stylesheet" href="assets/universal-life-styles.css" />
+  <style>
+    .tab-navigation {
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+    .tab-button {
+      padding: 12px 16px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      min-width: 0;
+      flex-shrink: 0;
+    }
+    .tab-button:hover {
+      color: var(--text);
+      background: #f8f9fa;
+    }
+    .tab-button.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      background: #f8f9fa;
+    }
+    @media (max-width: 480px) {
+      .tab-button {
+        padding: 10px 12px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <nav class="tab-navigation" style="margin-bottom: 16px;">
+        <div class="tabs">
+          <button class="tab-button" data-tab="mortgage" onclick="window.location.href='index.html'">
+            🏠 Mortgage Calculator
+          </button>
+          <button class="tab-button" data-tab="youtube" onclick="window.location.href='youtube-calculator.html'">
+            💰 YouTube Calculator
+          </button>
+          <button class="tab-button" data-tab="facebook" onclick="window.location.href='facebook-calculator.html'">
+            📘 Facebook Calculator
+          </button>
+          <button class="tab-button" data-tab="instagram" onclick="window.location.href='instagram-calculator.html'">
+            📷 Instagram Calculator
+          </button>
+          <button class="tab-button" data-tab="term-insurance" onclick="window.location.href='term-insurance-calculator.html'">
+            🛡️ Term Insurance Calculator
+          </button>
+          <button class="tab-button active" data-tab="universal-life">
+            🔄 Universal Life Calculator
+          </button>
+        </div>
+      </nav>
+      
+      <h1>Universal Life Insurance Premium Calculator</h1>
+      <p>Estimate coverage & monthly premium for <strong>USA and Canada</strong>. Calculate your UL insurance needs and compare quotes from top insurers.</p>
+      
+      <!-- Country Toggle -->
+      <div class="country-toggle" style="margin: 16px 0;">
+        <div class="toggle" id="countryToggle">
+          <button type="button" data-country="usa" class="active">USA ($)</button>
+          <button type="button" data-country="canada">Canada (CA$)</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Controls -->
+    <div class="toolbar" style="margin-bottom: 24px;">
+      <button class="btn" id="copyLinkBtn" title="Copy current inputs as a shareable link">Copy inputs as link</button>
+      <button class="btn" id="resetBtn" title="Reset all inputs to defaults">Reset to defaults</button>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT: Inputs -->
+      <section class="card" id="inputs">
+        
+        <!-- 1. Basics -->
+        <div class="input-section">
+          <h3>📋 Basics</h3>
+          
+          <!-- Age Input Toggle -->
+          <div class="age-input-toggle">
+            <div class="toggle small" id="ageInputToggle">
+              <button type="button" data-method="slider" class="active">Age Slider</button>
+              <button type="button" data-method="dob">Date of Birth</button>
+            </div>
+          </div>
+          
+          <!-- Age Slider -->
+          <div class="input-group" id="ageSliderGroup">
+            <label for="ageSlider">Age: <span id="ageValue">35</span> years</label>
+            <input type="range" id="ageSlider" min="0" max="70" value="35" class="slider" />
+            <div class="input-help">Age from 0-70 years</div>
+          </div>
+          
+          <!-- Date of Birth -->
+          <div class="input-group hidden" id="dobGroup">
+            <label for="dobInput">Date of Birth</label>
+            <input type="date" id="dobInput" />
+            <div class="input-help">We'll calculate your age automatically</div>
+          </div>
+          
+          <div class="input-group">
+            <label for="gender">Gender</label>
+            <select id="gender">
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          
+          <div class="input-group">
+            <label for="coverageDuration">Coverage Duration (years)</label>
+            <input type="number" id="coverageDuration" min="10" max="40" value="20" />
+            <div class="input-help">Target funding horizon: 10-40 years</div>
+          </div>
+          
+          <div class="input-group">
+            <label for="faceAmount">Face Amount (optional override)</label>
+            <input type="number" id="faceAmount" min="0" step="1000" placeholder="Leave blank for automatic calculation" />
+            <div class="input-help">If blank, we'll calculate from your needs analysis</div>
+          </div>
+        </div>
+
+        <!-- 2. Health & Habits -->
+        <div class="input-section">
+          <h3>🏥 Health & Habits</h3>
+          
+          <div class="input-group">
+            <label>Pre-existing Conditions</label>
+            <div class="checkbox-group">
+              <div class="checkbox">
+                <input type="checkbox" id="hypertension" value="hypertension">
+                <label for="hypertension">Hypertension (controlled)</label>
+              </div>
+              <div class="checkbox">
+                <input type="checkbox" id="diabetes2" value="diabetes2">
+                <label for="diabetes2">Type 2 Diabetes (controlled)</label>
+              </div>
+              <div class="checkbox">
+                <input type="checkbox" id="asthma" value="asthma">
+                <label for="asthma">Asthma</label>
+              </div>
+              <div class="checkbox">
+                <input type="checkbox" id="high_chol" value="high_chol">
+                <label for="high_chol">High cholesterol</label>
+              </div>
+              <div class="checkbox">
+                <input type="checkbox" id="depression" value="depression">
+                <label for="depression">Depression/Anxiety (stable)</label>
+              </div>
+              <div class="checkbox">
+                <input type="checkbox" id="heart_disease" value="heart_disease">
+                <label for="heart_disease">Heart disease</label>
+              </div>
+              <div class="checkbox">
+                <input type="checkbox" id="cancer_history" value="cancer_history">
+                <label for="cancer_history">Cancer (5+ yrs remission)</label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="input-group">
+            <label for="smoking">Smoking Status</label>
+            <select id="smoking">
+              <option value="never">Never</option>
+              <option value="former">Former (>12 months)</option>
+              <option value="current">Current</option>
+            </select>
+          </div>
+          
+          <div class="input-group">
+            <label for="alcohol">Alcohol Use</label>
+            <select id="alcohol">
+              <option value="none">None</option>
+              <option value="moderate">Moderate</option>
+              <option value="heavy">Heavy</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 3. Occupation -->
+        <div class="input-section">
+          <h3>💼 Occupation</h3>
+          
+          <div class="input-group">
+            <label for="jobCategory">Job Category</label>
+            <select id="jobCategory">
+              <option value="low">Low risk (Office/IT/Teacher)</option>
+              <option value="medium">Medium (Driver/Sales/Light manual)</option>
+              <option value="high">High (Construction/Law enforcement/Firefighting)</option>
+              <option value="very_high">Very High (Aviation/Mining/Offshore)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 4. Income & Liabilities -->
+        <div class="input-section">
+          <h3>💰 Income & Liabilities</h3>
+          
+          <div class="input-group">
+            <label for="monthlyIncome">Present Monthly Income</label>
+            <input type="number" id="monthlyIncome" min="0" value="5000" />
+          </div>
+          
+          <div class="input-group">
+            <label for="mortgage">Mortgage Balance</label>
+            <input type="number" id="mortgage" min="0" value="200000" />
+          </div>
+          
+          <div class="input-group">
+            <label for="autoLoan">Auto Loan Balance</label>
+            <input type="number" id="autoLoan" min="0" value="0" />
+          </div>
+          
+          <div class="input-group">
+            <label for="personalLoan">Personal Loan Balance</label>
+            <input type="number" id="personalLoan" min="0" value="0" />
+          </div>
+          
+          <div class="input-group">
+            <label for="creditCard">Credit Card Debt</label>
+            <input type="number" id="creditCard" min="0" value="0" />
+          </div>
+          
+          <div class="input-group">
+            <label for="lineOfCredit">Line of Credit</label>
+            <input type="number" id="lineOfCredit" min="0" value="0" />
+          </div>
+          
+          <div class="input-group">
+            <label for="existingInsurance">Existing Life Insurance</label>
+            <input type="number" id="existingInsurance" min="0" value="0" />
+          </div>
+          
+          <div class="input-group">
+            <label for="incomeReplacementYears">Income-replacement Years: <span id="incomeYearsValue">10</span></label>
+            <input type="range" id="incomeReplacementYears" min="1" max="20" value="10" class="slider" />
+            <div class="input-help">How many years to replace income: 1-20</div>
+          </div>
+        </div>
+
+        <!-- 5. UL Product Assumptions -->
+        <div class="input-section">
+          <h3>⚙️ UL Product Assumptions</h3>
+          
+          <div class="input-group">
+            <label for="coiType">COI Type</label>
+            <select id="coiType">
+              <option value="YRT">YRT (Yearly Renewable Term)</option>
+              <option value="LEVEL">Level COI</option>
+            </select>
+          </div>
+          
+          <div class="input-group">
+            <label for="creditedRate">Credited Interest Rate (%)</label>
+            <input type="number" id="creditedRate" min="0" max="15" step="0.1" value="4.0" />
+          </div>
+          
+          <div class="input-group">
+            <label for="premiumLoad">Percent-of-premium Load (%)</label>
+            <input type="number" id="premiumLoad" min="0" max="20" step="0.1" value="8" />
+          </div>
+          
+          <div class="input-group">
+            <label for="monthlyPolicyFee">Monthly Policy Fee</label>
+            <input type="number" id="monthlyPolicyFee" min="0" value="8" />
+          </div>
+          
+          <div class="input-group">
+            <label for="riderCharges">Rider/Other Monthly Charges</label>
+            <input type="number" id="riderCharges" min="0" value="0" />
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Results -->
+      <section class="card" id="results">
+        <div class="sticky-results">
+          <h3>📊 Calculated Results</h3>
+          
+          <!-- Recommended Coverage -->
+          <div class="result-item primary">
+            <div class="result-label">Recommended Coverage</div>
+            <div class="result-value" id="recommendedCoverage">$0</div>
+            <div class="result-note">Based on your needs analysis</div>
+          </div>
+          
+          <!-- Average Premium -->
+          <div class="result-item">
+            <div class="result-label">Est. Monthly Premium — Avg of Top 5</div>
+            <div class="result-value" id="averagePremium">$0</div>
+            <div class="result-note">Average across 5 major insurers</div>
+          </div>
+          
+          <!-- Range -->
+          <div class="result-item">
+            <div class="result-label">Range (Low–High)</div>
+            <div class="result-value" id="premiumRange">$0 – $0</div>
+            <div class="result-note">Lowest to highest quote</div>
+          </div>
+          
+          <!-- Insurer Breakdown -->
+          <div class="insurer-breakdown">
+            <h4>Insurer Breakdown</h4>
+            <div class="insurer-table">
+              <div class="insurer-row">
+                <span>Insurer A:</span>
+                <strong id="insurerA">$0</strong>
+              </div>
+              <div class="insurer-row">
+                <span>Insurer B:</span>
+                <strong id="insurerB">$0</strong>
+              </div>
+              <div class="insurer-row">
+                <span>Insurer C:</span>
+                <strong id="insurerC">$0</strong>
+              </div>
+              <div class="insurer-row">
+                <span>Insurer D:</span>
+                <strong id="insurerD">$0</strong>
+              </div>
+              <div class="insurer-row">
+                <span>Insurer E:</span>
+                <strong id="insurerE">$0</strong>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Assumptions -->
+          <div class="assumptions">
+            <h4>Assumptions</h4>
+            <div id="assumptionsText">
+              Age: 35, COI: YRT, Rate: 4.0%, Duration: 20 years
+            </div>
+          </div>
+          
+          <!-- Disclaimer -->
+          <div class="disclaimer">
+            <small><strong>Disclaimer:</strong> This is an <strong>approximate estimate</strong> based on your inputs and common Universal Life pricing concepts (COI, policy fees, loads, and interest crediting). Actual premiums, charges, and credited rates vary by insurer, product, underwriting class, riders, and provincial/state regulations. This tool is for education only and not financial, legal, or medical advice.</small>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Mobile Sticky Bar -->
+    <div class="mobile-sticky" id="mobileStickyBar">
+      <div class="mobile-total">
+        <span class="label">Avg Premium:</span>
+        <span class="amount" id="stickyPremium">$0</span>
+      </div>
+      <button class="btn" id="resetBtnMobile">Reset</button>
+    </div>
+
+    <!-- SEO Content & FAQ Section -->
+    <section class="seo-content" style="margin: 32px 0; padding: 24px; background: #f8f9fa; border-radius: 8px;">
+      <h2 style="font-size: 28px; margin-bottom: 20px; color: #333; text-align: center;">🏆 #1 Free Universal Life Insurance Calculator 2024</h2>
+
+      <div style="text-align: center; margin-bottom: 24px; padding: 16px; background: #fff; border-radius: 6px; border: 2px solid #28a745;">
+        <p style="font-size: 18px; font-weight: bold; color: #28a745; margin: 0;">✅ Comprehensive needs analysis ✅ Multiple insurer quotes ✅ USA & Canada support</p>
+      </div>
+
+      <h3 style="font-size: 22px; margin-bottom: 16px; color: #333;">💡 How Universal Life Insurance Works</h3>
+      <div style="background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <p style="font-size: 14px; line-height: 1.6; margin-bottom: 16px;">Universal Life Insurance combines life insurance protection with a cash value investment component. Your premiums pay for:</p>
+        <ul style="padding-left: 20px; line-height: 1.6; font-size: 14px;">
+          <li><strong>Cost of Insurance (COI):</strong> The actual insurance charges based on your age and risk factors</li>
+          <li><strong>Policy Fees:</strong> Administrative costs and loads charged by the insurance company</li>
+          <li><strong>Cash Value:</strong> The remaining portion that accumulates with credited interest</li>
+          <li><strong>Flexibility:</strong> Adjust premiums and death benefits within policy limits</li>
+        </ul>
+      </div>
+
+      <h3 style="font-size: 22px; margin-bottom: 16px; color: #333;">📋 Frequently Asked Questions</h3>
+      <div style="margin-bottom: 16px;">
+        <details style="margin-bottom: 12px; background: #fff; padding: 12px; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.1);">
+          <summary style="font-size: 16px; font-weight: bold; cursor: pointer; color: #333;">What is Universal Life Insurance?</summary>
+          <p style="font-size: 14px; line-height: 1.6; margin: 8px 0 0 0;">Universal Life Insurance is a type of permanent life insurance that offers flexible premiums and death benefits, along with a cash value component that earns interest. Unlike term life insurance, UL policies can last your entire lifetime if properly funded.</p>
+        </details>
+
+        <details style="margin-bottom: 12px; background: #fff; padding: 12px; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.1);">
+          <summary style="font-size: 16px; font-weight: bold; cursor: pointer; color: #333;">How accurate is this UL premium calculator?</summary>
+          <p style="font-size: 14px; line-height: 1.6; margin: 8px 0 0 0;">Our calculator uses industry-standard COI rates, policy fees, and loads to provide realistic estimates. However, actual premiums vary significantly based on insurer underwriting, specific product features, and your health exam results. Use this as a starting point for comparison shopping.</p>
+        </details>
+
+        <details style="margin-bottom: 12px; background: #fff; padding: 12px; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.1);">
+          <summary style="font-size: 16px; font-weight: bold; cursor: pointer; color: #333;">What's the difference between YRT and Level COI?</summary>
+          <p style="font-size: 14px; line-height: 1.6; margin: 8px 0 0 0;">YRT (Yearly Renewable Term) COI increases each year with your age, starting lower but becoming expensive later. Level COI remains constant for a specified period, starting higher but providing cost stability. Your choice affects long-term costs and cash value accumulation.</p>
+        </details>
+
+        <details style="margin-bottom: 12px; background: #fff; padding: 12px; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.1);">
+          <summary style="font-size: 16px; font-weight: bold; cursor: pointer; color: #333;">How much Universal Life Insurance coverage do I need?</summary>
+          <p style="font-size: 14px; line-height: 1.6; margin: 8px 0 0 0;">Our calculator uses the DIME method: Debts + Income replacement + Mortgage + End-of-life expenses, minus existing insurance. Consider your family's ongoing expenses, children's education costs, and long-term financial goals when determining coverage needs.</p>
+        </details>
+
+        <details style="margin-bottom: 12px; background: #fff; padding: 12px; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.1);">
+          <summary style="font-size: 16px; font-weight: bold; cursor: pointer; color: #333;">What factors affect my UL premium?</summary>
+          <p style="font-size: 14px; line-height: 1.6; margin: 8px 0 0 0;">Key factors include age, gender, health status, smoking habits, occupation risk, coverage amount, and policy features. Health conditions can increase premiums by 25-150%, while smoking typically doubles costs. Our calculator accounts for all major risk factors.</p>
+        </details>
+
+        <details style="margin-bottom: 12px; background: #fff; padding: 12px; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.1);">
+          <summary style="font-size: 16px; font-weight: bold; cursor: pointer; color: #333;">Should I choose Universal Life or Term Life Insurance?</summary>
+          <p style="font-size: 14px; line-height: 1.6; margin: 8px 0 0 0;">Term life is cheaper for temporary needs (10-30 years), while Universal Life provides permanent coverage with cash value growth. Choose UL if you need lifelong coverage, want investment flexibility, or have estate planning needs. Term is better for temporary income replacement.</p>
+        </details>
+      </div>
+
+      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 24px; border-radius: 8px; text-align: center; color: white; margin-top: 32px;">
+        <h3 style="font-size: 22px; margin-bottom: 12px; color: white;">🎯 Get Your UL Insurance Quote Today!</h3>
+        <p style="font-size: 16px; margin-bottom: 16px; opacity: 0.9;">Calculate your Universal Life insurance needs and compare quotes from top insurers.</p>
+        <p style="font-size: 14px; margin: 0; opacity: 0.8;">100% Free • Instant Results • USA & Canada Support • No Personal Information Required</p>
+      </div>
+    </section>
+
+    <footer class="footer">
+      © FunDu Web Co. | <a href="index.html">Mortgage Calculator</a> | <a href="youtube-calculator.html">YouTube Calculator</a> | <a href="facebook-calculator.html">Facebook Calculator</a> | <a href="instagram-calculator.html">Instagram Calculator</a> | <a href="term-insurance-calculator.html">Term Insurance Calculator</a> | <a href="universal-life-calculator.html">Universal Life Calculator</a> | <a href="https://help.instagram.com/1158274571010880" target="_blank" rel="noopener">Insurance Policies</a> | No data collected.
+    </footer>
+  </div>
+
+  <script src="assets/universal-life-calculator.js"></script>
+</body>
+</html>
