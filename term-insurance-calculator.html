@@ -1,6 +1,3 @@
-This commit updates the main index.html to include a new tab for the Universal Life Insurance Calculator and a corresponding link in the footer. It also provides the full content for the new `universal-life-calculator.html` page, including its HTML structure, basic CSS, and JavaScript for the calculator's functionality, adhering to the mobile-first and vanilla JS requirements.
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -533,10 +530,10 @@ This commit updates the main index.html to include a new tab for the Universal L
           <button class="tab-button" data-tab="instagram" onclick="window.location.href='instagram-calculator.html'">
             📷 Instagram Calculator
           </button>
-          <button class="tab-button" data-tab="term-insurance" onclick="window.location.href='term-insurance-calculator.html'">
+          <button class="tab-button active" data-tab="term-insurance">
             🛡️ Term Insurance Calculator
           </button>
-          <button class="tab-button active" data-tab="universal-life">
+          <button class="tab-button" data-tab="universal-life" onclick="window.location.href='universal-life-calculator.html'">
             🌟 Universal Life Calculator
           </button>
         </div>
@@ -764,8 +761,6 @@ This commit updates the main index.html to include a new tab for the Universal L
   <script src="assets/term-insurance-calculator.js"></script>
 </body>
 </html>
-
-<!-- Separate file content for universal-life-calculator.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
