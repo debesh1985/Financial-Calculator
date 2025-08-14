@@ -5,6 +5,9 @@ Allow: /index.html
 Allow: /youtube-calculator.html
 Allow: /facebook-calculator.html
 Allow: /instagram-calculator.html
+Allow: /term-insurance-calculator.html
+Allow: /us/term-life-insurance-premium-calculator/
+Allow: /ca/term-life-insurance-premium-calculator/
 Allow: /gst-hst.html
 Allow: /assets/
 Allow: /sitemap.xml

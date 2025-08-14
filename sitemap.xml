@@ -51,10 +51,32 @@
     </image:image>
   </url>
   <url>
+    <loc>/us/term-life-insurance-premium-calculator/</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>/og-image.png</image:loc>
+      <image:title>Term Life Insurance Premium Calculator USA - Free Monthly Cost Estimator</image:title>
+      <image:caption>Calculate term life insurance premiums for USA with instant estimates based on age, health, coverage amount</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>/ca/term-life-insurance-premium-calculator/</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>/og-image.png</image:loc>
+      <image:title>Term Life Insurance Premium Calculator Canada - Free Monthly Cost Estimator</image:title>
+      <image:caption>Calculate term life insurance premiums for Canada with instant estimates in CAD based on age, health, coverage</image:caption>
+    </image:image>
+  </url>
+  <url>
     <loc>/term-insurance-calculator.html</loc>
     <lastmod>2024-12-19</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>/gst-hst.html</loc>
