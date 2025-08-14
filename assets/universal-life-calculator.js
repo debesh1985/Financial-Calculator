@@ -126,11 +126,9 @@ class UniversalLifeCalculator {
         this.country = btn.dataset.country;
         this.currency = this.country === 'usa' ? '$' : 'CA$';
         
-        // Update policy fee default when country changes
+        // Reset form when country changes
         if (previousCountry !== this.country) {
-          const countryKey = this.country === 'usa' ? 'USA' : 'CAN';
-          const defaultFee = this.config.LOADS.monthly_policy_fee[countryKey];
-          document.getElementById('monthlyPolicyFee').value = defaultFee;
+          this.resetFormToDefaults();
         }
         
         // Force recalculation with new country
@@ -537,10 +535,7 @@ class UniversalLifeCalculator {
     }
   }
 
-  reset() {
-    // Reset country to USA
-    document.querySelector('#countryToggle [data-country="usa"]').click();
-    
+  resetFormToDefaults() {
     // Reset age input method to slider
     document.querySelector('#ageInputToggle [data-method="slider"]').click();
     
@@ -566,7 +561,12 @@ class UniversalLifeCalculator {
     document.getElementById('coiType').value = 'YRT';
     document.getElementById('creditedRate').value = 4.0;
     document.getElementById('premiumLoad').value = 8;
-    document.getElementById('monthlyPolicyFee').value = 8;
+    
+    // Set country-specific policy fee
+    const countryKey = this.country === 'usa' ? 'USA' : 'CAN';
+    const defaultFee = this.config.LOADS.monthly_policy_fee[countryKey];
+    document.getElementById('monthlyPolicyFee').value = defaultFee;
+    
     document.getElementById('riderCharges').value = 0;
     
     // Uncheck all medical conditions
@@ -574,6 +574,14 @@ class UniversalLifeCalculator {
     medicalIds.forEach(id => {
       document.getElementById(id).checked = false;
     });
+  }
+
+  reset() {
+    // Reset country to USA
+    document.querySelector('#countryToggle [data-country="usa"]').click();
+    
+    // Reset form to defaults (this will also be called by the country toggle)
+    this.resetFormToDefaults();
     
     this.calculate();
   }
