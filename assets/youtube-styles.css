@@ -383,6 +383,37 @@ h3:not(:first-child) {
     padding: 10px 12px;
     font-size: 13px;
   }
+  
+  /* Improve button touch handling on mobile */
+  button, .btn {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    min-height: 44px; /* Apple's recommended touch target */
+    cursor: pointer;
+  }
+  
+  /* Specific styles for fetch button */
+  #fetchChannelBtn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    background: var(--accent, #2563eb);
+    color: white;
+    font-weight: 500;
+  }
+  
+  #fetchChannelBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  #fetchChannelBtn:active {
+    transform: scale(0.98);
+  }
   .toolbar {
     flex-direction: column;
     align-items: stretch;

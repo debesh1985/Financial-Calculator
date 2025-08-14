@@ -300,11 +300,36 @@ const bindEvents = ()=>{
   $('#resetBtnMobile').addEventListener('click', resetToDefaults);
   $('#copyLinkBtn').addEventListener('click', copyInputsAsLink);
   
-  // Channel URL events
-  $('#fetchChannelBtn').addEventListener('click', analyzeChannel);
-  $('#channelInput').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') analyzeChannel();
-  });
+  // Channel URL events - improved mobile compatibility
+  const fetchBtn = $('#fetchChannelBtn');
+  if (fetchBtn) {
+    // Add multiple event types for better mobile support
+    fetchBtn.addEventListener('click', analyzeChannel);
+    fetchBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      analyzeChannel();
+    });
+    fetchBtn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+    });
+  }
+  
+  const channelInput = $('#channelInput');
+  if (channelInput) {
+    channelInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        analyzeChannel();
+      }
+    });
+    // Add input event for mobile keyboards
+    channelInput.addEventListener('input', () => {
+      const btn = $('#fetchChannelBtn');
+      if (btn) {
+        btn.disabled = !channelInput.value.trim();
+      }
+    });
+  }
   
   // Time window controls
   $$('input[name="timeWindow"]').forEach(radio => {
@@ -522,15 +547,25 @@ const parseDuration = (duration) => {
 };
 
 const analyzeChannel = async () => {
+  console.log('Analyze channel triggered'); // Debug log
+  
   const input = $('#channelInput').value.trim();
   if (!input) {
     setStatus('Please enter a channel URL or handle', 'error');
     return;
   }
   
-  if (!YT_API_KEY) {
+  // Check if API key is defined
+  if (typeof YT_API_KEY === 'undefined' || !YT_API_KEY) {
     setStatus('YouTube API key not configured. Please add your API key as a secret.', 'error');
     return;
+  }
+  
+  // Disable button during processing to prevent double-clicks
+  const btn = $('#fetchChannelBtn');
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Analyzing...';
   }
   
   try {
@@ -605,6 +640,13 @@ const analyzeChannel = async () => {
   } catch (error) {
     console.error('Channel analysis error:', error);
     setStatus(`Error: ${error.message}`, 'error');
+  } finally {
+    // Re-enable button
+    const btn = $('#fetchChannelBtn');
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'Fetch Channel Data';
+    }
   }
 };
 
@@ -672,8 +714,30 @@ const setStatus = (message, type = '') => {
 // ===== Initialization =====
 document.addEventListener('DOMContentLoaded', ()=>{
   loadFromQuery();
-  bindEvents();
-  recalc();
+  
+  // Add a small delay to ensure all elements are properly loaded on mobile
+  setTimeout(() => {
+    bindEvents();
+    recalc();
+    
+    // Additional mobile-specific initialization
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      console.log('Mobile device detected');
+      
+      // Ensure the fetch button is properly initialized
+      const fetchBtn = $('#fetchChannelBtn');
+      if (fetchBtn) {
+        fetchBtn.style.webkitTapHighlightColor = 'rgba(0,0,0,0)';
+        fetchBtn.style.touchAction = 'manipulation';
+        console.log('Mobile fetch button initialized');
+      }
+      
+      // Disable double-tap zoom on buttons
+      $$('button').forEach(btn => {
+        btn.style.touchAction = 'manipulation';
+      });
+    }
+  }, 100);
   
   // Handle mobile sticky bar initially
   setTimeout(() => {
