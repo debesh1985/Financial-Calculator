@@ -804,20 +804,28 @@
 
     if (hamburgerBtn && dropdownMenu) {
       hamburgerBtn.addEventListener('click', function(e) {
+        e.preventDefault();
         e.stopPropagation();
         hamburgerBtn.classList.toggle('active');
         dropdownMenu.classList.toggle('show');
       });
 
       // Close menu when clicking outside
-      document.addEventListener('click', function() {
-        hamburgerBtn.classList.remove('active');
-        dropdownMenu.classList.remove('show');
+      document.addEventListener('click', function(e) {
+        if (!hamburgerBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+          hamburgerBtn.classList.remove('active');
+          dropdownMenu.classList.remove('show');
+        }
       });
 
-      // Prevent menu from closing when clicking inside
+      // Prevent menu from closing when clicking inside dropdown
       dropdownMenu.addEventListener('click', function(e) {
         e.stopPropagation();
+      });
+
+      // Handle touch events for mobile
+      hamburgerBtn.addEventListener('touchstart', function(e) {
+        e.preventDefault();
       });
     }
   });
