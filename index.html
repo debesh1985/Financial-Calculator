@@ -107,10 +107,13 @@
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "Mortgage Calculator 2024",
+    "alternateName": ["Home Loan Calculator", "Mortgage Payment Calculator", "CMHC Calculator", "FHA Calculator"],
     "description": "Free mortgage calculator for Canada and USA. Calculate monthly payments, amortization, and total costs with CMHC, FHA, PMI insurance options.",
     "url": "",
     "applicationCategory": "FinanceApplication",
     "operatingSystem": "Web Browser",
+    "browserRequirements": "Requires JavaScript. Requires HTML5.",
+    "softwareVersion": "2024.12",
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": "4.9",
@@ -121,21 +124,27 @@
     "author": {
       "@type": "Organization",
       "name": "FunDu Web Co.",
-      "url": "https://funduweb.com"
+      "url": "https://funduweb.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "/assets/logo.png"
+      }
     },
     "datePublished": "2024-01-01",
-    "dateModified": "2024-12-15",
+    "dateModified": "2024-12-19",
     "inLanguage": "en-US",
     "isAccessibleForFree": true,
     "keywords": ["mortgage calculator", "home loan calculator", "mortgage payment calculator", "CMHC calculator", "FHA calculator", "PMI calculator", "Canada mortgage", "USA mortgage", "UK mortgage", "Australia mortgage", "Europe mortgage", "free calculator", "mobile mortgage calculator", "refinance calculator", "amortization calculator"],
     "offers": {
       "@type": "Offer",
       "price": "0",
-      "priceCurrency": "USD"
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock",
+      "validFrom": "2024-01-01"
     },
     "featureList": [
       "Free mortgage payment calculator",
-      "Canada CMHC insurance calculator",
+      "Canada CMHC insurance calculator", 
       "USA FHA loan calculator",
       "PMI calculator",
       "Amortization schedule",
@@ -143,7 +152,12 @@
       "Property tax estimation",
       "Total cost of ownership",
       "Bi-weekly payment calculator",
-      "Refinance calculator"
+      "Refinance calculator",
+      "Global mortgage calculation",
+      "Real-time results",
+      "Mobile-responsive design",
+      "No registration required",
+      "Bank-level accuracy"
     ],
     "provider": {
       "@type": "Organization",
@@ -158,7 +172,58 @@
       "@type": "UseAction",
       "target": "",
       "object": "Mortgage Calculator"
+    },
+    "mainEntity": {
+      "@type": "SoftwareApplication",
+      "name": "Mortgage Calculator",
+      "applicationCategory": "Finance",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0"
+      }
     }
+  }
+  </script>
+  
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "FunDu Web Co.",
+    "url": "",
+    "logo": "/assets/logo.png",
+    "sameAs": [
+      "https://www.facebook.com/funduweb",
+      "https://twitter.com/funduweb"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer service",
+      "availableLanguage": ["English"]
+    },
+    "areaServed": ["CA", "US", "GB", "AU", "DE", "FR", "IT", "ES", "NL", "BE", "CH", "AT", "IE", "NO", "SE", "DK", "FI", "NZ", "SG", "HK", "JP", "KR"]
+  }
+  </script>
+  
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "/"
+      },
+      {
+        "@type": "ListItem", 
+        "position": 2,
+        "name": "Mortgage Calculator",
+        "item": "/index.html"
+      }
+    ]
   }
   </script>
   
