@@ -319,12 +319,15 @@ const generateEstimatedData = (pageHandle) => {
   const dateRange = getSelectedDateRange();
   const daysDiff = Math.ceil((new Date(dateRange.to) - new Date(dateRange.from)) / (1000 * 60 * 60 * 24));
   
+  // Create a deterministic seed from page handle for consistent results
+  const seed = createDeterministicSeed(pageHandle);
+  
   // Simulate more realistic page metrics based on handle and date range
   const pageSize = estimatePageSize(pageHandle);
   const engagementRate = estimateEngagementRate(pageSize);
   
   // Calculate base metrics per day, then scale by date range
-  const dailyMetrics = calculateDailyMetrics(pageSize, engagementRate);
+  const dailyMetrics = calculateDailyMetrics(pageSize, engagementRate, seed);
   
   return {
     starsReceived: Math.max(0, Math.floor(dailyMetrics.starsPerDay * daysDiff)),
@@ -364,7 +367,18 @@ const estimateEngagementRate = (pageSize) => {
   return rates[pageSize] || rates.medium;
 };
 
-const calculateDailyMetrics = (pageSize, engagementRate) => {
+const createDeterministicSeed = (pageHandle) => {
+  // Create a simple hash from the page handle for consistent randomness
+  let hash = 0;
+  for (let i = 0; i < pageHandle.length; i++) {
+    const char = pageHandle.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return Math.abs(hash);
+};
+
+const calculateDailyMetrics = (pageSize, engagementRate, seed) => {
   // Base follower estimates by page size
   const followerEstimates = {
     'large': 500000,   // 500K+ followers
@@ -372,17 +386,26 @@ const calculateDailyMetrics = (pageSize, engagementRate) => {
     'small': 5000      // 5K followers
   };
   
-  const followers = followerEstimates[pageSize];
-  const dailyReach = followers * 0.1; // Assume 10% daily reach
-  const dailyEngagement = dailyReach * engagementRate;
+  // Use seed to create deterministic variations (±20% from base)
+  const seedNormalized = (seed % 1000) / 1000; // Normalize to 0-1
+  const variation = 0.8 + (seedNormalized * 0.4); // 0.8 to 1.2 multiplier
   
-  // Calculate realistic daily metrics
+  const followers = Math.floor(followerEstimates[pageSize] * variation);
+  const dailyReach = Math.floor(followers * 0.1); // Assume 10% daily reach
+  const dailyEngagement = Math.floor(dailyReach * engagementRate);
+  
+  // Calculate realistic daily metrics with deterministic variations
+  const starsVariation = 0.5 + ((seed % 100) / 100); // 0.5 to 1.5
+  const reelsVariation = 0.7 + ((seed % 200) / 333); // 0.7 to 1.3
+  const longformVariation = 0.6 + ((seed % 150) / 187.5); // 0.6 to 1.4
+  const brandedVariation = 0.4 + ((seed % 300) / 250); // 0.4 to 1.6
+  
   return {
-    starsPerDay: Math.floor(dailyEngagement * 0.001 * 10), // 0.1% of engaged users send ~10 stars
-    subscribersBase: Math.floor(followers * 0.005), // 0.5% subscription rate
-    reelsPerDay: Math.floor(dailyReach * 0.3), // 30% of reached users watch reels
-    longformPerDay: Math.floor(dailyReach * 0.15), // 15% watch long-form content
-    brandedPerDay: Math.floor(dailyReach * (pageSize === 'large' ? 0.2 : pageSize === 'medium' ? 0.1 : 0.05)) // Branded content impressions
+    starsPerDay: Math.floor(dailyEngagement * 0.001 * 10 * starsVariation), // 0.1% of engaged users send ~10 stars
+    subscribersBase: Math.floor(followers * 0.005), // 0.5% subscription rate (stable)
+    reelsPerDay: Math.floor(dailyReach * 0.3 * reelsVariation), // 30% of reached users watch reels
+    longformPerDay: Math.floor(dailyReach * 0.15 * longformVariation), // 15% watch long-form content
+    brandedPerDay: Math.floor(dailyReach * (pageSize === 'large' ? 0.2 : pageSize === 'medium' ? 0.1 : 0.05) * brandedVariation) // Branded content impressions
   };
 };
 
