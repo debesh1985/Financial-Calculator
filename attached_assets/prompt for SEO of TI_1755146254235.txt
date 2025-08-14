@@ -1,0 +1,140 @@
+1) URLs & hreflang
+Create two crawlable routes that render server-independent (static):
+
+/us/term-life-insurance-premium-calculator/ (default currency USD, US copy)
+
+/ca/term-life-insurance-premium-calculator/ (default currency CAD, CA copy)
+
+Add hreflang tags in both pages:
+
+en-US ↔ https://<domain>/us/term-life-insurance-premium-calculator/
+
+en-CA ↔ https://<domain>/ca/term-life-insurance-premium-calculator/
+
+Add rel=canonical to each page pointing to itself.
+
+The existing country toggle should navigate between these two URLs (not just switch text).
+
+2) Head tags (both pages)
+Title (≤60 chars):
+
+US: Term Life Insurance Premium Calculator (USA) – Estimate Monthly Cost
+
+CA: Term Life Insurance Premium Calculator (Canada) – Estimate Monthly Cost
+
+Meta description (140–160 chars): concise, includes target keywords and benefits.
+
+Open Graph & Twitter Cards: og:title, og:description, og:url, og:image (use provided og-image.png), twitter:card=summary_large_image.
+
+Preload/Preconnect: none to external fonts; use system font stack for best CWV.
+
+Favicon and app icons.
+
+3) Content & on-page SEO
+H1: “Term Life Insurance Premium Calculator (USA/Canada)”
+
+Intro (150–220 words) explaining what term life is, how coverage is estimated (income replacement + liabilities), and how age, job risk, health, smoking/alcohol, and term length influence price. Use natural language and keywords:
+
+primary: term life insurance calculator, term insurance premium calculator, life insurance estimate, term life cost
+
+geo modifiers: USA, United States, Canada, Canadian
+
+Scannable sub-sections (H2/H3): “How we calculate coverage”, “How premiums are estimated”, “Risk multipliers (age, health, habits, job)”, “US vs Canada differences”.
+
+Internal links (placeholder anchors):
+
+“Life Insurance 101”
+
+“How much coverage do I need?”
+
+Last updated date near the calculator (auto-filled current date).
+
+4) FAQ section (expanders + schema)
+Add a visible FAQ below results and include FAQPage JSON-LD with the same Q&As.
+
+FAQ items (use concise, plain language answers 2–5 sentences each):
+
+What is term life insurance and how does it work?
+
+How do you calculate the recommended coverage amount?
+
+What affects term life premiums the most (age, health, smoking, job, term length)?
+
+Do pre-existing conditions always raise premiums?
+
+How are US and Canada premiums different?
+
+Which term length (10/20/30 years) should I choose?
+
+Do I need a medical exam?
+
+Are premiums tax-deductible? (note personal policies generally aren’t; advise users to consult a tax professional)
+
+Can I change or convert my term policy later?
+
+How accurate is this calculator vs a quote?
+
+5) Structured data (JSON-LD)
+Embed all JSON-LD in <script type="application/ld+json">:
+
+WebSite with potentialAction = SearchAction (site search optional).
+
+WebPage (name, description, inLanguage).
+
+BreadcrumbList: Home → Calculators → Term Life Insurance Premium Calculator.
+
+SoftwareApplication (or WebApplication) describing the calculator:
+applicationCategory: "FinanceApplication", operatingSystem: "Web", offers with "price": "0", "priceCurrency": "USD" or "CAD".
+
+FAQPage containing the 10 Q&As above.
+
+6) Performance & CWV targets
+LCP ≤ 2.0s, CLS ≤ 0.05, INP ≤ 200ms on mid-range mobile.
+
+No external fonts or blocking CSS/JS. Inline critical CSS (<10kb) or load styles.css with media="print" + onload pattern (optional). Defer script.js.
+
+Compress og-image.png (~1200×630) and any icons.
+
+Use loading="lazy" for non-critical images and fetchpriority="high" for LCP image if any.
+
+7) Technical SEO
+Generate sitemap.xml listing both routes and the homepage.
+
+Provide robots.txt allowing crawl of both routes.
+
+Add canonical URLs as noted above.
+
+Add meta name="robots" content="index,follow" only on production.
+
+Add schema Organization in the homepage (if available) and link via sameAs to social profiles (placeholders).
+
+Use descriptive alt text on all images.
+
+Add event tracking hooks (data- attributes) to measure interactions (optional).
+
+8) UI polish (mobile-first)
+Maintain the existing calculator UI and results.
+
+Add an SEO text block (US and CA variants) under the calculator (~300–500 words each) using natural phrasing and the target keywords (no stuffing).
+
+Keep the disclaimer near results and in the footer:
+
+“This is an approximate estimate. Actual premiums depend on insurer underwriting, health disclosures, and regulations. This tool is not financial, legal, or medical advice.”
+
+9) Accessibility
+Logical heading order.
+
+Labels associated with inputs; visible focus states.
+
+Results area has aria-live="polite".
+
+10) Delivery
+Update index.html, styles.css, script.js to include all above.
+
+Create /us/ and /ca/ static copies with correct hreflang/canonical, currency defaults, and localized copy.
+
+Include sitemap.xml, robots.txt, og-image.png.
+
+Write a short README summarizing SEO decisions and how to edit FAQ/JSON-LD.
+
+If helpful, also attach a short keyword map (primary/secondary/LSI for US & CA) inside the README and note where each appears (Title, H1, meta description, H2s, intro, FAQ).
