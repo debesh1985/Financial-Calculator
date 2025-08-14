@@ -1,0 +1,265 @@
+**Goals**
+
+- Collect risk & financial inputs (age/DOB, medical conditions, habits, gender, job risk, income, liabilities, term/duration).
+- Compute **recommended coverage** (to protect dependents) and **estimated monthly UL premium**.
+- Support a **USA / Canada** toggle that switches currency ($ / CA$), base rate tables, and insurer set.
+- Show a **breakdown by 5 insurers** + **average** and **low–high range**.
+- Be fast, accessible, and **light theme**. All state shareable via URL.
+
+**Layout & UX**
+
+- **Header:** “Universal Life Insurance Premium Calculator” + subtitle “Estimate coverage & monthly premium (USA/Canada)”.
+- **Country toggle:** **USA** / **Canada** (switch currency and tables).
+- **Age input:** **either** Date of Birth (calendar) **or** **Age slider (0–70)**; always compute an **Age** value used in pricing.
+- **Cards (sections):**
+    1. **Basics**
+        - DOB **or** Age slider (0–70)
+        - Gender: Female / Male / Other
+        - **Coverage duration** (years): 10–40 (UL is permanent, but let users model target funding horizon)
+        - Face amount **(optional manual override)** (if left blank, we compute from needs analysis below)
+    2. **Health & Habits**
+        - Pre-existing conditions (checkboxes): Hypertension (controlled), Type 2 Diabetes (controlled), Asthma, High cholesterol, Depression/Anxiety (stable), Heart disease, Cancer (5+ yrs remission)
+        - Smoking: Never / Former (>12 months) / Current
+        - Alcohol use: None / Moderate / Heavy
+    3. **Occupation**
+        - Job category: Low risk (Office/IT/Teacher), Medium (Driver/Sales/Light manual), High (Construction/Law enforcement/Firefighting), Very High (Aviation/Mining/Offshore)
+    4. **Income & Liabilities**
+        - Present monthly income
+        - Liabilities (numbers, optional): Mortgage, Auto loan, Personal loan, Credit card debt, Line of credit
+        - Existing life insurance (optional)
+        - **Income-replacement years** (slider 1–20; default 10)
+    5. **UL Product Assumptions**
+        - COI type: **YRT** (Yearly Renewable Term) / **Level COI**
+        - Credited interest rate (%): default **4.0** (editable)
+        - Percent-of-premium load (%): default **8**
+        - Monthly policy fee (currency): default **$8**
+        - Rider/other monthly charges (currency): default **$0**
+- **Results (sticky on desktop):**
+    1. **Recommended Coverage** (large)
+    2. **Estimated Monthly Premium — Avg of Top 5** (large)
+    3. **Range** (Low–High)
+    4. **Table**: Insurer A–E with per-insurer premium
+    5. **Assumptions** (age band, COI type, credited rate, term)
+- **Controls:** “Reset to defaults” and “Copy inputs as link”.
+- **Accessibility:** Proper labels, keyboardable controls, aria-live="polite" on results, high contrast.
+
+**Coverage Need (dependents protection)**
+
+Use a DIME-style simplification and make constants editable:
+
+pgsql
+
+CopyEdit
+
+Liabilities_total = Mortgage + Auto + Personal + CreditCard + LOC
+
+Income_replacement = Monthly_income × 12 × Income_replacement_years
+
+Final_expenses = (USA: $15,000, Canada: CA$18,000) // editable
+
+Recommended_coverage =
+
+max(0, Liabilities_total + Income_replacement + Final_expenses − Existing_insurance)
+
+If user manually enters Face amount, use that instead of computed coverage.
+
+**UL Premium Model (transparent approximation)**
+
+Note: This models common UL mechanics (monthly **COI** on the **Net Amount at Risk**, plus policy fees/loads, less the effect of **interest crediting**). Exact carrier pricing varies; keep tables editable.
+
+**1) Base COI rate per $1,000 (monthly)**
+
+Provide **editable JSON** tables for **USA** and **Canada**, by **age bands**, **gender**, **smoker**, and **COI type** (YRT vs Level), representing a **standard non-rated class**. Example defaults (illustrative):
+
+js
+
+CopyEdit
+
+const UL_BASE = {
+
+USA: {
+
+YRT: {
+
+female: { nonsmoker: { "20-29": 0.06, "30-39": 0.09, "40-49": 0.18, "50-59": 0.42, "60-70": 1.05 },
+
+smoker: { "20-29": 0.10, "30-39": 0.16, "40-49": 0.32, "50-59": 0.78, "60-70": 1.95 } },
+
+male: { nonsmoker: { "20-29": 0.07, "30-39": 0.11, "40-49": 0.22, "50-59": 0.52, "60-70": 1.25 },
+
+smoker: { "20-29": 0.12, "30-39": 0.19, "40-49": 0.38, "50-59": 0.92, "60-70": 2.25 } }
+
+},
+
+LEVEL: {
+
+female: { nonsmoker: { "20-29": 0.09, "30-39": 0.13, "40-49": 0.24, "50-59": 0.55, "60-70": 1.30 },
+
+smoker: { "20-29": 0.15, "30-39": 0.22, "40-49": 0.42, "50-59": 1.00, "60-70": 2.35 } },
+
+male: { nonsmoker: { "20-29": 0.10, "30-39": 0.15, "40-49": 0.28, "50-59": 0.68, "60-70": 1.55 },
+
+smoker: { "20-29": 0.18, "30-39": 0.27, "40-49": 0.50, "50-59": 1.20, "60-70": 2.75 } }
+
+}
+
+},
+
+CAN: {
+
+YRT: {/\* mirror structure; slightly higher/lower by band to reflect market; editable \*/},
+
+LEVEL: {/\* ... \*/}
+
+}
+
+};
+
+Values are **monthly $ per $1,000 of Net Amount at Risk (NAR)**. You’ll map precise age into a band.
+
+**2) Risk multipliers (combined multiplicatively)**
+
+js
+
+CopyEdit
+
+const RISK = {
+
+gender: { female: 1.00, male: 1.08, other: 1.04 },
+
+smoking: { never: 1.00, former: 1.20, current: 2.00 },
+
+alcohol: { none: 1.00, moderate: 1.05, heavy: 1.20 },
+
+job: { low: 1.00, medium: 1.10, high: 1.25, very_high: 1.60 },
+
+medical: { hypertension:1.10, diabetes2:1.20, asthma:1.05, high_chol:1.10,
+
+depression:1.05, heart_disease:1.75, cancer_history:1.40 }
+
+};
+
+// medical_multiplier = product of all checked; total_multiplier = product of all factors above
+
+**3) Policy loads & fees (editable)**
+
+js
+
+CopyEdit
+
+const LOADS = {
+
+percent_of_premium: 0.08, // 8% default
+
+monthly_policy_fee: 8.00, // currency-specific
+
+rider_monthly: 0.00
+
+};
+
+**4) Interest crediting adjustment**
+
+Approximate the offset from credited interest to reserves with a simple factor:
+
+js
+
+CopyEdit
+
+// credited_rate in %, e.g., 4.0 → monthly_rate ≈ 0.04/12
+
+// Cap the effect so it cannot reduce charges by more than 15%
+
+credit_adj_factor = Math.max(0.85, 1 - (credited_rate/100) \* 0.5);
+
+**5) Insurer dispersion (Top 5)**
+
+Simulate five insurers around market average (**editable**):
+
+js
+
+CopyEdit
+
+const INSURERS = \[
+
+{ name: "Insurer A", factor: 0.95 },
+
+{ name: "Insurer B", factor: 0.98 },
+
+{ name: "Insurer C", factor: 1.00 },
+
+{ name: "Insurer D", factor: 1.03 },
+
+{ name: "Insurer E", factor: 1.07 }
+
+\];
+
+**Calculations (show in code comments & small tooltips)**
+
+1. **Age & band** → choose UL_BASE rate row (by country, COI type, gender, smoker).
+2. **Coverage need** → Recommended_coverage (unless user overrides Face).
+3. **Units** → units = ceil(Face / 1000)
+4. **Monthly COI** (using an approximation where Net Amount at Risk ≈ Face for modeling):
+
+ini
+
+CopyEdit
+
+base_rate = UL_BASE\[country\]\[coiType\]\[gender\]\[smokerClass\]\[ageBand\] // $ per $1,000 per month
+
+risked_rate = base_rate × total_risk_multiplier
+
+monthly_coi = risked_rate × units
+
+1. **Monthly premium before interest**:
+
+cpp
+
+CopyEdit
+
+gross_monthly = monthly_coi + LOADS.monthly_policy_fee + LOADS.rider_monthly
+
+// Percent-of-premium load is applied to the premium itself; solve with a divider:
+
+monthly_premium_pre_interest = gross_monthly / (1 - LOADS.percent_of_premium)
+
+1. **Interest crediting effect**:
+
+ini
+
+CopyEdit
+
+monthly_premium = monthly_premium_pre_interest × credit_adj_factor
+
+1. **Per-insurer pricing & stats**:
+
+matlab
+
+CopyEdit
+
+insurer_premium\[i\] = monthly_premium × INSURERS\[i\].factor
+
+avg_premium = mean(insurer_premium\[\])
+
+range_low_high = \[min, max\] of insurer_premium\[\]
+
+**UI Behavior**
+
+- **Instant re-calc** on any input (debounce ~150 ms).
+- If required inputs missing/invalid, disable results and show inline tips.
+- **Currency** switches with country ($ for USA, CA$ for Canada), via Intl.NumberFormat.
+- **URL state**: serialize all inputs, assumptions, and country to querystring; “Copy inputs as link” copies the URL.
+- **Reset** returns to defaults.
+
+**Technical**
+
+- Plain, semantic HTML; CSS variables for theme; no external libs.
+- Keep functions small & commented (age calc, band lookup, risk combine, COI calc, loads, interest adjustment).
+- Put **all editable tables** (UL_BASE, RISK, LOADS, INSURERS, constants) inside a single config object in script.js for easy tuning.
+
+**Disclaimer (show near results & in footer)**
+
+**Disclaimer:** This is an **approximate estimate** based on your inputs and common Universal Life pricing concepts (COI, policy fees, loads, and interest crediting). Actual premiums, charges, and credited rates vary by insurer, product, underwriting class, riders, and provincial/state regulations. This tool is for education only and not financial, legal, or medical advice.
+
+Footer links: “Learn about Universal Life Insurance”, “Privacy (no data saved)”, “Contact”.
+
+Deliver **index.html**, **styles.css**, **script.js** ready for any static host.
