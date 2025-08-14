@@ -123,30 +123,38 @@
 <body>
   <div class="container">
     <header>
-      <nav class="tab-navigation" style="margin-bottom: 16px;">
-        <div class="tabs">
-          <button class="tab-button" data-tab="mortgage" onclick="window.location.href='index.html'">
-            🏠 Mortgage Calculator
+      <div class="header-with-menu">
+        <div class="hamburger-menu">
+          <button class="hamburger-button" id="hamburgerBtn">
+            <span></span>
+            <span></span>
+            <span></span>
           </button>
-          <button class="tab-button" data-tab="youtube" onclick="window.location.href='youtube-calculator.html'">
-            💰 YouTube Calculator
-          </button>
-          <button class="tab-button" data-tab="facebook" onclick="window.location.href='facebook-calculator.html'">
-            📘 Facebook Calculator
-          </button>
-          <button class="tab-button" data-tab="instagram" onclick="window.location.href='instagram-calculator.html'">
-            📷 Instagram Calculator
-          </button>
-          <button class="tab-button" data-tab="term-insurance" onclick="window.location.href='term-insurance-calculator.html'">
-            🛡️ Term Insurance Calculator
-          </button>
-          <button class="tab-button active" data-tab="universal-life">
-            🔄 Universal Life Calculator
-          </button>
+          <div class="dropdown-menu" id="dropdownMenu">
+            <a href="index.html" class="dropdown-item">
+              🏠 Mortgage Calculator
+            </a>
+            <a href="youtube-calculator.html" class="dropdown-item">
+              💰 YouTube Calculator
+            </a>
+            <a href="facebook-calculator.html" class="dropdown-item">
+              📘 Facebook Calculator
+            </a>
+            <a href="instagram-calculator.html" class="dropdown-item">
+              📷 Instagram Calculator
+            </a>
+            <a href="term-insurance-calculator.html" class="dropdown-item">
+              🛡️ Term Insurance Calculator
+            </a>
+            <a href="universal-life-calculator.html" class="dropdown-item active">
+              🔄 Universal Life Calculator
+            </a>
+          </div>
         </div>
-      </nav>
-      
-      <h1>Universal Life Insurance Premium Calculator</h1>
+        <div class="header-content">
+          <h1>Universal Life Insurance Premium Calculator</h1>
+        </div>
+      </div>
       <p>Estimate coverage & monthly premium for <strong>USA and Canada</strong>. Calculate your UL insurance needs and compare quotes from top insurers.</p>
       
       <!-- Country Toggle -->
@@ -513,3 +521,32 @@
   <script src="assets/universal-life-calculator.js"></script>
 </body>
 </html>
+
+
+
+<script>
+  // Hamburger menu functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+
+    if (hamburgerBtn && dropdownMenu) {
+      hamburgerBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        hamburgerBtn.classList.toggle('active');
+        dropdownMenu.classList.toggle('show');
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', function() {
+        hamburgerBtn.classList.remove('active');
+        dropdownMenu.classList.remove('show');
+      });
+
+      // Prevent menu from closing when clicking inside
+      dropdownMenu.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+    }
+  });
+</script>

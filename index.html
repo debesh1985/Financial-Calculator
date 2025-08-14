@@ -344,30 +344,35 @@
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <nav class="tab-navigation" style="margin-bottom: 24px;">
-        <div class="tabs">
-          <button class="tab-button active" data-tab="mortgage">
+    <header class="header-with-menu">
+      <div class="hamburger-menu">
+        <button class="hamburger-button" id="hamburgerBtn">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div class="dropdown-menu" id="dropdownMenu">
+          <a href="index.html" class="dropdown-item active">
             🏠 Mortgage Calculator
-          </button>
-          <button class="tab-button" data-tab="youtube" onclick="window.location.href='youtube-calculator.html'">
+          </a>
+          <a href="youtube-calculator.html" class="dropdown-item">
             💰 YouTube Calculator
-          </button>
-          <button class="tab-button" data-tab="facebook" onclick="window.location.href='facebook-calculator.html'">
+          </a>
+          <a href="facebook-calculator.html" class="dropdown-item">
             📘 Facebook Calculator
-          </button>
-          <button class="tab-button" data-tab="instagram" onclick="window.location.href='instagram-calculator.html'">
+          </a>
+          <a href="instagram-calculator.html" class="dropdown-item">
             📷 Instagram Calculator
-          </button>
-          <button class="tab-button" data-tab="term-insurance" onclick="window.location.href='term-insurance-calculator.html'">
+          </a>
+          <a href="term-insurance-calculator.html" class="dropdown-item">
             🛡️ Term Insurance Calculator
-          </button>
-          <button class="tab-button" data-tab="universal-life" onclick="window.location.href='universal-life-calculator.html'">
+          </a>
+          <a href="universal-life-calculator.html" class="dropdown-item">
             🔄 Universal Life Calculator
-          </button>
+          </a>
         </div>
-      </nav>
-      <div style="clear: both; width: 100%;">
+      </div>
+      <div class="header-content">
         <h1>🏠 #1 Free Mortgage Calculator 2024 — Canada & USA</h1>
         <p class="header-description" style="margin: 8px 0 16px 0; font-size: 16px; color: #555; line-height: 1.4;">
           <strong>Calculate your monthly mortgage payments in seconds!</strong> Our trusted mortgage calculator works for both Canadian and American home loans. Includes CMHC, FHA, and PMI insurance calculations. Used by <strong>500,000+ homebuyers</strong> annually.
@@ -378,6 +383,31 @@
         </div>
       </div>
     </header>
+
+    <script>
+      // Hamburger menu functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        hamburgerBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          hamburgerBtn.classList.toggle('active');
+          dropdownMenu.classList.toggle('show');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function() {
+          hamburgerBtn.classList.remove('active');
+          dropdownMenu.classList.remove('show');
+        });
+
+        // Prevent menu from closing when clicking inside
+        dropdownMenu.addEventListener('click', function(e) {
+          e.stopPropagation();
+        });
+      });
+    </script>
 
     <div class="row">
       <section class="card" aria-labelledby="inputsTitle">
