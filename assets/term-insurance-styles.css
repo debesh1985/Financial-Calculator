@@ -178,32 +178,32 @@ header p {
 }
 
 .result-item {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
   padding: var(--space-md);
   border-radius: 8px;
   text-align: center;
   backdrop-filter: blur(10px);
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .result-item.primary {
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.25);
+  border: 2px solid rgba(255, 255, 255, 0.4);
 }
 
 .result-label {
   font-size: 0.9rem;
   opacity: 0.9;
   margin-bottom: 8px;
-  color: white;
+  color: white !important;
 }
 
 .result-value {
   font-size: 2rem;
   font-weight: 800;
   margin-bottom: 4px;
-  color: white;
+  color: white !important;
 }
 
 @media (max-width: 768px) {
@@ -214,8 +214,8 @@ header p {
 
 .result-note {
   font-size: 0.8rem;
-  opacity: 0.8;
-  color: white;
+  opacity: 0.9;
+  color: white !important;
 }
 
 /* Premium Breakdown */
@@ -229,7 +229,7 @@ header p {
 .premium-breakdown h4 {
   font-size: 1.2rem;
   margin-bottom: var(--space-md);
-  color: white;
+  color: white !important;
 }
 
 .breakdown-item {
@@ -238,6 +238,7 @@ header p {
   align-items: center;
   padding: 8px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: white !important;
 }
 
 .breakdown-item:last-child {

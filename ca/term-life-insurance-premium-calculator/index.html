@@ -236,6 +236,30 @@
       box-shadow: var(--shadow);
     }
 
+    /* Readability improvements for results section */
+    .results-section .result-item {
+      color: var(--text); /* Ensure text is readable */
+    }
+
+    .results-section .result-label,
+    .results-section .result-value,
+    .results-section .result-note,
+    .premium-breakdown .breakdown-item span {
+      color: var(--text); /* Ensure all text elements are readable */
+    }
+
+    /* If specific elements were indeed white on white, target them specifically */
+    /* For example, if result-label was white, uncomment and adjust: */
+    /*
+    .results-section .result-label {
+      color: var(--text); 
+    }
+    */
+
+    .premium-breakdown {
+      color: var(--text); /* Ensure premium breakdown text is readable */
+    }
+
     @media (max-width: 768px) {
       .container { padding: var(--space-sm); }
       .card { padding: var(--space-md); }

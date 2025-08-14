@@ -146,6 +146,17 @@
       --space-xl: 32px;
     }
 
+    .results-section .result-item:not(.primary) {
+        color: var(--text); /* Ensure text is visible on white background */
+    }
+
+    .results-section .result-label,
+    .results-section .result-value,
+    .premium-breakdown span,
+    .premium-breakdown strong {
+        color: var(--text); /* Ensure text is visible on white background */
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;

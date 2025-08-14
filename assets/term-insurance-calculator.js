@@ -37,12 +37,7 @@ const OCCUPATION_MULTIPLIERS = {
 
 const COUNTRY_MULTIPLIERS = {
   usa: 1.0,
-  canada: 0.85,
-  uk: 0.90,
-  australia: 0.88,
-  germany: 0.82,
-  france: 0.86,
-  other: 1.1
+  canada: 0.85
 };
 
 // Term length multipliers (longer terms cost more due to level premiums)
