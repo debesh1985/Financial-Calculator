@@ -156,28 +156,54 @@ class UniversalLifeCalculator {
       });
     });
 
-    // Age slider
-    const ageSlider = document.getElementById('ageSlider');
-    const ageValue = document.getElementById('ageValue');
-    ageSlider.addEventListener('input', () => {
-      ageValue.textContent = ageSlider.value;
-      this.calculate();
-    });
+    // Age slider - with better event handling
+    setTimeout(() => {
+      const ageSlider = document.getElementById('ageSlider');
+      const ageValue = document.getElementById('ageValue');
+      if (ageSlider && ageValue) {
+        ageSlider.addEventListener('input', () => {
+          ageValue.textContent = ageSlider.value;
+          console.log(`Age slider changed: ${ageSlider.value}`);
+          this.calculate();
+        });
+        ageSlider.addEventListener('change', () => {
+          ageValue.textContent = ageSlider.value;
+          console.log(`Age slider change event: ${ageSlider.value}`);
+          this.calculate();
+        });
+      }
 
-    // Income replacement years slider
-    const incomeYearsSlider = document.getElementById('incomeReplacementYears');
-    const incomeYearsValue = document.getElementById('incomeYearsValue');
-    incomeYearsSlider.addEventListener('input', () => {
-      incomeYearsValue.textContent = incomeYearsSlider.value;
-      this.calculate();
-    });
+      // Income replacement years slider
+      const incomeYearsSlider = document.getElementById('incomeReplacementYears');
+      const incomeYearsValue = document.getElementById('incomeYearsValue');
+      if (incomeYearsSlider && incomeYearsValue) {
+        incomeYearsSlider.addEventListener('input', () => {
+          incomeYearsValue.textContent = incomeYearsSlider.value;
+          console.log(`Income years slider changed: ${incomeYearsSlider.value}`);
+          this.calculate();
+        });
+        incomeYearsSlider.addEventListener('change', () => {
+          incomeYearsValue.textContent = incomeYearsSlider.value;
+          console.log(`Income years slider change event: ${incomeYearsSlider.value}`);
+          this.calculate();
+        });
+      }
 
-    // Date of birth
-    document.getElementById('dobInput').addEventListener('change', () => {
-      this.calculate();
-    });
+      // Date of birth
+      const dobInput = document.getElementById('dobInput');
+      if (dobInput) {
+        dobInput.addEventListener('change', () => {
+          console.log(`DOB changed: ${dobInput.value}`);
+          this.calculate();
+        });
+        dobInput.addEventListener('input', () => {
+          console.log(`DOB input: ${dobInput.value}`);
+          this.calculate();
+        });
+      }
+    }, 100);
 
-    // All other inputs
+    // All other inputs - use setTimeout to ensure DOM is ready
     const inputs = [
       'gender', 'coverageDuration', 'faceAmount', 'smoking', 'alcohol', 'jobCategory',
       'monthlyIncome', 'mortgage', 'autoLoan', 'personalLoan', 'creditCard', 
@@ -185,37 +211,64 @@ class UniversalLifeCalculator {
       'premiumLoad', 'monthlyPolicyFee', 'riderCharges'
     ];
     
-    inputs.forEach(id => {
-      const element = document.getElementById(id);
-      if (element) {
-        element.addEventListener('input', () => {
-          console.log(`Input changed: ${id} = ${element.value}`);
-          this.calculate();
-        });
-        element.addEventListener('change', () => {
-          console.log(`Change event: ${id} = ${element.value}`);
-          this.calculate();
-        });
-        element.addEventListener('keyup', () => {
-          this.calculate();
-        });
-      } else {
-        console.warn(`Element not found: ${id}`);
-      }
-    });
+    // Add a small delay to ensure all DOM elements are ready
+    setTimeout(() => {
+      inputs.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          // Remove any existing listeners first
+          element.removeEventListener('input', this.calculate);
+          element.removeEventListener('change', this.calculate);
+          element.removeEventListener('keyup', this.calculate);
+          
+          // Add new listeners
+          element.addEventListener('input', () => {
+            console.log(`Input changed: ${id} = ${element.value}`);
+            this.calculate();
+          });
+          element.addEventListener('change', () => {
+            console.log(`Change event: ${id} = ${element.value}`);
+            this.calculate();
+          });
+          element.addEventListener('keyup', () => {
+            console.log(`Keyup event: ${id} = ${element.value}`);
+            this.calculate();
+          });
+          
+          // Also add blur event for better mobile support
+          element.addEventListener('blur', () => {
+            console.log(`Blur event: ${id} = ${element.value}`);
+            this.calculate();
+          });
+        } else {
+          console.warn(`Element not found: ${id}`);
+        }
+      });
+    }, 100);
 
-    // Medical condition checkboxes
-    const medicalCheckboxes = [
-      'hypertension', 'diabetes2', 'asthma', 'high_chol', 
-      'depression', 'heart_disease', 'cancer_history'
-    ];
-    
-    medicalCheckboxes.forEach(id => {
-      const element = document.getElementById(id);
-      if (element) {
-        element.addEventListener('change', () => this.calculate());
-      }
-    });
+    // Medical condition checkboxes - with better timing
+    setTimeout(() => {
+      const medicalCheckboxes = [
+        'hypertension', 'diabetes2', 'asthma', 'high_chol', 
+        'depression', 'heart_disease', 'cancer_history'
+      ];
+      
+      medicalCheckboxes.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.addEventListener('change', () => {
+            console.log(`Medical checkbox changed: ${id} = ${element.checked}`);
+            this.calculate();
+          });
+          element.addEventListener('click', () => {
+            console.log(`Medical checkbox clicked: ${id} = ${element.checked}`);
+            setTimeout(() => this.calculate(), 10);
+          });
+        } else {
+          console.warn(`Medical checkbox not found: ${id}`);
+        }
+      });
+    }, 100);
 
     // Control buttons
     document.getElementById('resetBtn').addEventListener('click', () => this.reset());
