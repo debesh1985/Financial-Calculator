@@ -91,7 +91,8 @@ class TermInsuranceCalculator {
 
   getInputValues() {
     const ageInput = document.getElementById('age');
-    const age = ageInput ? parseInt(ageInput.value) : NaN;
+    const ageValue = ageInput ? ageInput.value.toString().trim() : '';
+    const age = ageValue ? parseInt(ageValue, 10) : NaN;
     
     const genderInput = document.getElementById('gender');
     const gender = genderInput ? genderInput.value : 'male';
@@ -102,13 +103,15 @@ class TermInsuranceCalculator {
     let coverage;
     if (coverageValue === 'custom') {
       const customInput = document.getElementById('customCoverage');
-      coverage = customInput ? parseInt(customInput.value) : NaN;
+      const customValue = customInput ? customInput.value.toString().trim() : '';
+      coverage = customValue ? parseInt(customValue, 10) : NaN;
     } else {
-      coverage = parseInt(coverageValue);
+      coverage = parseInt(coverageValue, 10);
     }
     
     const termInput = document.getElementById('term');
-    const term = termInput ? parseInt(termInput.value) : NaN;
+    const termValue = termInput ? termInput.value.toString().trim() : '';
+    const term = termValue ? parseInt(termValue, 10) : NaN;
     
     const healthInput = document.getElementById('health');
     const health = healthInput ? healthInput.value : 'excellent';
@@ -122,6 +125,8 @@ class TermInsuranceCalculator {
     const countryInput = document.getElementById('country');
     const country = countryInput ? countryInput.value : 'usa';
 
+    console.log('Debug - Age input:', ageValue, 'Parsed age:', age, 'Is valid:', !isNaN(age) && age >= 18 && age <= 75);
+    
     return { age, gender, coverage, term, health, smoking, occupation, country };
   }
 
@@ -143,20 +148,43 @@ class TermInsuranceCalculator {
   }
 
   calculatePremium() {
+    // Clear any previous error display
+    const resultsSection = document.getElementById('resultsSection');
+    if (resultsSection) {
+      resultsSection.style.display = 'none';
+    }
+    
     const { age, gender, coverage, term, health, smoking, occupation, country } = this.getInputValues();
     
-    // Validate inputs
-    if (isNaN(age) || age < 18 || age > 75) {
-      this.showError('Age must be between 18 and 75 years');
+    console.log('Debug - Validation inputs:', { age, gender, coverage, term });
+    
+    // Validate inputs with more detailed error messages
+    if (isNaN(age)) {
+      this.showError('Please enter a valid age');
       return;
     }
     
-    if (isNaN(coverage) || coverage < 50000 || coverage > 10000000) {
+    if (age < 18 || age > 75) {
+      this.showError(`Age must be between 18 and 75 years (you entered: ${age})`);
+      return;
+    }
+    
+    if (isNaN(coverage)) {
+      this.showError('Please enter a valid coverage amount');
+      return;
+    }
+    
+    if (coverage < 50000 || coverage > 10000000) {
       this.showError('Coverage amount must be between $50,000 and $10,000,000');
       return;
     }
 
-    if (isNaN(term) || term < 10 || term > 30) {
+    if (isNaN(term)) {
+      this.showError('Please select a valid policy term');
+      return;
+    }
+    
+    if (term < 10 || term > 30) {
       this.showError('Policy term must be between 10 and 30 years');
       return;
     }
