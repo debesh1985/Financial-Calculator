@@ -1,4 +1,3 @@
-
 :root{
   --bg:#ffffff;
   --fg:#0f172a; /* slate-900 */
@@ -383,7 +382,7 @@ h3:not(:first-child) {
     padding: 10px 12px;
     font-size: 13px;
   }
-  
+
   /* Improve button touch handling on mobile */
   button, .btn {
     -webkit-tap-highlight-color: rgba(0,0,0,0);
@@ -393,7 +392,7 @@ h3:not(:first-child) {
     min-height: 44px; /* Apple's recommended touch target */
     cursor: pointer;
   }
-  
+
   /* Specific styles for fetch button */
   #fetchChannelBtn {
     width: 100%;
@@ -405,12 +404,12 @@ h3:not(:first-child) {
     color: white;
     font-weight: 500;
   }
-  
+
   #fetchChannelBtn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
   }
-  
+
   #fetchChannelBtn:active {
     transform: scale(0.98);
   }
@@ -546,14 +545,20 @@ h3:not(:first-child) {
   margin: var(--space) 0;
   min-height: 20px;
 }
-.status-line.loading {
-  color: var(--accent);
-}
-.status-line.error {
-  color: #dc2626;
-}
 .status-line.success {
-  color: var(--ok);
+  color: #28a745;
+}
+
+.status-line.error {
+  color: #dc3545;
+}
+
+.status-line.loading {
+  color: #007bff;
+}
+
+.status-line.warning {
+  color: #ffc107;
 }
 
 .channel-summary {

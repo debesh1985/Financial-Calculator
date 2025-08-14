@@ -476,8 +476,13 @@ const fetchVideos = async (playlistId, maxVideos, publishedAfter, publishedBefor
   const videos = [];
   let nextPageToken = '';
   let processed = 0;
+  let totalFetched = 0;
+  let videosOutsideRange = 0;
   
-  while (videos.length < maxVideos) {
+  // Fetch enough videos to ensure we get videos within the date range
+  const maxFetchAttempts = Math.max(maxVideos * 3, 1000); // Fetch up to 3x or 1000 videos to find videos in range
+  
+  while (videos.length < maxVideos && totalFetched < maxFetchAttempts) {
     const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails,snippet&playlistId=${playlistId}&maxResults=50${nextPageToken ? `&pageToken=${nextPageToken}` : ''}&key=${YT_API_KEY}`;
     
     const response = await fetch(url);
@@ -494,11 +499,22 @@ const fetchVideos = async (playlistId, maxVideos, publishedAfter, publishedBefor
     
     if (!data.items) break;
     
-    // Filter by date
-    const filteredItems = data.items.filter(item => {
+    totalFetched += data.items.length;
+    
+    // Filter by date and check if videos are getting too old
+    const filteredItems = [];
+    for (const item of data.items) {
       const publishedAt = new Date(item.snippet.publishedAt);
-      return publishedAt >= publishedAfter && publishedAt <= publishedBefore;
-    });
+      if (publishedAt >= publishedAfter && publishedAt <= publishedBefore) {
+        filteredItems.push(item);
+      } else if (publishedAt < publishedAfter) {
+        videosOutsideRange++;
+        // If we're finding too many old videos, we can stop
+        if (videosOutsideRange > 100 && filteredItems.length === 0) {
+          break;
+        }
+      }
+    }
     
     if (filteredItems.length > 0) {
       // Get video details in batches of 50
@@ -519,9 +535,15 @@ const fetchVideos = async (playlistId, maxVideos, publishedAfter, publishedBefor
         }
         
         if (videoData.items) {
-          videos.push(...videoData.items);
-          processed += videoData.items.length;
-          onProgress(`Fetching videos ${Math.min(processed, maxVideos)}/${maxVideos}...`);
+          // Filter video data by date as well (double check)
+          const validVideos = videoData.items.filter(video => {
+            const publishedAt = new Date(video.snippet.publishedAt);
+            return publishedAt >= publishedAfter && publishedAt <= publishedBefore;
+          });
+          
+          videos.push(...validVideos);
+          processed += validVideos.length;
+          onProgress(`Fetching videos ${Math.min(processed, maxVideos)}/${maxVideos} (scanned ${totalFetched} total)...`);
           
           if (videos.length >= maxVideos) break;
         }
@@ -600,24 +622,45 @@ const analyzeChannel = async () => {
       return;
     }
     
-    // Analyze videos
+    // Analyze videos and calculate proper metrics
     let longFormViews = 0;
     let shortsViews = 0;
     let longFormCount = 0;
     let shortsCount = 0;
+    let totalVideoDays = 0;
+    
+    // Calculate actual date range in days
+    const actualDays = Math.max(1, Math.ceil((publishedBefore - publishedAfter) / (1000 * 60 * 60 * 24)));
     
     videos.forEach(video => {
       const duration = parseDuration(video.contentDetails.duration);
       const views = parseInt(video.statistics.viewCount || '0');
+      const publishedAt = new Date(video.snippet.publishedAt);
+      
+      // Calculate how many days this video has been live within our range
+      const daysSincePublished = Math.min(
+        actualDays,
+        Math.max(1, Math.ceil((publishedBefore - publishedAt) / (1000 * 60 * 60 * 24)))
+      );
+      
+      // Normalize views to the actual time period (avoid inflating recent video views)
+      const normalizedViews = views * Math.min(1, daysSincePublished / Math.max(1, actualDays));
       
       if (duration <= shortsRule) {
-        shortsViews += views;
+        shortsViews += normalizedViews;
         shortsCount++;
       } else {
-        longFormViews += views;
+        longFormViews += normalizedViews;
         longFormCount++;
       }
+      
+      totalVideoDays += daysSincePublished;
     });
+    
+    // If we have very few videos in the date range, provide a warning
+    if (videos.length < 5 && actualDays > 30) {
+      setStatus(`Warning: Only ${videos.length} videos found in ${actualDays} day range. Results may be less accurate.`, 'warning');
+    }
     
     // Calculate revenue using current calculator settings
     const { lfAdsUSD, shortsUSD, premiumUSD, total, overallRPM } = calculateChannelRevenue(longFormViews, shortsViews);
@@ -651,26 +694,52 @@ const analyzeChannel = async () => {
 };
 
 const calculateChannelRevenue = (longFormViews, shortsViews) => {
-  // Use current calculator settings for revenue calculation
+  // Use current calculator settings but make them more conservative for channel estimation
   const oldLF = inputs.viewsLF();
   const oldSH = inputs.viewsShorts();
+  const oldFormat = inputs.format();
+  
+  // Store original conservative settings
+  const originalCPM = inputs.avgCPM();
+  const originalMonetizable = inputs.monetizableRate();
+  const originalFillRate = inputs.adFillRate();
+  const originalShortsRPM = inputs.shortsRPM();
+  
+  // Apply more conservative estimates for channel analysis
+  $('#avgCPM').value = Math.min(originalCPM, 4.0); // Cap at $4 CPM for conservative estimate
+  $('#monetizableRate').value = Math.min(originalMonetizable, 75); // Reduce to 75%
+  $('#adFillRate').value = Math.min(originalFillRate, 85); // Reduce to 85%
+  $('#shortsRPM').value = Math.min(originalShortsRPM, 0.60); // Conservative Shorts RPM
   
   // Temporarily override views
   $('#viewsLF').value = longFormViews;
   $('#viewsShorts').value = shortsViews;
   
   // Calculate with both formats
-  const oldFormat = inputs.format();
   $('input[value="both"]').checked = true;
   
   const result = calc();
+  
+  // Apply additional conservative factor (reduce by 20% for channel estimates)
+  const conservativeFactor = 0.8;
+  const conservativeResult = {
+    lfAdsUSD: result.lfAdsUSD * conservativeFactor,
+    shortsUSD: result.shortsUSD * conservativeFactor,
+    premiumUSD: result.premiumUSD * conservativeFactor,
+    total: result.total * conservativeFactor,
+    overallRPM: result.overallRPM * conservativeFactor
+  };
   
   // Restore original values
   $('#viewsLF').value = oldLF;
   $('#viewsShorts').value = oldSH;
   $(`input[value="${oldFormat}"]`).checked = true;
+  $('#avgCPM').value = originalCPM;
+  $('#monetizableRate').value = originalMonetizable;
+  $('#adFillRate').value = originalFillRate;
+  $('#shortsRPM').value = originalShortsRPM;
   
-  return result;
+  return conservativeResult;
 };
 
 const displayChannelResults = (channelData, analysis) => {
