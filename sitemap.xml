@@ -3,7 +3,7 @@
   <url>
     <loc>/</loc>
     <lastmod>2024-12-19</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <image:image>
       <image:loc>/assets/mortgage-calculator-preview.jpg</image:loc>
@@ -14,14 +14,14 @@
   <url>
     <loc>/index.html</loc>
     <lastmod>2024-12-19</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>/youtube-calculator.html</loc>
     <lastmod>2024-12-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
+    <changefreq>daily</changefreq>
+    <priority>0.98</priority>
     <image:image>
       <image:loc>/assets/youtube-calculator-preview.jpg</image:loc>
       <image:title>YouTube Monetization Calculator 2024 - Free Creator Earnings Tool</image:title>
@@ -31,8 +31,8 @@
   <url>
     <loc>/facebook-calculator.html</loc>
     <lastmod>2024-12-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <changefreq>daily</changefreq>
+    <priority>0.96</priority>
     <image:image>
       <image:loc>/assets/facebook-calculator-preview.jpg</image:loc>
       <image:title>Facebook Monetization Calculator 2024 - Creator Earnings Tool</image:title>
@@ -42,8 +42,13 @@
   <url>
     <loc>/instagram-calculator.html</loc>
     <lastmod>2024-12-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <changefreq>daily</changefreq>
+    <priority>0.94</priority>
+    <image:image>
+      <image:loc>/assets/instagram-calculator-preview.jpg</image:loc>
+      <image:title>Instagram Monetization Calculator 2024 - Creator Earnings Tool</image:title>
+      <image:caption>Calculate Instagram creator earnings from Gifts, Subscriptions, and Reels performance payouts</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>/gst-hst.html</loc>
