@@ -4,17 +4,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>YouTube Monetization Calculator 2024 - Estimate Creator Earnings</title>
-  <meta name="description" content="Calculate your YouTube earnings potential with our free monetization calculator. Estimate revenue from views, subscribers, CPM rates, and sponsorships. Works globally!" />
+  <title>YouTube Monetization Calculator — Estimate Creator Earnings (USD)</title>
+  <meta name="description" content="Mobile-friendly YouTube Monetization Calculator to estimate earnings for organic, policy-safe content. Supports Long-form, Shorts, and Premium revenue in USD." />
   <meta name="keywords" content="youtube monetization calculator, youtube earnings calculator, youtube revenue calculator, creator earnings, youtube money calculator, CPM calculator, RPM calculator" />
-  
   <meta name="author" content="FunDu Web Co." />
   <meta name="robots" content="index, follow" />
+  <meta name="color-scheme" content="light" />
   
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="YouTube Monetization Calculator - Estimate Creator Earnings" />
-  <meta property="og:description" content="Free YouTube earnings calculator. Estimate your revenue from views, subscribers, and sponsorships. Used by creators worldwide!" />
+  <meta property="og:title" content="YouTube Monetization Calculator — Estimate Creator Earnings (USD)" />
+  <meta property="og:description" content="Mobile-friendly YouTube Monetization Calculator to estimate earnings for organic, policy-safe content. Supports Long-form, Shorts, and Premium revenue in USD." />
   
   <!-- Canonical URL -->
   <link rel="canonical" href="" />
@@ -22,7 +22,7 @@
   <link rel="stylesheet" href="assets/youtube-styles.css" />
 </head>
 <body>
-  <div class="wrap">
+  <div class="container">
     <header>
       <nav class="tab-navigation" style="margin-bottom: 16px;">
         <div class="tabs">
@@ -34,195 +34,193 @@
           </button>
         </div>
       </nav>
-      <h1>💰 YouTube Monetization Calculator 2024</h1>
-      <p class="header-description">
-        <strong>Estimate your YouTube earnings potential!</strong> Calculate revenue from views, subscribers, CPM rates, and sponsorships. Used by <strong>50,000+ creators</strong> worldwide.
-      </p>
+      <h1>YouTube Monetization Calculator</h1>
+      <p>Estimate earnings in <strong>USD</strong> for <strong>organic, policy-safe</strong> videos. Toggle format, add your inputs, and see results instantly.</p>
     </header>
 
-    <div class="row">
-      <section class="card">
-        <h2>Channel Metrics</h2>
+    <!-- Format Toggle -->
+    <div class="toolbar" role="tablist" aria-label="Content format">
+      <div class="toggle" id="formatToggle">
+        <input type="radio" name="format" id="fmt-long" value="long" checked>
+        <label for="fmt-long" role="tab" aria-selected="true">Long‑form</label>
+        <input type="radio" name="format" id="fmt-shorts" value="shorts">
+        <label for="fmt-shorts" role="tab" aria-selected="false">Shorts</label>
+        <input type="radio" name="format" id="fmt-both" value="both">
+        <label for="fmt-both" role="tab" aria-selected="false">Both</label>
+      </div>
+      <button class="btn" id="copyLinkBtn" title="Copy current inputs as a shareable link">Copy inputs as link</button>
+      <button class="btn" id="resetBtn" title="Reset all inputs to defaults">Reset to defaults</button>
+    </div>
 
-        <div class="section">
-          <div class="grid two">
-            <div>
-              <div class="label">Monthly Views</div>
-              <input id="monthlyViews" type="number" min="0" step="1" value="100000" placeholder="e.g., 100000" />
-            </div>
-            <div>
-              <div class="label">Subscribers</div>
-              <input id="subscribers" type="number" min="0" step="1" value="10000" placeholder="e.g., 10000" />
-            </div>
+    <div class="grid">
+      <!-- LEFT: Inputs -->
+      <section class="card" id="inputs">
+        <h3>1) Channel & Video Monetization Settings</h3>
+        <div class="checkbox"><input type="checkbox" id="mod-watch" checked><label for="mod-watch">Watch Page Ads (Long‑form)</label></div>
+        <div class="checkbox"><input type="checkbox" id="mod-shorts" checked><label for="mod-shorts">Shorts Ads</label></div>
+        <div class="checkbox"><input type="checkbox" id="mod-premium" checked><label for="mod-premium">YouTube Premium revenue</label></div>
+        
+        <div class="lf-only">
+          <div class="subheading">Ad Formats (Long-form)</div>
+          <div class="checkbox"><input type="checkbox" id="preRoll" checked><label for="preRoll">Pre-roll ads</label></div>
+          <div class="checkbox"><input type="checkbox" id="midRoll" checked><label for="midRoll">Mid-roll ads</label></div>
+          <div class="checkbox"><input type="checkbox" id="postRoll"><label for="postRoll">Post-roll ads</label></div>
+          
+          <div class="input-group">
+            <label for="videoLength">Video length (minutes) <span class="info" title="Average length of your videos">ⓘ</span></label>
+            <input type="number" id="videoLength" min="0" step="0.1" value="10">
           </div>
-
-          <div class="grid two">
-            <div>
-              <div class="label">Average Video Length (minutes)</div>
-              <input id="videoLength" type="number" min="0" step="0.1" value="8" placeholder="e.g., 8" />
-            </div>
-            <div>
-              <div class="label">Videos per Month</div>
-              <input id="videosPerMonth" type="number" min="0" step="1" value="8" placeholder="e.g., 8" />
-            </div>
-          </div>
-        </div>
-
-        <div class="section">
-          <h3>Monetization Settings</h3>
-          <div class="grid two">
-            <div>
-              <div class="label">CPM (Cost per 1000 views) - USD</div>
-              <input id="cpm" type="number" min="0" step="0.01" value="3.50" placeholder="e.g., 3.50" />
-              <div class="small">Typical range: $1-$10 depending on niche and audience</div>
-            </div>
-            <div>
-              <div class="label">Ad Revenue Share (%)</div>
-              <input id="adShare" type="number" min="0" max="100" step="1" value="55" placeholder="55" />
-              <div class="small">YouTube gives creators 55% of ad revenue</div>
-            </div>
-          </div>
-
-          <div class="grid two">
-            <div>
-              <div class="label">Channel Memberships (monthly)</div>
-              <input id="memberships" type="number" min="0" step="1" value="0" placeholder="e.g., 50" />
-            </div>
-            <div>
-              <div class="label">Avg. Membership Price (USD)</div>
-              <input id="membershipPrice" type="number" min="0" step="0.01" value="4.99" placeholder="4.99" />
-            </div>
-          </div>
-
-          <div class="grid two">
-            <div>
-              <div class="label">Super Chat/Thanks (monthly USD)</div>
-              <input id="superChat" type="number" min="0" step="0.01" value="0" placeholder="e.g., 200" />
-            </div>
-            <div>
-              <div class="label">Sponsorship Deals (monthly USD)</div>
-              <input id="sponsorships" type="number" min="0" step="0.01" value="0" placeholder="e.g., 1000" />
-            </div>
+          
+          <div class="input-group">
+            <label for="midrolls">Mid-rolls count <span class="info" title="Number of mid-roll ad breaks (enabled for videos 8+ minutes)">ⓘ</span></label>
+            <input type="number" id="midrolls" min="0" step="1" value="2">
           </div>
         </div>
 
-        <div class="section">
-          <h3>Quick Presets</h3>
-          <button class="btn" id="presetSmall">Small Creator (1K-10K)</button>
-          <button class="btn" id="presetMedium">Medium Creator (10K-100K)</button>
-          <button class="btn" id="presetLarge">Large Creator (100K-1M)</button>
+        <h3>2) Viewer & Context</h3>
+        <div class="input-group lf-only">
+          <label for="viewsLF">Total views (Long-form) <span class="info" title="Monthly views on long-form content">ⓘ</span></label>
+          <input type="number" id="viewsLF" min="0" step="1" value="100000">
+        </div>
+        
+        <div class="input-group sh-only">
+          <label for="viewsShorts">Total views (Shorts) <span class="info" title="Monthly views on YouTube Shorts">ⓘ</span></label>
+          <input type="number" id="viewsShorts" min="0" step="1" value="500000">
+        </div>
+        
+        <div class="input-group">
+          <label for="monetizableRate">Monetizable view rate % <span class="info" title="Percentage of views that can show ads">ⓘ</span></label>
+          <div class="slider-group">
+            <input type="range" id="monetizableRate" min="0" max="100" value="85">
+            <input type="number" id="monetizableRateNum" min="0" max="100" value="85" class="slider-num">
+            <span>%</span>
+          </div>
+        </div>
+        
+        <div class="input-group">
+          <label for="adFillRate">Ad fill rate % <span class="info" title="Percentage of ad slots that get filled">ⓘ</span></label>
+          <div class="slider-group">
+            <input type="range" id="adFillRate" min="0" max="100" value="90">
+            <input type="number" id="adFillRateNum" min="0" max="100" value="90" class="slider-num">
+            <span>%</span>
+          </div>
+        </div>
+        
+        <div class="input-group">
+          <label for="premiumViews">YouTube Premium views % <span class="info" title="Percentage of views from Premium subscribers">ⓘ</span></label>
+          <div class="slider-group">
+            <input type="range" id="premiumViews" min="0" max="100" value="5">
+            <input type="number" id="premiumViewsNum" min="0" max="100" value="5" class="slider-num">
+            <span>%</span>
+          </div>
+        </div>
+        
+        <div class="input-group">
+          <label for="premiumRPM">Premium RPM (USD per 1K Premium views) <span class="info" title="Revenue per 1000 Premium views">ⓘ</span></label>
+          <input type="number" id="premiumRPM" min="0" step="0.01" value="3.00">
+        </div>
+
+        <h3>3) Auction & Demand</h3>
+        <div class="input-group lf-only">
+          <label for="avgCPM">Average ad CPM (USD) <span class="info" title="Cost per 1000 ad impressions for long-form">ⓘ</span></label>
+          <input type="number" id="avgCPM" min="0" step="0.01" value="8.00">
+        </div>
+        
+        <div class="input-group">
+          <label for="seasonality">Seasonality/Demand multiplier % <span class="info" title="Seasonal adjustment for ad demand">ⓘ</span></label>
+          <div class="slider-group">
+            <input type="range" id="seasonality" min="50" max="150" value="100">
+            <input type="number" id="seasonalityNum" min="50" max="150" value="100" class="slider-num">
+            <span>%</span>
+          </div>
+        </div>
+        
+        <div class="input-group">
+          <label for="inventoryAvail">Advertiser inventory availability % <span class="info" title="How broadly advertisers can bid on your content">ⓘ</span></label>
+          <div class="slider-group">
+            <input type="range" id="inventoryAvail" min="50" max="100" value="100">
+            <input type="number" id="inventoryAvailNum" min="50" max="100" value="100" class="slider-num">
+            <span>%</span>
+          </div>
+        </div>
+
+        <h3>4) Rights & Revenue Splits</h3>
+        <div class="input-group lf-only">
+          <label for="creatorShareLF">Creator revenue share % (Long-form) <span class="info" title="Your share of long-form ad revenue">ⓘ</span></label>
+          <input type="number" id="creatorShareLF" min="0" max="100" value="55">
+        </div>
+        
+        <div class="input-group sh-only">
+          <label for="creatorShareShorts">Creator revenue share % (Shorts) <span class="info" title="Your share of Shorts ad revenue">ⓘ</span></label>
+          <input type="number" id="creatorShareShorts" min="0" max="100" value="45">
+        </div>
+        
+        <div class="input-group">
+          <label for="additionalSharing">Additional revenue sharing reductions % <span class="info" title="Music/license splits and other deductions">ⓘ</span></label>
+          <div class="slider-group">
+            <input type="range" id="additionalSharing" min="0" max="50" value="0">
+            <input type="number" id="additionalSharingNum" min="0" max="50" value="0" class="slider-num">
+            <span>%</span>
+          </div>
+        </div>
+
+        <h3>5) Format-specific Variables</h3>
+        <div class="lf-only">
+          <div class="checkbox">
+            <input type="checkbox" id="manualImp">
+            <label for="manualImp">Override ad impressions per view (Long-form)</label>
+          </div>
+          <div class="input-group hidden" id="manualImpRow">
+            <label for="adImpressionsManual">Ad impressions per view <span class="info" title="Manual override for impressions per view">ⓘ</span></label>
+            <input type="number" id="adImpressionsManual" min="0" step="0.1" value="2.5">
+          </div>
+          <div class="small-text">Auto: Pre-roll + Mid-rolls + Post-roll (if enabled)</div>
+        </div>
+        
+        <div class="input-group sh-only">
+          <label for="shortsRPM">Estimated Shorts RPM (USD per 1K views) <span class="info" title="Revenue per 1000 Shorts views">ⓘ</span></label>
+          <input type="number" id="shortsRPM" min="0" step="0.01" value="0.80">
         </div>
       </section>
 
-      <section class="card">
-        <h2>Estimated Monthly Earnings</h2>
-
-        <div class="stat-grid">
-          <div class="stat">
-            <div class="label">Ad Revenue</div>
-            <div class="hero" id="adRevenue">$0</div>
-            <div class="small">From YouTube ads (55% share)</div>
-          </div>
-
-          <div class="stat">
-            <div class="label">Channel Memberships</div>
-            <div class="hero" id="membershipRevenue">$0</div>
-            <div class="small">Monthly recurring revenue</div>
-          </div>
-
-          <div class="stat">
-            <div class="label">Super Chat & Thanks</div>
-            <div class="hero" id="superChatRevenue">$0</div>
-            <div class="small">Live chat donations</div>
-          </div>
-
-          <div class="stat">
-            <div class="label">Sponsorships</div>
-            <div class="hero" id="sponsorshipRevenue">$0</div>
-            <div class="small">Brand deals & partnerships</div>
-          </div>
-        </div>
-
-        <div class="total-section">
-          <div class="label">Total Monthly Revenue</div>
-          <div class="total" id="totalRevenue">$0</div>
-          <div class="small">Estimated total before taxes and expenses</div>
-        </div>
-
-        <div class="section">
-          <div class="breakdown">
-            <h3>Annual Projections</h3>
-            <div class="breakdown-item">
-              <span>Yearly Revenue:</span>
-              <strong id="yearlyRevenue">$0</strong>
+      <!-- RIGHT: Results -->
+      <section class="card" id="results">
+        <div class="sticky-results">
+          <h3>Estimated Monthly Earnings</h3>
+          <div class="total-earnings" id="estTotal" aria-live="polite">$0</div>
+          <div class="breakdown" aria-live="polite">
+            <div class="breakdown-item lf-only">
+              <span>Long-form Ads:</span>
+              <strong id="estLF">$0 (0%)</strong>
+            </div>
+            <div class="breakdown-item sh-only">
+              <span>Shorts Ads:</span>
+              <strong id="estSH">$0 (0%)</strong>
             </div>
             <div class="breakdown-item">
-              <span>Revenue per Subscriber:</span>
-              <strong id="revenuePerSub">$0</strong>
+              <span>YouTube Premium:</span>
+              <strong id="estPR">$0 (0%)</strong>
             </div>
-            <div class="breakdown-item">
-              <span>Revenue per 1K Views:</span>
-              <strong id="rpm">$0</strong>
+            <div class="breakdown-item total-line">
+              <span>Overall RPM:</span>
+              <strong id="overallRPM">$0</strong>
             </div>
           </div>
-        </div>
-
-        <div class="section">
-          <h3>Growth Insights</h3>
-          <div class="insights" id="insights">
-            <div class="insight-item">
-              <div class="insight-icon">📊</div>
-              <div class="insight-text">Enter your channel data to see personalized insights</div>
-            </div>
+          <div class="disclaimer">
+            <small>This is an approximate estimate for organic, policy-safe content. Actual earnings vary by auction demand, geography, and policies. Check <strong>YouTube Studio</strong> for your actual revenue.</small>
           </div>
         </div>
       </section>
     </div>
 
-    <section class="info-section">
-      <h2>📚 YouTube Monetization Guide</h2>
-      
-      <div class="info-grid">
-        <div class="info-card">
-          <h3>💡 Monetization Requirements</h3>
-          <ul>
-            <li><strong>1,000+ subscribers</strong></li>
-            <li><strong>4,000+ watch hours</strong> in the past 12 months</li>
-            <li><strong>Follow YouTube policies</strong></li>
-            <li><strong>Live in eligible country</strong></li>
-            <li><strong>No active strikes</strong></li>
-          </ul>
-        </div>
-        
-        <div class="info-card">
-          <h3>🎯 Revenue Optimization Tips</h3>
-          <ul>
-            <li><strong>Target high-CPM niches:</strong> Finance, tech, business</li>
-            <li><strong>Optimize for watch time:</strong> Longer videos = more ads</li>
-            <li><strong>Engage your audience:</strong> Comments boost algorithm</li>
-            <li><strong>Consistent uploads:</strong> Build audience loyalty</li>
-            <li><strong>Diversify income:</strong> Don't rely only on ads</li>
-          </ul>
-        </div>
-        
-        <div class="info-card">
-          <h3>💰 CPM by Niche (Average)</h3>
-          <ul>
-            <li><strong>Finance/Investing:</strong> $8-15</li>
-            <li><strong>Technology:</strong> $5-12</li>
-            <li><strong>Business/Marketing:</strong> $4-10</li>
-            <li><strong>Lifestyle/Vlog:</strong> $2-6</li>
-            <li><strong>Gaming:</strong> $1-4</li>
-            <li><strong>Entertainment:</strong> $1-3</li>
-          </ul>
-        </div>
+    <!-- Mobile Sticky Bar -->
+    <div class="mobile-sticky" id="mobileStickyBar">
+      <div class="mobile-total">
+        <span class="label">Estimated:</span>
+        <span class="amount" id="stickyTotal">$0</span>
       </div>
-
-      <div class="disclaimer">
-        <h3>⚠️ Important Disclaimer</h3>
-        <p>This calculator provides estimates based on industry averages. Actual earnings vary significantly based on factors like audience location, content quality, engagement rates, and market conditions. Results are for educational purposes only.</p>
-      </div>
-    </section>
+      <button class="btn" id="resetBtnMobile">Reset</button>
+    </div>
 
     <footer class="footer">
       © FunDu Web Co. | <a href="index.html">Mortgage Calculator</a> | No data collected.
