@@ -150,12 +150,15 @@ header p {
 
 /* Results Section */
 .results-section {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: #f8f9fa;
+  color: #1f2937;
+  border: 2px solid #e5e7eb;
 }
 
 .results-section h3 {
-  color: white;
+  color: #1f2937;
+  text-align: center;
+  margin-bottom: var(--space-lg);
 }
 
 .results-grid {
@@ -178,32 +181,39 @@ header p {
 }
 
 .result-item {
-  background: rgba(255, 255, 255, 0.15);
+  background: #ffffff;
   padding: var(--space-md);
   border-radius: 8px;
   text-align: center;
-  backdrop-filter: blur(10px);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #1f2937;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .result-item.primary {
-  background: rgba(255, 255, 255, 0.25);
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: 2px solid #667eea;
+}
+
+.result-item.primary .result-label,
+.result-item.primary .result-value,
+.result-item.primary .result-note {
+  color: white !important;
 }
 
 .result-label {
   font-size: 0.9rem;
-  opacity: 0.9;
+  opacity: 0.8;
   margin-bottom: 8px;
-  color: white !important;
+  color: #6b7280 !important;
 }
 
 .result-value {
   font-size: 2rem;
   font-weight: 800;
   margin-bottom: 4px;
-  color: white !important;
+  color: #1f2937 !important;
 }
 
 @media (max-width: 768px) {
@@ -214,22 +224,23 @@ header p {
 
 .result-note {
   font-size: 0.8rem;
-  opacity: 0.9;
-  color: white !important;
+  opacity: 0.8;
+  color: #6b7280 !important;
 }
 
 /* Premium Breakdown */
 .premium-breakdown {
-  background: rgba(255, 255, 255, 0.1);
+  background: #ffffff;
   padding: var(--space-md);
   border-radius: 8px;
-  backdrop-filter: blur(10px);
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .premium-breakdown h4 {
   font-size: 1.2rem;
   margin-bottom: var(--space-md);
-  color: white !important;
+  color: #1f2937 !important;
 }
 
 .breakdown-item {
@@ -237,8 +248,8 @@ header p {
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  color: white !important;
+  border-bottom: 1px solid #e5e7eb;
+  color: #1f2937 !important;
 }
 
 .breakdown-item:last-child {
@@ -248,8 +259,9 @@ header p {
 .breakdown-item.total {
   margin-top: var(--space-sm);
   padding-top: var(--space-sm);
-  border-top: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid #1f2937;
   font-size: 1.1rem;
+  font-weight: 600;
 }
 
 /* SEO Content Styles */
