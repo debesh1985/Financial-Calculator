@@ -28,6 +28,11 @@ const inputs = {
   // Reels
   reelsPlays: () => parseFloat($('#reelsPlays').value) || 0,
   reelsRPM: () => parseFloat($('#reelsRPM').value) || 0,
+  qualifiedPlayRate: () => parseFloat($('#qualifiedPlayRate').value) || 0,
+  reelsCreatorShare: () => {
+    const val = parseFloat($('#reelsCreatorShare').value);
+    return isNaN(val) ? 45 : val;
+  },
 };
 
 // ===== Eligibility Check =====
@@ -76,7 +81,8 @@ const calculateSubscriptions = () => {
 
 // Reels_Revenue = Plays × (Effective_RPM / 1000)
 const calculateReels = () => {
-  return inputs.reelsPlays() * (inputs.reelsRPM() / 1000);
+  const qualifiedPlays = inputs.reelsPlays() * inputs.qualifiedPlayRate() / 100;
+  return qualifiedPlays * (inputs.reelsRPM() / 1000) * (inputs.reelsCreatorShare() / 100);
 };
 
 // ===== Main Calculation Function =====
@@ -143,6 +149,8 @@ const getURLState = () => {
     platformFee: params.get('platformFee') || '0',
     reelsPlays: params.get('reelsPlays') || '1000000',
     reelsRPM: params.get('reelsRPM') || '0.90',
+    qualifiedPlayRate: params.get('qualifiedPlayRate') || '100',
+    reelsCreatorShare: params.get('reelsCreatorShare') || '45',
     eligibility1: params.get('eligibility1') !== 'false',
     eligibility2: params.get('eligibility2') !== 'false',
     eligibility3: params.get('eligibility3') !== 'false',
@@ -163,6 +171,8 @@ const setURLState = () => {
   params.set('platformFee', $('#platformFee').value);
   params.set('reelsPlays', $('#reelsPlays').value);
   params.set('reelsRPM', $('#reelsRPM').value);
+  params.set('qualifiedPlayRate', $('#qualifiedPlayRate').value);
+  params.set('reelsCreatorShare', $('#reelsCreatorShare').value);
   params.set('eligibility1', $('#eligibility1').checked);
   params.set('eligibility2', $('#eligibility2').checked);
   params.set('eligibility3', $('#eligibility3').checked);
@@ -190,6 +200,8 @@ const loadFromURL = () => {
   $('#platformFee').value = state.platformFee;
   $('#reelsPlays').value = state.reelsPlays;
   $('#reelsRPM').value = state.reelsRPM;
+  $('#qualifiedPlayRate').value = state.qualifiedPlayRate;
+  $('#reelsCreatorShare').value = state.reelsCreatorShare;
   
   // Set eligibility checkboxes
   $('#eligibility1').checked = state.eligibility1;
@@ -229,6 +241,8 @@ const resetToDefaults = () => {
   $('#platformFee').value = '0';
   $('#reelsPlays').value = '1000000';
   $('#reelsRPM').value = '0.90';
+  $('#qualifiedPlayRate').value = '100';
+  $('#reelsCreatorShare').value = '45';
   
   syncSliders();
   setURLState();

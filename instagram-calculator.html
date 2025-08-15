@@ -423,12 +423,20 @@
         <div class="scenario-section" id="reelsSection">
           <h3>📹 Reels Performance Payouts</h3>
           <div class="input-group">
-            <label for="reelsPlays">Qualified Reels plays (monthly) <span class="info" title="Number of qualified plays on your Reels">ⓘ</span></label>
+            <label for="reelsPlays">Reels plays (monthly) <span class="info" title="Total number of plays on your Reels">ⓘ</span></label>
             <input type="number" id="reelsPlays" min="0" step="1" value="1000000">
+          </div>
+          <div class="input-group">
+            <label for="qualifiedPlayRate">Qualified play rate (%) <span class="info" title="Percentage of plays eligible for payouts">ⓘ</span></label>
+            <input type="number" id="qualifiedPlayRate" min="0" max="100" step="1" value="100">
           </div>
           <div class="input-group">
             <label for="reelsRPM">Effective RPM (USD per 1K plays) <span class="info" title="Revenue per 1000 Reels plays">ⓘ</span></label>
             <input type="number" id="reelsRPM" min="0" step="0.01" value="0.90">
+          </div>
+          <div class="input-group">
+            <label for="reelsCreatorShare">Creator revenue share (%) <span class="info" title="Percentage of revenue you receive">ⓘ</span></label>
+            <input type="number" id="reelsCreatorShare" min="0" max="100" step="1" value="45">
           </div>
         </div>
       </section>
