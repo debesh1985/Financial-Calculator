@@ -34,7 +34,9 @@ const inputs = {
   // Reels
   reelsPlays: () => Math.max(0, Number($('#reelsPlays').value||0)),
   reelsRPM: () => Math.max(0, Number($('#reelsRPM').value||0)),
-  
+  qualifiedPlayRate: () => clamp(Number($('#qualifiedPlayRate').value||100), 0, 100),
+  reelsCreatorShare: () => clamp(Number($('#reelsCreatorShare').value||45), 0, 100),
+
   // Long-form
   longformViews: () => Math.max(0, Number($('#longformViews').value||0)),
   monetizableRate: () => clamp(Number($('#monetizableRate').value||85), 0, 100),
@@ -97,8 +99,9 @@ const calc = () => {
 
   const subscriptionsUSD = netApp + netWeb;
   
-  // Reels Revenue = Plays × (Effective_RPM / 1000)
-  const reelsUSD = inputs.reelsPlays() * (inputs.reelsRPM() / 1000);
+  // Reels Revenue = Qualified_Plays × (Effective_RPM / 1000) × Creator_Share
+  const qualifiedPlays = inputs.reelsPlays() * (inputs.qualifiedPlayRate() / 100);
+  const reelsUSD = qualifiedPlays * (inputs.reelsRPM() / 1000) * (inputs.reelsCreatorShare() / 100);
   
   // Long-form Revenue
   const eligibleViews = inputs.longformViews() * (inputs.monetizableRate() / 100);
@@ -224,6 +227,8 @@ const resetToDefaults = () => {
   // Reels
   $('#reelsPlays').value = 100000;
   $('#reelsRPM').value = 0.90;
+  $('#qualifiedPlayRate').value = 100;
+  $('#reelsCreatorShare').value = 45;
   
   // Long-form
   $('#longformViews').value = 50000;
