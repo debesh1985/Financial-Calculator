@@ -23,3 +23,4 @@ Notes:
 - All rates and buckets are configurable inside assets/app.js (CONFIG object).
 - Tax rates in assets/tax.js include province HST or GST only (PST/QST not included).
 - This is for estimates only; confirm with lenders and official tax sources.
+- Mortgage rates shown in the header ticker are retrieved from external APIs (Ratehub for Canada and Financial Modeling Prep for the USA) and refresh every 15 minutes.
