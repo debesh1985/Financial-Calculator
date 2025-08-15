@@ -117,21 +117,27 @@ h1{
   line-height:1.4;
 }
 
-input,select{
-  width:100%; 
-  padding:12px; 
-  background:#fff; 
-  border:1px solid var(--border); 
-  border-radius:10px; 
+/*
+ * Generic input styles previously applied to all <input> elements, which caused
+ * checkbox controls to lose their native appearance and become non-interactive
+ * in sections like "Health & Habits". Limit these rules to non-checkbox/radio
+ * inputs so that checkboxes retain default rendering and remain clickable.
+ */
+input:not([type="checkbox"]):not([type="radio"]), select{
+  width:100%;
+  padding:12px;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:10px;
   color:var(--text);
   font-size:16px; /* Prevents zoom on iOS */
   -webkit-appearance:none;
 }
-@media(min-width:768px){ 
-  input,select{padding:10px 12px; font-size:14px;} 
+@media(min-width:768px){
+  input:not([type="checkbox"]):not([type="radio"]), select{padding:10px 12px; font-size:14px;}
 }
-input:focus,select:focus{
-  outline:2px solid rgba(37,99,235,.25); 
+input:not([type="checkbox"]):not([type="radio"]):focus, select:focus{
+  outline:2px solid rgba(37,99,235,.25);
   border-color:#bfdbfe;
 }
 
