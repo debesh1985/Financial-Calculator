@@ -12,10 +12,20 @@ body {
   line-height: 1.6;
 }
 
+:root {
+  --space-lg: 24px;
+}
+
 /* Layout */
 .container, .container-xxl {
   width: 100%;
   max-width: 100%;
+}
+
+.content-wrapper {
+  max-width: 1100px;
+  margin-inline: auto;
+  padding: clamp(12px, 3vw, 28px);
 }
 
 /* Cards */
@@ -191,4 +201,12 @@ body {
   clip: rect(0, 0, 0, 0) !important;
   white-space: nowrap !important;
   border: 0 !important;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: var(--space-lg) 0;
+  border-top: 1px solid #dee2e6;
+  margin-top: var(--space-lg);
 }
