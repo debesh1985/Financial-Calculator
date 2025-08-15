@@ -532,7 +532,6 @@
         <div class="collapse navbar-collapse" id="mainNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item"><a class="nav-link" href="index.html">Mortgage</a></li>
-            <li class="nav-item"><a class="nav-link" href="gst-hst.html">GST/HST</a></li>
             <li class="nav-item"><a class="nav-link" href="youtube-calculator.html">YouTube</a></li>
             <li class="nav-item"><a class="nav-link" href="facebook-calculator.html">Facebook</a></li>
             <li class="nav-item"><a class="nav-link" href="instagram-calculator.html">Instagram</a></li>
@@ -630,11 +629,11 @@
         </div>
 
         <div class="input-group">
-          <label for="country">Country/Region</label>
-          <select id="country">
-            <option value="usa" selected>United States</option>
-            <option value="canada">Canada</option>
-          </select>
+          <label>Region</label>
+          <div class="btn-group" role="group" id="regionToggle">
+            <button type="button" class="btn btn-outline-primary active" data-region="usa">USA</button>
+            <button type="button" class="btn btn-outline-primary" data-region="canada">Canada</button>
+          </div>
         </div>
       </div>
 
@@ -688,10 +687,6 @@
         <div class="breakdown-item">
           <span>Occupation Risk:</span>
           <span id="occupationAdjustment">$0</span>
-        </div>
-        <div class="breakdown-item">
-          <span>Regional Factor:</span>
-          <span id="regionalAdjustment">$0</span>
         </div>
         <div class="breakdown-item total">
           <span><strong>Final Monthly Premium:</strong></span>
