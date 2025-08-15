@@ -82,6 +82,8 @@ document.addEventListener('DOMContentLoaded', function() {
   setupCityAutocomplete();
   updateCurrencySymbols();
   calculateAndUpdate();
+  fetchMortgageRates();
+  setInterval(fetchMortgageRates, 15 * 60 * 1000);
 });
 
 function setupEventListeners() {
@@ -531,4 +533,54 @@ function updateCityList() {
 function isCanada() {
   const cadRadio = document.getElementById('countryCADMain');
   return cadRadio && cadRadio.checked;
+}
+
+async function fetchMortgageRates() {
+  const ticker = document.getElementById('rate-ticker');
+  if (!ticker) return;
+
+  ticker.textContent = 'Loading mortgage rates...';
+
+  try {
+    const [caRes, usRes] = await Promise.all([
+      fetch('https://mortgageapi.ratehub.ca/v1/rates/variable/uninsured'),
+      fetch('https://financialmodelingprep.com/api/v3/mortgage-rates?apikey=demo')
+    ]);
+
+    const [caData, usData] = await Promise.all([caRes.json(), usRes.json()]);
+
+    const rates = [];
+
+    const caRate = parseFloat(caData?.rate);
+    if (!isNaN(caRate)) {
+      rates.push({ country: 'Canada', rate: caRate });
+    }
+
+    let usRate = null;
+    if (Array.isArray(usData)) {
+      const entry = usData.find(r => r.item && r.item.toLowerCase().includes('variable'));
+      usRate = parseFloat(entry?.value);
+    } else {
+      usRate = parseFloat(usData?.rate);
+    }
+    if (!isNaN(usRate)) {
+      rates.push({ country: 'USA', rate: usRate });
+    }
+
+    if (rates.length === 0) {
+      throw new Error('No data');
+    }
+
+    const lowest = rates.reduce((min, r) => (r.rate < min.rate ? r : min), rates[0]);
+    const content = document.createElement('div');
+    content.className = 'ticker-content';
+    content.innerHTML = rates
+      .map(r => `<span class="ticker-rate${r === lowest ? ' lowest' : ''}">${r.country}: ${r.rate.toFixed(2)}%</span>`)
+      .join('');
+
+    ticker.innerHTML = '';
+    ticker.appendChild(content);
+  } catch (err) {
+    ticker.textContent = 'Mortgage rates unavailable';
+  }
 }
