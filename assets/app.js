@@ -504,9 +504,13 @@ function updateAmortizationChart(mortgage) {
 }
 
 function formatCurrency(amount) {
-  return new Intl.NumberFormat('en-US', {
+  const desktopCAD = document.getElementById('countryCAD');
+  const mobileCAD = document.getElementById('countryCADMobile');
+  const isCAD = (desktopCAD && desktopCAD.checked) || (mobileCAD && mobileCAD.checked);
+
+  return new Intl.NumberFormat(isCAD ? 'en-CA' : 'en-US', {
     style: 'currency',
-    currency: 'USD',
+    currency: isCAD ? 'CAD' : 'USD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0
   }).format(amount);
