@@ -32,33 +32,6 @@
   
   <style>
     /* UI tidy-up (2025-08-14) */
-    .country-toggle-desktop {
-      position: absolute;
-      top: 50%;
-      right: 1rem;
-      transform: translateY(-50%);
-    }
-    
-    .country-toggle-mobile {
-      text-align: right;
-      margin: 1rem 0 0 0;
-    }
-    
-    @media (min-width: 768px) {
-      .country-toggle-mobile {
-        display: none;
-      }
-    }
-    
-    @media (max-width: 767px) {
-      .country-toggle-desktop {
-        display: none;
-      }
-    }
-    
-    .navbar .container {
-      position: relative;
-    }
     
     .input-grid {
       display: grid;
@@ -130,15 +103,7 @@
     <div class="container position-relative">
       <a class="navbar-brand fw-semibold" href="index.html">🏠 Financial Calculators</a>
       
-      <!-- Country toggle for desktop -->
-      <div class="country-toggle-desktop">
-        <div class="btn-group" role="group" aria-label="Country">
-          <input type="radio" class="btn-check" name="country" id="countryCAD" autocomplete="off" checked>
-          <label class="btn btn-outline-primary btn-sm" for="countryCAD">Canada (CAD)</label>
-          <input type="radio" class="btn-check" name="country" id="countryUSD" autocomplete="off">
-          <label class="btn btn-outline-primary btn-sm" for="countryUSD">USA (USD)</label>
-        </div>
-      </div>
+      
       
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -162,24 +127,24 @@
       <h1 class="h3 mb-2">Free Mortgage Calculator — Canada & USA</h1>
       <p class="text-muted mb-0">Calculate monthly payments and total monthly cost of ownership. Includes CMHC (Canada) and PMI/FHA (USA), with purchase or refinance scenarios.</p>
       
-      <!-- Country toggle for mobile -->
-      <div class="country-toggle-mobile d-md-none">
-        <div class="btn-group" role="group" aria-label="Country">
-          <input type="radio" class="btn-check" name="country-mobile" id="countryCADMobile" autocomplete="off" checked>
-          <label class="btn btn-outline-primary btn-sm" for="countryCADMobile">Canada (CAD)</label>
-          <input type="radio" class="btn-check" name="country-mobile" id="countryUSDMobile" autocomplete="off">
-          <label class="btn btn-outline-primary btn-sm" for="countryUSDMobile">USA (USD)</label>
-        </div>
-      </div>
+      
     </header>
 
     <!-- Input Form -->
     <section class="container mb-4">
       <div class="card border-0 shadow-sm">
         <div class="card-body">
-          <h2 class="h5 mb-3">Mortgage Details</h2>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h5 mb-0">Mortgage Details</h2>
+            <div class="btn-group" role="group" aria-label="Country">
+              <input type="radio" class="btn-check" name="country-main" id="countryCADMain" autocomplete="off" checked>
+              <label class="btn btn-outline-primary btn-sm" for="countryCADMain">Canada (CAD)</label>
+              <input type="radio" class="btn-check" name="country-main" id="countryUSDMain" autocomplete="off">
+              <label class="btn btn-outline-primary btn-sm" for="countryUSDMain">USA (USD)</label>
+            </div>
+          </div>
           
-          <div class="btn-group mb-3" role="group" aria-label="Scenario">
+          <div class="btn-group mb-3" role="group" aria-label="Scenario"></div>
             <input type="radio" class="btn-check" name="scenario" id="scenarioPurchase" autocomplete="off" checked>
             <label class="btn btn-outline-secondary" for="scenarioPurchase">Purchase</label>
             <input type="radio" class="btn-check" name="scenario" id="scenarioRefinance" autocomplete="off">
@@ -570,36 +535,24 @@
       }
     }
     
-    // Sync mobile and desktop country toggles
+    // Initialize country toggle functionality
     document.addEventListener('DOMContentLoaded', function() {
-      const desktopCAD = document.getElementById('countryCAD');
-      const desktopUSD = document.getElementById('countryUSD');
-      const mobileCAD = document.getElementById('countryCADMobile');
-      const mobileUSD = document.getElementById('countryUSDMobile');
+      const countryCAD = document.getElementById('countryCADMain');
+      const countryUSD = document.getElementById('countryUSDMain');
       
-      function syncToggles(source, target) {
-        if (source && target && source.checked) {
-          target.checked = true;
-          // Trigger change event to update the app
-          target.dispatchEvent(new Event('change'));
-        }
-      }
-      
-      if (desktopCAD && mobileCAD) {
-        desktopCAD.addEventListener('change', function() {
-          syncToggles(this, mobileCAD);
+      if (countryCAD && countryUSD) {
+        countryCAD.addEventListener('change', function() {
+          if (this.checked) {
+            // Trigger change event to update the app
+            this.dispatchEvent(new Event('change'));
+          }
         });
         
-        desktopUSD.addEventListener('change', function() {
-          syncToggles(this, mobileUSD);
-        });
-        
-        mobileCAD.addEventListener('change', function() {
-          syncToggles(this, desktopCAD);
-        });
-        
-        mobileUSD.addEventListener('change', function() {
-          syncToggles(this, desktopUSD);
+        countryUSD.addEventListener('change', function() {
+          if (this.checked) {
+            // Trigger change event to update the app
+            this.dispatchEvent(new Event('change'));
+          }
         });
       }
     });

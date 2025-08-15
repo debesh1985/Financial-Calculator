@@ -1,4 +1,3 @@
-
 // Geographic data for city suggestions
 const geoData = [
   // Canada
@@ -22,7 +21,7 @@ const geoData = [
   { city: "Gatineau", region: "QC", country: "CA" },
   { city: "Saskatoon", region: "SK", country: "CA" },
   { city: "Longueuil", region: "QC", country: "CA" },
-  
+
   // USA
   { city: "New York", region: "NY", country: "US" },
   { city: "Los Angeles", region: "CA", country: "US" },
@@ -129,18 +128,18 @@ function setupEventListeners() {
 function setupCityAutocomplete() {
   const cityInput = document.getElementById('cityInput');
   const cityList = document.getElementById('cityList');
-  
+
   cityInput.addEventListener('input', function() {
     const query = this.value.toLowerCase();
     cityList.innerHTML = '';
-    
+
     if (query.length < 2) return;
-    
+
     const filtered = geoData.filter(item => 
       item.city.toLowerCase().includes(query) || 
       item.region.toLowerCase().includes(query)
     ).slice(0, 10);
-    
+
     filtered.forEach(item => {
       const option = document.createElement('option');
       option.value = `${item.city}, ${item.region}`;
@@ -154,7 +153,7 @@ function updateCurrencySymbols() {
   const mobileCAD = document.getElementById('countryCADMobile');
   const isCAD = (desktopCAD && desktopCAD.checked) || (mobileCAD && mobileCAD.checked);
   const symbol = '$'; // Both CAD and USD use $
-  
+
   // Update all currency symbols
   document.querySelectorAll('[id^="currencySymbol"]').forEach(elem => {
     if (elem) {
@@ -167,12 +166,12 @@ function updateDownPaymentPercent() {
   const homePriceEl = document.getElementById('homePrice');
   const downPaymentEl = document.getElementById('downPayment');
   const downPctHelpEl = document.getElementById('downPctHelp');
-  
+
   if (!homePriceEl || !downPaymentEl || !downPctHelpEl) return;
-  
+
   const homePrice = parseFloat(homePriceEl.value) || 0;
   const downPayment = parseFloat(downPaymentEl.value) || 0;
-  
+
   const percentage = homePrice > 0 ? ((downPayment / homePrice) * 100).toFixed(1) : 0;
   downPctHelpEl.textContent = `${percentage}% of home price`;
 }
@@ -183,14 +182,14 @@ function updateUSAInsuranceVisibility() {
   const homePriceEl = document.getElementById('homePrice');
   const downPaymentEl = document.getElementById('downPayment');
   const usaMIChoice = document.getElementById('usaMIChoice');
-  
+
   if (!homePriceEl || !downPaymentEl || !usaMIChoice) return;
-  
+
   const isUSA = (countryUSDEl && countryUSDEl.checked) || (countryUSDMobileEl && countryUSDMobileEl.checked);
   const homePrice = parseFloat(homePriceEl.value) || 0;
   const downPayment = parseFloat(downPaymentEl.value) || 0;
   const downPaymentPercent = homePrice > 0 ? (downPayment / homePrice) * 100 : 100;
-  
+
   if (isUSA && downPaymentPercent < 20) {
     usaMIChoice.classList.remove('d-none');
   } else {
@@ -214,22 +213,22 @@ function calculateMortgage() {
   const rate = parseFloat(document.getElementById('rate').value) || 0;
   const years = parseInt(document.getElementById('years').value) || 25;
   const frequency = document.getElementById('frequency').value;
-  
+
   const desktopCAD = document.getElementById('countryCAD');
   const mobileCAD = document.getElementById('countryCADMobile');
   const isCAD = (desktopCAD && desktopCAD.checked) || (mobileCAD && mobileCAD.checked);
   const isPurchase = document.getElementById('scenarioPurchase') && document.getElementById('scenarioPurchase').checked;
-  
+
   if (homePrice <= 0 || downPayment < 0 || rate < 0) {
     return null;
   }
 
   let loanAmount = homePrice - downPayment;
   const ltvPercent = homePrice > 0 ? (loanAmount / homePrice) * 100 : 0;
-  
+
   let mortgageInsurance = 0;
   let insuranceInfo = '—';
-  
+
   // Calculate mortgage insurance
   if (isCAD && isPurchase && ltvPercent > 80) {
     // CMHC insurance for Canada
@@ -257,7 +256,7 @@ function calculateMortgage() {
 
   // Payment frequency calculations
   let paymentsPerYear, payment, monthlyEquivalent;
-  
+
   switch (frequency) {
     case 'monthly':
       paymentsPerYear = 12;
@@ -297,14 +296,14 @@ function calculateMortgage() {
     const monthlyRate = rate / 100 / 12;
     const monthlyPayments = years * 12;
     let monthlyPayment;
-    
+
     if (rate === 0) {
       monthlyPayment = loanAmount / monthlyPayments;
     } else {
       monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, monthlyPayments)) / 
                       (Math.pow(1 + monthlyRate, monthlyPayments) - 1);
     }
-    
+
     if (frequency === 'acc-bi-weekly') {
       payment = monthlyPayment / 2;
     } else {
@@ -331,14 +330,14 @@ function calculateMortgage() {
 
 function calculateAndUpdate() {
   const mortgage = calculateMortgage();
-  
+
   if (!mortgage) {
     // Clear results with null checks
     const paymentDisplay = document.getElementById('paymentDisplay');
     const monthlyEquiv = document.getElementById('monthlyEquiv');
     const ltvDisplay = document.getElementById('ltvDisplay');
     const miSummary = document.getElementById('miSummary');
-    
+
     if (paymentDisplay) paymentDisplay.textContent = '$0.00';
     if (monthlyEquiv) monthlyEquiv.textContent = '$0.00';
     if (ltvDisplay) ltvDisplay.textContent = '0%';
@@ -352,7 +351,7 @@ function calculateAndUpdate() {
   const frequencyLabel = document.getElementById('frequencyLabel');
   const ltvDisplay = document.getElementById('ltvDisplay');
   const miSummary = document.getElementById('miSummary');
-  
+
   if (paymentDisplay) paymentDisplay.textContent = formatCurrency(mortgage.payment);
   if (monthlyEquiv) monthlyEquiv.textContent = formatCurrency(mortgage.monthlyEquivalent);
 
@@ -384,7 +383,7 @@ function updateOwnershipCosts(mortgage) {
   const water = parseFloat(document.getElementById('water').value) || 0;
   const electric = parseFloat(document.getElementById('electric').value) || 0;
   const heating = parseFloat(document.getElementById('heating').value) || 0;
-  
+
   const utilities = water + electric + heating;
   const total = mortgage.monthlyEquivalent + mortgage.mortgageInsurance + tax + condo + utilities;
 
@@ -399,30 +398,30 @@ function updateOwnershipCosts(mortgage) {
 function updateAmortizationChart(mortgage) {
   const yearsEl = document.getElementById('years');
   const chartEl = document.getElementById('amortChart');
-  
+
   if (!yearsEl || !chartEl) return;
-  
+
   const years = parseInt(yearsEl.value) || 25;
-  
+
   // Generate amortization schedule
   let balance = mortgage.loanAmount;
   const yearlyData = [];
-  
+
   for (let year = 1; year <= years; year++) {
     let yearlyPrincipal = 0;
     let yearlyInterest = 0;
-    
+
     for (let payment = 1; payment <= mortgage.paymentsPerYear; payment++) {
       if (balance <= 0) break;
-      
+
       const interestPayment = balance * mortgage.periodicRate;
       const principalPayment = Math.min(mortgage.payment - interestPayment, balance);
-      
+
       yearlyInterest += interestPayment;
       yearlyPrincipal += principalPayment;
       balance -= principalPayment;
     }
-    
+
     yearlyData.push({
       year,
       principal: yearlyPrincipal,
@@ -438,7 +437,7 @@ function updateAmortizationChart(mortgage) {
 
   // Create chart
   const ctx = chartEl.getContext('2d');
-  
+
   if (amortChart) {
     amortChart.destroy();
   }
@@ -515,4 +514,9 @@ function formatCurrency(amount) {
 
 function updateCityList() {
   // This function is handled by setupCityAutocomplete
+}
+
+function isCanada() {
+  const cadRadio = document.getElementById('countryCADMain');
+  return cadRadio && cadRadio.checked;
 }
