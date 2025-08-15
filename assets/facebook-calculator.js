@@ -21,14 +21,15 @@ const inputs = {
   // Stars
   starsReceived: () => Math.max(0, Number($('#starsReceived').value||0)),
   starsFee: () => clamp(Number($('#starsFee').value||5), 0, 50),
-  
+
   // Subscriptions
-  activeSubscribers: () => Math.max(0, Number($('#activeSubscribers').value||0)),
+  subscribersYear1: () => Math.max(0, Number($('#subscribersYear1').value||0)),
+  subscribersYear2Plus: () => Math.max(0, Number($('#subscribersYear2Plus').value||0)),
   monthlyPrice: () => Math.max(0, Number($('#monthlyPrice').value||0)),
   appStorePurchases: () => clamp(Number($('#appStorePurchases').value||70), 0, 100),
-  appStoreFee: () => clamp(Number($('#appStoreFee').value||30), 0, 50),
   webPurchases: () => clamp(Number($('#webPurchases').value||30), 0, 100),
   platformFee: () => clamp(Number($('#platformFee').value||0), 0, 50),
+  metaPlatformFee: () => clamp(Number($('#metaPlatformFee').value||0), 0, 50),
   
   // Reels
   reelsPlays: () => Math.max(0, Number($('#reelsPlays').value||0)),
@@ -81,11 +82,19 @@ const calc = () => {
   const starsUSD = inputs.starsReceived() * 0.01 * (1 - inputs.starsFee() / 100);
   
   // Subscriptions Revenue
-  const gross = inputs.activeSubscribers() * inputs.monthlyPrice();
+  const grossYear1 = inputs.subscribersYear1() * inputs.monthlyPrice();
+  const grossYear2Plus = inputs.subscribersYear2Plus() * inputs.monthlyPrice();
   const appPercent = inputs.appStorePurchases() / 100;
   const webPercent = (100 - inputs.appStorePurchases()) / 100;
-  const netApp = (appPercent * gross) * (1 - inputs.appStoreFee() / 100);
-  const netWeb = (webPercent * gross) * (1 - inputs.platformFee() / 100);
+
+  const netAppYear1 = grossYear1 * appPercent * (1 - 0.30);
+  const netAppYear2Plus = grossYear2Plus * appPercent * (1 - 0.15);
+  const netApp = (netAppYear1 + netAppYear2Plus) * (1 - inputs.metaPlatformFee() / 100);
+
+  const netWebYear1 = grossYear1 * webPercent * (1 - inputs.platformFee() / 100);
+  const netWebYear2Plus = grossYear2Plus * webPercent * (1 - inputs.platformFee() / 100);
+  const netWeb = (netWebYear1 + netWebYear2Plus) * (1 - inputs.metaPlatformFee() / 100);
+
   const subscriptionsUSD = netApp + netWeb;
   
   // Reels Revenue = Plays × (Effective_RPM / 1000)
@@ -203,13 +212,14 @@ const resetToDefaults = () => {
   $('#starsFeeNum').value = 5;
   
   // Subscriptions
-  $('#activeSubscribers').value = 200;
+  $('#subscribersYear1').value = 100;
+  $('#subscribersYear2Plus').value = 100;
   $('#monthlyPrice').value = 4.99;
   $('#appStorePurchases').value = 70;
   $('#appStorePurchasesNum').value = 70;
-  $('#appStoreFee').value = 30;
   $('#webPurchases').value = 30;
   $('#platformFee').value = 0;
+  $('#metaPlatformFee').value = 0;
   
   // Reels
   $('#reelsPlays').value = 100000;
@@ -333,9 +343,11 @@ const generateEstimatedData = (pageHandle) => {
   // Calculate base metrics per day, then scale by date range
   const dailyMetrics = calculateDailyMetrics(pageSize, engagementRate, seed);
   
+  const totalSubs = Math.max(0, Math.floor(dailyMetrics.subscribersBase * (daysDiff / 30))); // Monthly growth
   return {
     starsReceived: Math.max(0, Math.floor(dailyMetrics.starsPerDay * daysDiff)),
-    activeSubscribers: Math.max(0, Math.floor(dailyMetrics.subscribersBase * (daysDiff / 30))), // Monthly growth
+    subscribersYear1: Math.floor(totalSubs * 0.6),
+    subscribersYear2Plus: Math.floor(totalSubs * 0.4),
     reelsPlays: Math.max(0, Math.floor(dailyMetrics.reelsPerDay * daysDiff)),
     longformViews: Math.max(0, Math.floor(dailyMetrics.longformPerDay * daysDiff)),
     guaranteedImpressions: Math.max(0, Math.floor(dailyMetrics.brandedPerDay * daysDiff))
@@ -437,7 +449,8 @@ const populateInputsFromEstimate = (data) => {
   const monthlyMultiplier = 30 / daysDiff; // Convert to monthly estimates
   
   $('#starsReceived').value = Math.round(data.starsReceived * monthlyMultiplier);
-  $('#activeSubscribers').value = Math.round(data.activeSubscribers);
+  $('#subscribersYear1').value = Math.round(data.subscribersYear1);
+  $('#subscribersYear2Plus').value = Math.round(data.subscribersYear2Plus);
   $('#reelsPlays').value = Math.round(data.reelsPlays * monthlyMultiplier);
   $('#longformViews').value = Math.round(data.longformViews * monthlyMultiplier);
   $('#guaranteedImpressions').value = Math.round(data.guaranteedImpressions * monthlyMultiplier);
@@ -607,9 +620,9 @@ Test Case 1: Stars only
 - Stars received: 1000
 - Expected: $10 (1000 × 0.01)
 
-Test Case 2: Subscriptions
-- Subscribers: 100, Price: $5, App: 70%, App fee: 30%, Web: 30%, Platform fee: 0%
-- Expected: ~$385 (100×$5×0.7×0.7 + 100×$5×0.3×1.0)
+ Test Case 2: Subscriptions
+ - Subscribers Year 1: 60, Subscribers Year 2+: 40, Price: $5, App: 70%, Web: 30%, Platform fee: 0%, Meta fee: 0%
+ - Expected: ~$416 (60×$5×0.7×0.7 + 40×$5×0.7×0.85 + 100×$5×0.3)
 
 Test Case 3: Reels
 - Plays: 100,000, RPM: $1.00
