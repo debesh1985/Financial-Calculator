@@ -32,7 +32,8 @@ const inputs = {
   additionalSharing: () => clamp(Number($('#additionalSharing').value||0), 0, 50),
   manualImp: () => $('#manualImp').checked,
   adImpressionsManual: () => Math.max(0, Number($('#adImpressionsManual').value||2.5)),
-  shortsRPM: () => Math.max(0, Number($('#shortsRPM').value||0.8))
+  totalShortsViews: () => Math.max(0, Number($('#totalShortsViews').value||0)),
+  shortsPoolRevenue: () => Math.max(0, Number($('#shortsPoolRevenue').value||0))
 };
 
 // ===== Calculations =====
@@ -65,10 +66,12 @@ const calc = () => {
 
   // Shorts revenue
   if ((fmt === 'shorts' || fmt === 'both') && inputs.modShorts()) {
-    const views = inputs.viewsShorts();
-    const baseRevenue = (views / 1000) * inputs.shortsRPM();
-    const creatorRevenue = baseRevenue * (inputs.creatorShareShorts() / 100);
-    shortsUSD = creatorRevenue * (1 - inputs.additionalSharing() / 100);
+    const poolRevenue = inputs.shortsPoolRevenue();
+    const totalShortsViews = inputs.totalShortsViews();
+    const share = totalShortsViews > 0
+      ? poolRevenue * (inputs.viewsShorts() / totalShortsViews) * (inputs.creatorShareShorts() / 100)
+      : 0;
+    shortsUSD = share * (1 - inputs.additionalSharing() / 100);
   }
 
   // Premium revenue
@@ -226,7 +229,8 @@ const resetToDefaults = ()=>{
   // Format-specific
   $('#manualImp').checked = false;
   $('#adImpressionsManual').value = 2.5;
-  $('#shortsRPM').value = 0.80;
+  $('#shortsPoolRevenue').value = 10000000;
+  $('#totalShortsViews').value = 1000000000;
   
   recalc();
 };
@@ -703,13 +707,11 @@ const calculateChannelRevenue = (longFormViews, shortsViews) => {
   const originalCPM = inputs.avgCPM();
   const originalMonetizable = inputs.monetizableRate();
   const originalFillRate = inputs.adFillRate();
-  const originalShortsRPM = inputs.shortsRPM();
   
   // Apply more conservative estimates for channel analysis
   $('#avgCPM').value = Math.min(originalCPM, 4.0); // Cap at $4 CPM for conservative estimate
   $('#monetizableRate').value = Math.min(originalMonetizable, 75); // Reduce to 75%
   $('#adFillRate').value = Math.min(originalFillRate, 85); // Reduce to 85%
-  $('#shortsRPM').value = Math.min(originalShortsRPM, 0.60); // Conservative Shorts RPM
   
   // Temporarily override views
   $('#viewsLF').value = longFormViews;
@@ -737,7 +739,6 @@ const calculateChannelRevenue = (longFormViews, shortsViews) => {
   $('#avgCPM').value = originalCPM;
   $('#monetizableRate').value = originalMonetizable;
   $('#adFillRate').value = originalFillRate;
-  $('#shortsRPM').value = originalShortsRPM;
   
   return conservativeResult;
 };

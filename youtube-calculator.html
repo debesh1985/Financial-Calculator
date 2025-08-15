@@ -629,10 +629,14 @@
           <div class="small-text">Auto: Pre-roll + Mid-rolls + Post-roll (if enabled)</div>
         </div>
 
-        <div class="input-group sh-only">
-          <label for="shortsRPM">Estimated Shorts RPM (USD per 1K views) <span class="info" title="Revenue per 1000 Shorts views">ⓘ</span></label>
-          <input type="number" id="shortsRPM" min="0" step="0.01" value="0.80">
-        </div>
+          <div class="input-group sh-only">
+            <label for="shortsPoolRevenue">Total Shorts ad-revenue pool (USD) <span class="info" title="Total ad revenue available for Shorts creators">ⓘ</span></label>
+            <input type="number" id="shortsPoolRevenue" min="0" step="0.01" value="10000000">
+          </div>
+          <div class="input-group sh-only">
+            <label for="totalShortsViews">Total eligible Shorts views <span class="info" title="Total views across all monetized Shorts">ⓘ</span></label>
+            <input type="number" id="totalShortsViews" min="0" step="1" value="1000000000">
+          </div>
       </section>
 
       <!-- RIGHT: Results -->
