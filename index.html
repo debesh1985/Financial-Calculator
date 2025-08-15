@@ -33,25 +33,34 @@
   <link rel="stylesheet" href="/assets/style.css" />
 
   <style>
-    /* Prevent layout breaks */
-    #calc-inputs-col .card,
-    #calc-results-col .card,
-    #calc-side-kpis .card { width: 100%; }
+    /* Safe CSS - Fix Desktop Layout Issues */
+    
+    /* Ensure columns/cards stretch correctly */
+    #inputs-col .card,
+    #results-col .card,
+    #kpis-col .card { width: 100%; }
 
-    /* Never rely on fixed widths for inputs */
-    #calc-inputs-col .form-control,
-    #calc-inputs-col .form-select { width: 100%; max-width: 100%; }
+    /* Undo accidental zero-width layouts */
+    #results-col,
+    #inputs-col,
+    #kpis-col { flex: 1 1 auto; max-width: 100%; }
+
+    /* Inputs fill their container without fixed widths */
+    #inputs-col .form-control,
+    #inputs-col .form-select { width: 100%; max-width: 100%; }
+
+    /* Prevent horizontal scroll from long figures */
+    .result-number, .calc-amount { overflow-wrap: anywhere; }
+
+    /* Keep media responsive */
+    canvas, img, svg, iframe, table { max-width: 100%; height: auto; }
 
     /* Kill rogue fixed widths & floats */
     .card, .card-body, .form-control { max-width: 100%; }
     [class*="col-"] { float: none !important; }
 
-    /* Avoid horizontal scrolling from long numbers/labels */
-    .result-number { overflow-wrap: anywhere; }
+    /* Prevent layout breaks */
     body { overflow-x: clip; }
-
-    /* Charts or large media should scale */
-    canvas, img, svg, iframe, table { max-width: 100%; height: auto; }
 
     /* Optional: equal spacing */
     .section { margin-bottom: 1.5rem; }
@@ -99,9 +108,9 @@
 
     <!-- Calculator Form & Results - Responsive Grid -->
     <div class="container-xxl py-4">
-      <div class="row g-4 align-items-start">
-        <!-- Left: Calculator Inputs -->
-        <aside class="col-12 col-lg-5 col-xl-4" id="calc-inputs-col">
+      <div class="row g-4 align-items-start" id="mortgage-grid">
+        <!-- Inputs -->
+        <aside class="col-12 col-lg-5 col-xl-4" id="inputs-col">
           <form id="mortgageForm" class="card p-4">
             <h3 class="h5 mb-3">📊 Mortgage Details</h3>
 
@@ -109,7 +118,7 @@
               <label for="homePrice" class="form-label">Home Price</label>
               <div class="input-group">
                 <span class="input-group-text" id="currency-symbol">$</span>
-                <input type="number" class="form-control w-100" id="homePrice" value="500000" min="0" step="1000" aria-describedby="currency-symbol">
+                <input type="number" class="form-control" id="homePrice" value="500000" min="0" step="1000" aria-describedby="currency-symbol">
               </div>
             </div>
 
@@ -117,7 +126,7 @@
               <label for="downPayment" class="form-label">Down Payment</label>
               <div class="input-group">
                 <span class="input-group-text" id="currency-symbol-2">$</span>
-                <input type="number" class="form-control w-100" id="downPayment" value="100000" min="0" step="1000" aria-describedby="currency-symbol-2">
+                <input type="number" class="form-control" id="downPayment" value="100000" min="0" step="1000" aria-describedby="currency-symbol-2">
               </div>
               <div class="small text-muted mt-1">
                 <span id="downPaymentPercent">20%</span> of home price
@@ -126,12 +135,12 @@
 
             <div class="form-group mb-3">
               <label for="interestRate" class="form-label">Interest Rate (%)</label>
-              <input type="number" class="form-control w-100" id="interestRate" value="5.5" min="0" max="20" step="0.01">
+              <input type="number" class="form-control" id="interestRate" value="5.5" min="0" max="20" step="0.01">
             </div>
 
             <div class="form-group mb-3">
               <label for="amortization" class="form-label">Amortization Period (years)</label>
-              <select class="form-select w-100" id="amortization">
+              <select class="form-select" id="amortization">
                 <option value="15">15 years</option>
                 <option value="20">20 years</option>
                 <option value="25" selected>25 years</option>
@@ -141,7 +150,7 @@
 
             <div class="form-group mb-3">
               <label for="paymentFrequency" class="form-label">Payment Frequency</label>
-              <select class="form-select w-100" id="paymentFrequency">
+              <select class="form-select" id="paymentFrequency">
                 <option value="monthly" selected>Monthly</option>
                 <option value="biweekly">Bi-weekly</option>
                 <option value="weekly">Weekly</option>
@@ -155,7 +164,7 @@
               <label for="propertyTax" class="form-label">Property Tax (monthly)</label>
               <div class="input-group">
                 <span class="input-group-text">$</span>
-                <input type="number" class="form-control w-100" id="propertyTax" value="400" min="0" step="10">
+                <input type="number" class="form-control" id="propertyTax" value="400" min="0" step="10">
               </div>
             </div>
 
@@ -163,7 +172,7 @@
               <label for="homeInsurance" class="form-label">Home Insurance (monthly)</label>
               <div class="input-group">
                 <span class="input-group-text">$</span>
-                <input type="number" class="form-control w-100" id="homeInsurance" value="150" min="0" step="10">
+                <input type="number" class="form-control" id="homeInsurance" value="150" min="0" step="10">
               </div>
             </div>
 
@@ -171,7 +180,7 @@
               <label for="cmhcInsurance" class="form-label">CMHC Insurance (monthly)</label>
               <div class="input-group">
                 <span class="input-group-text">$</span>
-                <input type="number" class="form-control w-100" id="cmhcInsurance" value="0" min="0" step="10" readonly>
+                <input type="number" class="form-control" id="cmhcInsurance" value="0" min="0" step="10" readonly>
               </div>
               <div class="small text-muted mt-1">Calculated automatically based on down payment</div>
             </div>
@@ -180,7 +189,7 @@
               <label for="condoFees" class="form-label">Condo Fees (optional)</label>
               <div class="input-group">
                 <span class="input-group-text">$</span>
-                <input type="number" class="form-control w-100" id="condoFees" value="0" min="0" step="10">
+                <input type="number" class="form-control" id="condoFees" value="0" min="0" step="10">
               </div>
             </div>
 
@@ -188,7 +197,7 @@
               <label for="utilities" class="form-label">Utilities (optional)</label>
               <div class="input-group">
                 <span class="input-group-text">$</span>
-                <input type="number" class="form-control w-100" id="utilities" value="200" min="0" step="10">
+                <input type="number" class="form-control" id="utilities" value="200" min="0" step="10">
               </div>
             </div>
 
@@ -196,8 +205,8 @@
           </form>
         </aside>
 
-        <!-- Middle: Results -->
-        <section class="col-12 col-lg-7 col-xl-5" id="calc-results-col">
+        <!-- Results -->
+        <section class="col-12 col-lg-7 col-xl-5" id="results-col">
           <div id="results" class="card p-4 mb-4" style="display: none;">
             <h3 class="h5 mb-3">💵 Payment Breakdown</h3>
 
@@ -276,8 +285,8 @@
           </div>
         </section>
 
-        <!-- Right: Secondary KPIs (Optional on xl+) -->
-        <aside class="col-12 col-xl-3 d-none d-xl-block" id="calc-side-kpis">
+        <!-- KPIs / Side panel (optional) -->
+        <aside class="col-12 col-xl-3 d-none d-xl-block" id="kpis-col">
           <div class="card p-3">
             <h4 class="h6 mb-3">📊 Quick Stats</h4>
             <div class="small">
