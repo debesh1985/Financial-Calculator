@@ -86,6 +86,7 @@
       display: flex;
       align-items: center;
       gap: 0.75rem;
+      flex-wrap: nowrap;
       width: 100%;
     }
     
@@ -196,8 +197,10 @@
           <div class="input-grid">
             <!-- City input -->
             <div class="mb-3">
-              <label class="form-label" for="cityInput">City & Province/State</label>
-              <input id="cityInput" class="form-control" list="cityList" placeholder="e.g., Toronto, ON or San Francisco, CA">
+              <div class="form-field-wrapper">
+                <label class="form-label" for="cityInput">City & Province/State</label>
+                <input id="cityInput" class="form-control" list="cityList" placeholder="e.g., Toronto, ON or San Francisco, CA">
+              </div>
               <datalist id="cityList"></datalist>
               <small class="text-muted">Start typing (try "Tor", "San", "Van", "Mon").</small>
             </div>
@@ -230,42 +233,50 @@
 
             <!-- Interest rate -->
             <div class="mb-3">
-              <label class="form-label" for="rate">Interest rate (annual %)</label>
-              <input id="rate" type="number" min="0" step="0.01" class="form-control" value="5.29" inputmode="decimal">
+              <div class="form-field-wrapper">
+                <label class="form-label" for="rate">Interest rate (annual %)</label>
+                <input id="rate" type="number" min="0" step="0.01" class="form-control" value="5.29" inputmode="decimal">
+              </div>
             </div>
 
             <!-- Amortization -->
             <div class="mb-3">
-              <label class="form-label" for="years">Amortization (years)</label>
-              <select id="years" class="form-select">
-                <option value="25" selected>25</option>
-                <option value="30">30</option>
-                <option value="20">20</option>
-                <option value="15">15</option>
-                <option value="10">10</option>
-              </select>
+              <div class="form-field-wrapper">
+                <label class="form-label" for="years">Amortization (years)</label>
+                <select id="years" class="form-select">
+                  <option value="25" selected>25</option>
+                  <option value="30">30</option>
+                  <option value="20">20</option>
+                  <option value="15">15</option>
+                  <option value="10">10</option>
+                </select>
+              </div>
             </div>
 
             <!-- Payment frequency -->
             <div class="mb-3">
-              <label class="form-label" for="frequency">Payment frequency</label>
-              <select id="frequency" class="form-select">
-                <option value="monthly" selected>Monthly (12/yr)</option>
-                <option value="semi-monthly">Semi‑Monthly (24/yr)</option>
-                <option value="bi-weekly">Bi‑Weekly (26/yr)</option>
-                <option value="acc-bi-weekly">Accelerated Bi‑Weekly (26/yr, accelerated)</option>
-                <option value="weekly">Weekly (52/yr)</option>
-                <option value="acc-weekly">Accelerated Weekly (52/yr, accelerated)</option>
-              </select>
+              <div class="form-field-wrapper">
+                <label class="form-label" for="frequency">Payment frequency</label>
+                <select id="frequency" class="form-select">
+                  <option value="monthly" selected>Monthly (12/yr)</option>
+                  <option value="semi-monthly">Semi‑Monthly (24/yr)</option>
+                  <option value="bi-weekly">Bi‑Weekly (26/yr)</option>
+                  <option value="acc-bi-weekly">Accelerated Bi‑Weekly (26/yr, accelerated)</option>
+                  <option value="weekly">Weekly (52/yr)</option>
+                  <option value="acc-weekly">Accelerated Weekly (52/yr, accelerated)</option>
+                </select>
+              </div>
             </div>
 
             <!-- USA insurance choice -->
             <div class="mb-3 d-none" id="usaMIChoice">
-              <label class="form-label" for="usaMI">Mortgage insurance (USA)</label>
-              <select id="usaMI" class="form-select">
-                <option value="pmi" selected>Conventional PMI (estimate)</option>
-                <option value="fha">FHA (UFMIP + Annual MIP)</option>
-              </select>
+              <div class="form-field-wrapper">
+                <label class="form-label" for="usaMI">Mortgage insurance (USA)</label>
+                <select id="usaMI" class="form-select">
+                  <option value="pmi" selected>Conventional PMI (estimate)</option>
+                  <option value="fha">FHA (UFMIP + Annual MIP)</option>
+                </select>
+              </div>
             </div>
 
             <!-- Monthly costs -->
