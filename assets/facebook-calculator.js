@@ -41,7 +41,8 @@ const inputs = {
   longformViews: () => Math.max(0, Number($('#longformViews').value||0)),
   monetizableRate: () => clamp(Number($('#monetizableRate').value||85), 0, 100),
   fillRate: () => clamp(Number($('#fillRate').value||90), 0, 100),
-  adImpressions: () => Math.max(0, Number($('#adImpressions').value||1.5)),
+  avgWatchSeconds: () => Math.max(0, Number($('#avgWatchSeconds').value||0)),
+  adsPerMinute: () => Math.max(0, Number($('#adsPerMinute').value||0)),
   eCPM: () => Math.max(0, Number($('#eCPM').value||6)),
   creatorShare: () => clamp(Number($('#creatorShare').value||55), 0, 100),
   additionalReductions: () => clamp(Number($('#additionalReductions').value||0), 0, 50),
@@ -104,8 +105,8 @@ const calc = () => {
   const reelsUSD = qualifiedPlays * (inputs.reelsRPM() / 1000) * (inputs.reelsCreatorShare() / 100);
   
   // Long-form Revenue
-  const eligibleViews = inputs.longformViews() * (inputs.monetizableRate() / 100);
-  const impressions = eligibleViews * (inputs.fillRate() / 100) * inputs.adImpressions();
+  const eligibleSeconds = inputs.longformViews() * inputs.avgWatchSeconds() * (inputs.monetizableRate() / 100);
+  const impressions = (eligibleSeconds / 60) * inputs.adsPerMinute() * (inputs.fillRate() / 100);
   const adRevenue = impressions * (inputs.eCPM() / 1000);
   const longformUSD = adRevenue * (inputs.creatorShare() / 100) * (1 - inputs.additionalReductions() / 100);
   
@@ -230,17 +231,18 @@ const resetToDefaults = () => {
   $('#qualifiedPlayRate').value = 100;
   $('#reelsCreatorShare').value = 45;
   
-  // Long-form
-  $('#longformViews').value = 50000;
-  $('#monetizableRate').value = 85;
-  $('#monetizableRateNum').value = 85;
-  $('#fillRate').value = 90;
-  $('#fillRateNum').value = 90;
-  $('#adImpressions').value = 1.5;
-  $('#eCPM').value = 6.00;
-  $('#creatorShare').value = 55;
-  $('#additionalReductions').value = 0;
-  $('#additionalReductionsNum').value = 0;
+    // Long-form
+    $('#longformViews').value = 50000;
+    $('#monetizableRate').value = 85;
+    $('#monetizableRateNum').value = 85;
+    $('#fillRate').value = 90;
+    $('#fillRateNum').value = 90;
+    $('#avgWatchSeconds').value = 90;
+    $('#adsPerMinute').value = 1;
+    $('#eCPM').value = 6.00;
+    $('#creatorShare').value = 55;
+    $('#additionalReductions').value = 0;
+    $('#additionalReductionsNum').value = 0;
   
   // Branded Content
   $('#guaranteedImpressions').value = 50000;
