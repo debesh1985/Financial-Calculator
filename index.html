@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Free Mortgage Calculator (Canada & USA) – Payments & Amortization</title>
-  <meta name="description" content="Instant mortgage payments and total monthly cost of ownership for Canada and the USA. Supports CMHC, PMI/FHA, multiple payment frequencies, and a clear amortization graph.">
+  <meta name="description" content="Calculate mortgage payments, CMHC/PMI insurance, and total monthly ownership costs for Canada and USA. Free calculator with amortization charts.">
   <meta name="keywords" content="mortgage calculator, Canada mortgage calculator, USA mortgage calculator, CMHC calculator, FHA calculator, mortgage payment calculator">
   
   <!-- Canonical URL -->
@@ -29,12 +29,112 @@
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="assets/app.css">
+  
+  <style>
+    /* UI tidy-up (2025-08-14) */
+    .country-toggle-desktop {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+    }
+    
+    .country-toggle-mobile {
+      text-align: right;
+      margin: 1rem 0;
+    }
+    
+    @media (min-width: 768px) {
+      .country-toggle-mobile {
+        display: none;
+      }
+    }
+    
+    @media (max-width: 767px) {
+      .country-toggle-desktop {
+        display: none;
+      }
+    }
+    
+    .input-grid {
+      display: grid;
+      gap: 1rem;
+    }
+    
+    @media (min-width: 768px) {
+      .input-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    
+    .results-card {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 0.375rem;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    
+    .faq-toggle {
+      background: none;
+      border: none;
+      width: 100%;
+      text-align: left;
+      padding: 1rem 0;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .faq-content {
+      display: none;
+      padding: 0 0 1rem 0;
+      color: #6c757d;
+    }
+    
+    .faq-content.show {
+      display: block;
+    }
+    
+    .chart-container {
+      position: relative;
+      height: 300px;
+      margin: 1.5rem 0;
+    }
+    
+    @media (max-width: 480px) {
+      .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      
+      .input-group-text {
+        min-width: 40px;
+      }
+      
+      .btn {
+        min-height: 44px;
+      }
+    }
+  </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
-  <!-- Site Navbar: keep the existing links -->
+  <!-- Site Navbar -->
   <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
-    <div class="container">
+    <div class="container position-relative">
       <a class="navbar-brand fw-semibold" href="index.html">🏠 Financial Calculators</a>
+      
+      <!-- Country toggle for desktop -->
+      <div class="country-toggle-desktop">
+        <div class="btn-group" role="group" aria-label="Country">
+          <input type="radio" class="btn-check" name="country" id="countryCAD" autocomplete="off" checked>
+          <label class="btn btn-outline-primary btn-sm" for="countryCAD">Canada (CAD)</label>
+          <input type="radio" class="btn-check" name="country" id="countryUSD" autocomplete="off">
+          <label class="btn btn-outline-primary btn-sm" for="countryUSD">USA (USD)</label>
+        </div>
+      </div>
+      
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -52,206 +152,270 @@
   </nav>
 
   <main class="flex-grow-1">
+    <!-- Header + Subtitle -->
     <header class="container py-4">
       <h1 class="h3 mb-2">Free Mortgage Calculator — Canada & USA</h1>
       <p class="text-muted mb-0">Calculate monthly payments and total monthly cost of ownership. Includes CMHC (Canada) and PMI/FHA (USA), with purchase or refinance scenarios.</p>
+      
+      <!-- Country toggle for mobile -->
+      <div class="country-toggle-mobile d-md-none">
+        <div class="btn-group" role="group" aria-label="Country">
+          <input type="radio" class="btn-check" name="country-mobile" id="countryCADMobile" autocomplete="off" checked>
+          <label class="btn btn-outline-primary btn-sm" for="countryCADMobile">Canada (CAD)</label>
+          <input type="radio" class="btn-check" name="country-mobile" id="countryUSDMobile" autocomplete="off">
+          <label class="btn btn-outline-primary btn-sm" for="countryUSDMobile">USA (USD)</label>
+        </div>
+      </div>
     </header>
 
-    <!-- Country toggle -->
-    <div class="container mb-3">
-      <div class="btn-group" role="group" aria-label="Country">
-        <input type="radio" class="btn-check" name="country" id="countryCAD" autocomplete="off" checked>
-        <label class="btn btn-outline-primary" for="countryCAD">Canada (CAD)</label>
-        <input type="radio" class="btn-check" name="country" id="countryUSD" autocomplete="off">
-        <label class="btn btn-outline-primary" for="countryUSD">USA (USD)</label>
+    <!-- Input Form -->
+    <section class="container mb-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <h2 class="h5 mb-3">Mortgage Details</h2>
+          
+          <div class="btn-group mb-3" role="group" aria-label="Scenario">
+            <input type="radio" class="btn-check" name="scenario" id="scenarioPurchase" autocomplete="off" checked>
+            <label class="btn btn-outline-secondary" for="scenarioPurchase">Purchase</label>
+            <input type="radio" class="btn-check" name="scenario" id="scenarioRefinance" autocomplete="off">
+            <label class="btn btn-outline-secondary" for="scenarioRefinance">Refinance</label>
+          </div>
+
+          <div class="input-grid">
+            <!-- City input -->
+            <div class="mb-3">
+              <label class="form-label" for="cityInput">City & Province/State</label>
+              <input id="cityInput" class="form-control" list="cityList" placeholder="e.g., Toronto, ON or San Francisco, CA">
+              <datalist id="cityList"></datalist>
+              <small class="text-muted">Start typing (try "Tor", "San", "Van", "Mon").</small>
+            </div>
+
+            <!-- Empty div for grid alignment on desktop -->
+            <div class="d-none d-md-block"></div>
+
+            <!-- Home price -->
+            <div class="mb-3">
+              <label class="form-label" for="homePrice">Home price / appraised value</label>
+              <div class="input-group">
+                <span class="input-group-text" id="currencySymbol">$</span>
+                <input id="homePrice" type="number" min="0" step="1000" class="form-control" value="700000" inputmode="numeric">
+              </div>
+            </div>
+
+            <!-- Down payment -->
+            <div class="mb-3">
+              <label class="form-label" for="downPayment">Down payment</label>
+              <div class="input-group">
+                <span class="input-group-text" id="currencySymbol2">$</span>
+                <input id="downPayment" type="number" min="0" step="1000" class="form-control" value="140000" inputmode="numeric">
+              </div>
+              <small class="text-muted" id="downPctHelp">20% of home price</small>
+            </div>
+
+            <!-- Interest rate -->
+            <div class="mb-3">
+              <label class="form-label" for="rate">Interest rate (annual %)</label>
+              <input id="rate" type="number" min="0" step="0.01" class="form-control" value="5.29" inputmode="decimal">
+            </div>
+
+            <!-- Amortization -->
+            <div class="mb-3">
+              <label class="form-label" for="years">Amortization (years)</label>
+              <select id="years" class="form-select">
+                <option value="25" selected>25</option>
+                <option value="30">30</option>
+                <option value="20">20</option>
+                <option value="15">15</option>
+                <option value="10">10</option>
+              </select>
+            </div>
+
+            <!-- Payment frequency -->
+            <div class="mb-3">
+              <label class="form-label" for="frequency">Payment frequency</label>
+              <select id="frequency" class="form-select">
+                <option value="monthly" selected>Monthly (12/yr)</option>
+                <option value="semi-monthly">Semi‑Monthly (24/yr)</option>
+                <option value="bi-weekly">Bi‑Weekly (26/yr)</option>
+                <option value="acc-bi-weekly">Accelerated Bi‑Weekly (26/yr, accelerated)</option>
+                <option value="weekly">Weekly (52/yr)</option>
+                <option value="acc-weekly">Accelerated Weekly (52/yr, accelerated)</option>
+              </select>
+            </div>
+
+            <!-- USA insurance choice -->
+            <div class="mb-3 d-none" id="usaMIChoice">
+              <label class="form-label" for="usaMI">Mortgage insurance (USA)</label>
+              <select id="usaMI" class="form-select">
+                <option value="pmi" selected>Conventional PMI (estimate)</option>
+                <option value="fha">FHA (UFMIP + Annual MIP)</option>
+              </select>
+            </div>
+
+            <!-- Monthly costs -->
+            <div class="mb-3">
+              <label class="form-label" for="tax">Property tax (monthly)</label>
+              <div class="input-group">
+                <span class="input-group-text" id="currencySymbol3">$</span>
+                <input id="tax" type="number" min="0" step="10" class="form-control" value="400">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label" for="condo">Condo fee (monthly)</label>
+              <div class="input-group">
+                <span class="input-group-text" id="currencySymbol4">$</span>
+                <input id="condo" type="number" min="0" step="10" class="form-control" value="300">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label" for="water">Water (monthly)</label>
+              <div class="input-group">
+                <span class="input-group-text" id="currencySymbol5">$</span>
+                <input id="water" type="number" min="0" step="5" class="form-control" value="40">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label" for="electric">Electricity (monthly)</label>
+              <div class="input-group">
+                <span class="input-group-text" id="currencySymbol6">$</span>
+                <input id="electric" type="number" min="0" step="5" class="form-control" value="120">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label" for="heating">Heating (monthly)</label>
+              <div class="input-group">
+                <span class="input-group-text" id="currencySymbol7">$</span>
+                <input id="heating" type="number" min="0" step="5" class="form-control" value="100">
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
 
-    
-
-    <!-- Responsive grid: Inputs | Results | KPIs -->
-    <div class="container-xxl pb-5">
-      <div class="row g-4 align-items-start" id="grid">
-        <!-- Inputs -->
-        <aside class="col-12 col-lg-5 col-xl-4" id="inputs-col">
-          <div class="card border-0 shadow-sm">
-            <div class="card-body">
-              <div class="btn-group mb-3" role="group" aria-label="Scenario">
-                <input type="radio" class="btn-check" name="scenario" id="scenarioPurchase" autocomplete="off" checked>
-                <label class="btn btn-outline-secondary" for="scenarioPurchase">Purchase</label>
-                <input type="radio" class="btn-check" name="scenario" id="scenarioRefinance" autocomplete="off">
-                <label class="btn btn-outline-secondary" for="scenarioRefinance">Refinance</label>
-              </div>
-
-              <!-- City + Province/State with dynamic suggestions -->
-              <div class="mb-3">
-                <label class="form-label">City & Province/State</label>
-                <input id="cityInput" class="form-control" list="cityList" placeholder="e.g., Toronto, ON or San Francisco, CA">
-                <datalist id="cityList"></datalist>
-                <small class="text-muted">Start typing (try "Tor", "San", "Van", "Mon").</small>
-              </div>
-
-              <div class="row g-3">
-                <div class="col-12">
-                  <label class="form-label">Home price / appraised value</label>
-                  <div class="input-group">
-                    <span class="input-group-text" id="currencySymbol">$</span>
-                    <input id="homePrice" type="number" min="0" step="1000" class="form-control" value="700000" inputmode="numeric">
-                  </div>
-                </div>
-
-                <div class="col-12">
-                  <label class="form-label">Down payment</label>
-                  <div class="input-group">
-                    <span class="input-group-text" id="currencySymbol2">$</span>
-                    <input id="downPayment" type="number" min="0" step="1000" class="form-control" value="140000" inputmode="numeric">
-                  </div>
-                  <small class="text-muted" id="downPctHelp">20% of home price</small>
-                </div>
-
-                <div class="col-12">
-                  <label class="form-label">Interest rate (annual %)</label>
-                  <input id="rate" type="number" min="0" step="0.01" class="form-control" value="5.29" inputmode="decimal">
-                </div>
-
-                <div class="col-12">
-                  <label class="form-label">Amortization (years)</label>
-                  <select id="years" class="form-select">
-                    <option value="25" selected>25</option>
-                    <option value="30">30</option>
-                    <option value="20">20</option>
-                    <option value="15">15</option>
-                    <option value="10">10</option>
-                  </select>
-                </div>
-
-                <div class="col-12">
-                  <label class="form-label">Payment frequency</label>
-                  <select id="frequency" class="form-select">
-                    <option value="monthly" selected>Monthly (12/yr)</option>
-                    <option value="semi-monthly">Semi‑Monthly (24/yr)</option>
-                    <option value="bi-weekly">Bi‑Weekly (26/yr)</option>
-                    <option value="acc-bi-weekly">Accelerated Bi‑Weekly (26/yr, accelerated)</option>
-                    <option value="weekly">Weekly (52/yr)</option>
-                    <option value="acc-weekly">Accelerated Weekly (52/yr, accelerated)</option>
-                  </select>
-                </div>
-
-                <!-- USA insurance choice appears only if USA selected and DP < 20% -->
-                <div class="col-12 d-none" id="usaMIChoice">
-                  <label class="form-label">Mortgage insurance (USA)</label>
-                  <select id="usaMI" class="form-select">
-                    <option value="pmi" selected>Conventional PMI (estimate)</option>
-                    <option value="fha">FHA (UFMIP + Annual MIP)</option>
-                  </select>
-                </div>
-
-                <!-- Monthly cost add‑ons -->
-                <div class="col-12">
-                  <label class="form-label">Property tax (monthly)</label>
-                  <div class="input-group">
-                    <span class="input-group-text" id="currencySymbol3">$</span>
-                    <input id="tax" type="number" min="0" step="10" class="form-control" value="400">
-                  </div>
-                </div>
-                <div class="col-12">
-                  <label class="form-label">Condo fee (monthly)</label>
-                  <div class="input-group">
-                    <span class="input-group-text" id="currencySymbol4">$</span>
-                    <input id="condo" type="number" min="0" step="10" class="form-control" value="300">
-                  </div>
-                </div>
-                <div class="col-12">
-                  <label class="form-label">Water (monthly)</label>
-                  <div class="input-group">
-                    <span class="input-group-text" id="currencySymbol5">$</span>
-                    <input id="water" type="number" min="0" step="5" class="form-control" value="40">
-                  </div>
-                </div>
-                <div class="col-12">
-                  <label class="form-label">Electricity (monthly)</label>
-                  <div class="input-group">
-                    <span class="input-group-text" id="currencySymbol6">$</span>
-                    <input id="electric" type="number" min="0" step="5" class="form-control" value="120">
-                  </div>
-                </div>
-                <div class="col-12">
-                  <label class="form-label">Heating (monthly)</label>
-                  <div class="input-group">
-                    <span class="input-group-text" id="currencySymbol7">$</span>
-                    <input id="heating" type="number" min="0" step="5" class="form-control" value="100">
-                  </div>
-                </div>
-              </div>
+    <!-- Mortgage Breakdown (Results Summary) -->
+    <section class="container mb-4">
+      <div class="results-card" aria-live="polite">
+        <h2 class="h5 mb-3">Mortgage Payment & Cost Breakdown</h2>
+        
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <div class="text-muted small">Per‑period mortgage payment (P&I)</div>
+            <div class="fs-4 fw-semibold" id="paymentDisplay">$0.00</div>
+            <div class="small text-muted" id="frequencyLabel">Monthly • 12 payments/yr</div>
+          </div>
+          <div class="col-md-6">
+            <div class="text-muted small">Monthly equivalent (P&I)</div>
+            <div class="fs-4 fw-semibold" id="monthlyEquiv">$0.00</div>
+            <div class="small text-muted">
+              <span>LTV: </span><span id="ltvDisplay">0%</span> |
+              <span id="miSummary">—</span>
             </div>
           </div>
-        </aside>
+        </div>
 
-        <!-- Results -->
-        <section class="col-12 col-lg-7 col-xl-5" id="results-col">
-          <div class="card border-0 shadow-sm">
-            <div class="card-body">
-              <h2 class="h5 mb-3">Results</h2>
-              <div class="d-flex flex-wrap gap-3 mb-3">
-                <div>
-                  <div class="text-muted small">Per‑period mortgage payment (P&I)</div>
-                  <div class="fs-4 fw-semibold" id="paymentDisplay">$0.00</div>
-                  <div class="small text-muted" id="frequencyLabel">Monthly • 12 payments/yr</div>
-                </div>
-                <div>
-                  <div class="text-muted small">Monthly equivalent (P&I)</div>
-                  <div class="fs-4 fw-semibold" id="monthlyEquiv">$0.00</div>
-                </div>
-              </div>
-
-              <h3 class="h6 mt-4">Estimated Monthly Cost of Ownership</h3>
-              <ul class="list-group mb-4" id="ownershipList">
-                <li class="list-group-item d-flex justify-content-between">
-                  <span>Mortgage P&I (monthly equivalent)</span>
-                  <span id="ownershipPI">$0</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between">
-                  <span>Mortgage insurance</span>
-                  <span id="ownershipMI">$0</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between">
-                  <span>Property tax</span>
-                  <span id="ownershipTax">$0</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between">
-                  <span>Condo fee</span>
-                  <span id="ownershipCondo">$0</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between">
-                  <span>Utilities (Water + Electric + Heat)</span>
-                  <span id="ownershipUtilities">$0</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between fw-bold bg-light">
-                  <span>Total Monthly Cost</span>
-                  <span id="ownershipTotal">$0</span>
-                </li>
-              </ul>
-
-              <h3 class="h6">Amortization by Year</h3>
-              <canvas id="amortChart" height="260" aria-label="Amortization chart showing principal and interest by year"></canvas>
-            </div>
-          </div>
-        </section>
-
-        <!-- KPIs (optional on xl+) -->
-        <aside class="col-12 col-xl-3 d-none d-xl-block" id="kpis-col">
-          <div class="card border-0 shadow-sm">
-            <div class="card-body">
-              <div class="text-muted small">Loan‑to‑Value (LTV)</div>
-              <div class="fs-5 fw-semibold" id="ltvDisplay">0%</div>
-              <hr>
-              <div class="text-muted small">Insurance</div>
-              <div class="small" id="miSummary">—</div>
-            </div>
-          </div>
-        </aside>
+        <h3 class="h6 mt-4 mb-3">Total Monthly Cost of Ownership</h3>
+        <ul class="list-group" id="ownershipList">
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Mortgage P&I (monthly equivalent)</span>
+            <span id="ownershipPI">$0</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Mortgage insurance</span>
+            <span id="ownershipMI">$0</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Property tax</span>
+            <span id="ownershipTax">$0</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Condo fee</span>
+            <span id="ownershipCondo">$0</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Utilities (Water + Electric + Heat)</span>
+            <span id="ownershipUtilities">$0</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between fw-bold bg-light">
+            <span>Total Monthly Cost</span>
+            <span id="ownershipTotal">$0</span>
+          </li>
+        </ul>
       </div>
-    </div>
+    </section>
+
+    <!-- Amortization Graph -->
+    <section class="container mb-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <h2 class="h5 mb-3">Amortization by Year</h2>
+          <div class="chart-container">
+            <canvas id="amortChart" aria-label="Amortization chart showing principal and interest by year"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEO + FAQ -->
+    <section class="container mb-4">
+      <div class="row">
+        <div class="col-lg-8">
+          <h2 class="h5 mb-3">About This Mortgage Calculator</h2>
+          <p class="text-muted">
+            Our free mortgage calculator helps you estimate monthly payments and total ownership costs for properties in Canada and the USA. 
+            Calculate CMHC insurance premiums for Canadian purchases, or PMI/FHA insurance for US mortgages. 
+            Compare different payment frequencies including accelerated bi-weekly options to see how they affect your amortization schedule.
+          </p>
+
+          <h3 class="h5 mt-4 mb-3">Frequently Asked Questions</h3>
+          <div class="border rounded">
+            <div class="border-bottom">
+              <button class="faq-toggle" type="button" onclick="toggleFAQ(1)">
+                What costs are included in total monthly ownership?
+                <span id="faq-icon-1">+</span>
+              </button>
+              <div class="faq-content" id="faq-content-1">
+                The total includes your mortgage principal and interest, mortgage insurance (if applicable), property taxes, condo fees, and utilities (water, electricity, heating). This gives you a complete picture of your monthly housing costs.
+              </div>
+            </div>
+            
+            <div class="border-bottom">
+              <button class="faq-toggle" type="button" onclick="toggleFAQ(2)">
+                How does payment frequency affect amortization?
+                <span id="faq-icon-2">+</span>
+              </button>
+              <div class="faq-content" id="faq-content-2">
+                More frequent payments reduce the total interest paid over the life of your mortgage. Accelerated bi-weekly payments are particularly effective, saving you thousands in interest and reducing your amortization period.
+              </div>
+            </div>
+            
+            <div class="border-bottom">
+              <button class="faq-toggle" type="button" onclick="toggleFAQ(3)">
+                When does CMHC (Canada) or FHA/PMI (USA) apply?
+                <span id="faq-icon-3">+</span>
+              </button>
+              <div class="faq-content" id="faq-content-3">
+                In Canada, CMHC insurance is required for purchases with less than 20% down payment. In the USA, mortgage insurance applies when down payment is less than 20%, with options for conventional PMI or FHA insurance.
+              </div>
+            </div>
+            
+            <div>
+              <button class="faq-toggle" type="button" onclick="toggleFAQ(4)">
+                Can I use this for purchase or refinance scenarios?
+                <span id="faq-icon-4">+</span>
+              </button>
+              <div class="faq-content" id="faq-content-4">
+                Yes, you can select either Purchase or Refinance scenarios. Note that CMHC insurance in Canada only applies to purchase transactions, not refinancing.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="border-top mt-auto">
@@ -267,7 +431,7 @@
   </footer>
 
   <!-- JSON-LD: Organization -->
-  <script type="application/ld+json" id="ld-org">
+  <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -278,7 +442,7 @@
   </script>
 
   <!-- JSON-LD: WebSite -->
-  <script type="application/ld+json" id="ld-site">
+  <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -293,7 +457,7 @@
   </script>
 
   <!-- JSON-LD: WebApplication -->
-  <script type="application/ld+json" id="ld-app">
+  <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
@@ -318,7 +482,7 @@
   </script>
 
   <!-- JSON-LD: BreadcrumbList -->
-  <script type="application/ld+json" id="ld-breadcrumb">
+  <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -340,41 +504,41 @@
   </script>
 
   <!-- JSON-LD: FAQPage -->
-  <script type="application/ld+json" id="ld-faq">
+  <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "mainEntity": [
       {
         "@type": "Question",
-        "name": "How do I calculate my mortgage payment?",
+        "name": "What costs are included in total monthly ownership?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Enter home price, down payment, interest rate and amortization period; the calculator shows principal and interest by frequency."
+          "text": "The total includes your mortgage principal and interest, mortgage insurance (if applicable), property taxes, condo fees, and utilities (water, electricity, heating). This gives you a complete picture of your monthly housing costs."
         }
       },
       {
         "@type": "Question",
-        "name": "What's the difference between PMI and FHA?",
+        "name": "How does payment frequency affect amortization?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "PMI is conventional mortgage insurance, while FHA includes an upfront premium and annual mortgage insurance premium with different rates."
+          "text": "More frequent payments reduce the total interest paid over the life of your mortgage. Accelerated bi-weekly payments are particularly effective, saving you thousands in interest and reducing your amortization period."
         }
       },
       {
         "@type": "Question",
-        "name": "How does CMHC work in Canada?",
+        "name": "When does CMHC (Canada) or FHA/PMI (USA) apply?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "CMHC insurance is required when down payment is less than 20% on purchases. The premium is based on loan-to-value ratio and is added to your mortgage principal."
+          "text": "In Canada, CMHC insurance is required for purchases with less than 20% down payment. In the USA, mortgage insurance applies when down payment is less than 20%, with options for conventional PMI or FHA insurance."
         }
       },
       {
         "@type": "Question",
-        "name": "What are accelerated bi‑weekly payments?",
+        "name": "Can I use this for purchase or refinance scenarios?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Accelerated bi-weekly means you pay half your monthly payment every two weeks, resulting in 26 payments per year instead of 24, helping you pay off your mortgage faster."
+          "text": "Yes, you can select either Purchase or Refinance scenarios. Note that CMHC insurance in Canada only applies to purchase transactions, not refinancing."
         }
       }
     ]
@@ -386,6 +550,46 @@
   <script src="assets/app.js"></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+    
+    // FAQ toggle functionality
+    function toggleFAQ(num) {
+      const content = document.getElementById(`faq-content-${num}`);
+      const icon = document.getElementById(`faq-icon-${num}`);
+      
+      if (content.classList.contains('show')) {
+        content.classList.remove('show');
+        icon.textContent = '+';
+      } else {
+        content.classList.add('show');
+        icon.textContent = '−';
+      }
+    }
+    
+    // Sync mobile and desktop country toggles
+    document.addEventListener('DOMContentLoaded', function() {
+      const desktopCAD = document.getElementById('countryCAD');
+      const desktopUSD = document.getElementById('countryUSD');
+      const mobileCAD = document.getElementById('countryCADMobile');
+      const mobileUSD = document.getElementById('countryUSDMobile');
+      
+      if (desktopCAD && mobileCAD) {
+        desktopCAD.addEventListener('change', function() {
+          if (this.checked) mobileCAD.checked = true;
+        });
+        
+        desktopUSD.addEventListener('change', function() {
+          if (this.checked) mobileUSD.checked = true;
+        });
+        
+        mobileCAD.addEventListener('change', function() {
+          if (this.checked) desktopCAD.checked = true;
+        });
+        
+        mobileUSD.addEventListener('change', function() {
+          if (this.checked) desktopUSD.checked = true;
+        });
+      }
+    });
   </script>
 </body>
 </html>
