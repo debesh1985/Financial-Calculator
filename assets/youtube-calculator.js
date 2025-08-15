@@ -43,7 +43,7 @@ const calc = () => {
   // Long-form ads revenue
   if ((fmt === 'long' || fmt === 'both') && inputs.modWatch()) {
     const views = inputs.viewsLF();
-    const monetizableViews = views * (inputs.monetizableRate() / 100);
+    const monetizableViews = views * (inputs.monetizableRate() / 100) * (1 - inputs.premiumViews() / 100);
     
     // Calculate ad impressions per view
     let adImpressions = 0;
