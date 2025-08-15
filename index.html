@@ -34,13 +34,14 @@
     /* UI tidy-up (2025-08-14) */
     .country-toggle-desktop {
       position: absolute;
-      top: 1rem;
+      top: 50%;
       right: 1rem;
+      transform: translateY(-50%);
     }
     
     .country-toggle-mobile {
       text-align: right;
-      margin: 1rem 0;
+      margin: 1rem 0 0 0;
     }
     
     @media (min-width: 768px) {
@@ -53,6 +54,10 @@
       .country-toggle-desktop {
         display: none;
       }
+    }
+    
+    .navbar .container {
+      position: relative;
     }
     
     .input-grid {
@@ -572,21 +577,29 @@
       const mobileCAD = document.getElementById('countryCADMobile');
       const mobileUSD = document.getElementById('countryUSDMobile');
       
+      function syncToggles(source, target) {
+        if (source && target && source.checked) {
+          target.checked = true;
+          // Trigger change event to update the app
+          target.dispatchEvent(new Event('change'));
+        }
+      }
+      
       if (desktopCAD && mobileCAD) {
         desktopCAD.addEventListener('change', function() {
-          if (this.checked) mobileCAD.checked = true;
+          syncToggles(this, mobileCAD);
         });
         
         desktopUSD.addEventListener('change', function() {
-          if (this.checked) mobileUSD.checked = true;
+          syncToggles(this, mobileUSD);
         });
         
         mobileCAD.addEventListener('change', function() {
-          if (this.checked) desktopCAD.checked = true;
+          syncToggles(this, desktopCAD);
         });
         
         mobileUSD.addEventListener('change', function() {
-          if (this.checked) desktopUSD.checked = true;
+          syncToggles(this, desktopUSD);
         });
       }
     });

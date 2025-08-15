@@ -86,18 +86,22 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function setupEventListeners() {
-  // Country toggle
-  document.querySelectorAll('input[name="country"]').forEach(radio => {
-    radio.addEventListener('change', function() {
-      updateCurrencySymbols();
-      updateUSAInsuranceVisibility();
-      calculateAndUpdate();
-    });
+  // Country toggle - both desktop and mobile
+  document.querySelectorAll('input[name="country"], input[name="country-mobile"]').forEach(radio => {
+    if (radio) {
+      radio.addEventListener('change', function() {
+        updateCurrencySymbols();
+        updateUSAInsuranceVisibility();
+        calculateAndUpdate();
+      });
+    }
   });
 
   // Scenario toggle
   document.querySelectorAll('input[name="scenario"]').forEach(radio => {
-    radio.addEventListener('change', calculateAndUpdate);
+    if (radio) {
+      radio.addEventListener('change', calculateAndUpdate);
+    }
   });
 
   // All input fields
@@ -146,12 +150,16 @@ function setupCityAutocomplete() {
 }
 
 function updateCurrencySymbols() {
-  const isCAD = document.getElementById('countryCAD').checked;
+  const desktopCAD = document.getElementById('countryCAD');
+  const mobileCAD = document.getElementById('countryCADMobile');
+  const isCAD = (desktopCAD && desktopCAD.checked) || (mobileCAD && mobileCAD.checked);
   const symbol = '$'; // Both CAD and USD use $
   
   // Update all currency symbols
   document.querySelectorAll('[id^="currencySymbol"]').forEach(elem => {
-    elem.textContent = symbol;
+    if (elem) {
+      elem.textContent = symbol;
+    }
   });
 }
 
@@ -171,13 +179,14 @@ function updateDownPaymentPercent() {
 
 function updateUSAInsuranceVisibility() {
   const countryUSDEl = document.getElementById('countryUSD');
+  const countryUSDMobileEl = document.getElementById('countryUSDMobile');
   const homePriceEl = document.getElementById('homePrice');
   const downPaymentEl = document.getElementById('downPayment');
   const usaMIChoice = document.getElementById('usaMIChoice');
   
-  if (!countryUSDEl || !homePriceEl || !downPaymentEl || !usaMIChoice) return;
+  if (!homePriceEl || !downPaymentEl || !usaMIChoice) return;
   
-  const isUSA = countryUSDEl.checked;
+  const isUSA = (countryUSDEl && countryUSDEl.checked) || (countryUSDMobileEl && countryUSDMobileEl.checked);
   const homePrice = parseFloat(homePriceEl.value) || 0;
   const downPayment = parseFloat(downPaymentEl.value) || 0;
   const downPaymentPercent = homePrice > 0 ? (downPayment / homePrice) * 100 : 100;
@@ -206,8 +215,10 @@ function calculateMortgage() {
   const years = parseInt(document.getElementById('years').value) || 25;
   const frequency = document.getElementById('frequency').value;
   
-  const isCAD = document.getElementById('countryCAD').checked;
-  const isPurchase = document.getElementById('scenarioPurchase').checked;
+  const desktopCAD = document.getElementById('countryCAD');
+  const mobileCAD = document.getElementById('countryCADMobile');
+  const isCAD = (desktopCAD && desktopCAD.checked) || (mobileCAD && mobileCAD.checked);
+  const isPurchase = document.getElementById('scenarioPurchase') && document.getElementById('scenarioPurchase').checked;
   
   if (homePrice <= 0 || downPayment < 0 || rate < 0) {
     return null;
@@ -440,16 +451,16 @@ function updateAmortizationChart(mortgage) {
         {
           label: 'Principal',
           data: yearlyData.map(d => d.principal),
-          backgroundColor: '#198754',
-          borderColor: '#198754',
-          borderWidth: 1
+          backgroundColor: '#10b981',
+          borderColor: '#059669',
+          borderWidth: 2
         },
         {
           label: 'Interest',
           data: yearlyData.map(d => d.interest),
-          backgroundColor: '#dc3545',
-          borderColor: '#dc3545',
-          borderWidth: 1
+          backgroundColor: '#f59e0b',
+          borderColor: '#d97706',
+          borderWidth: 2
         }
       ]
     },
