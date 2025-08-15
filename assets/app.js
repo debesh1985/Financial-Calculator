@@ -85,8 +85,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function setupEventListeners() {
-  // Country toggle - both desktop and mobile
-  document.querySelectorAll('input[name="country"], input[name="country-mobile"]').forEach(radio => {
+  // Country toggle - desktop, main section, and mobile
+  document
+    .querySelectorAll(
+      'input[name="country"], input[name="country-main"], input[name="country-mobile"]'
+    )
+    .forEach(radio => {
     if (radio) {
       radio.addEventListener('change', function() {
         updateCurrencySymbols();

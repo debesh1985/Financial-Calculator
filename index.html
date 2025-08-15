@@ -582,27 +582,6 @@
       }
     }
     
-    // Initialize country toggle functionality
-    document.addEventListener('DOMContentLoaded', function() {
-      const countryCAD = document.getElementById('countryCADMain');
-      const countryUSD = document.getElementById('countryUSDMain');
-      
-      if (countryCAD && countryUSD) {
-        countryCAD.addEventListener('change', function() {
-          if (this.checked) {
-            // Trigger change event to update the app
-            this.dispatchEvent(new Event('change'));
-          }
-        });
-        
-        countryUSD.addEventListener('change', function() {
-          if (this.checked) {
-            // Trigger change event to update the app
-            this.dispatchEvent(new Event('change'));
-          }
-        });
-      }
-    });
   </script>
 </body>
 </html>
