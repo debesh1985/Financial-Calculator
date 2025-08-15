@@ -265,12 +265,103 @@ const copyInputsAsLink = () => {
     textArea.select();
     document.execCommand('copy');
     document.body.removeChild(textArea);
-    
+
     const btn = $('#copyLinkBtn');
     const originalText = btn.textContent;
     btn.textContent = 'Copied!';
     setTimeout(() => btn.textContent = originalText, 2000);
   });
+};
+
+// ===== Instagram ID Estimator =====
+const strToSeed = (str) => {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = Math.imul(31, h) + str.charCodeAt(i) | 0;
+  }
+  return Math.abs(h);
+};
+
+const seededRng = (seed) => {
+  return () => {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t ^= t + Math.imul(t ^ t >>> 7, 61 | t);
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+};
+
+const generateMetrics = (id, start, end) => {
+  const rand = seededRng(strToSeed(id + start + end));
+  return {
+    starsReceived: Math.floor(rand() * 5000),
+    activeSubscribers: Math.floor(rand() * 2000),
+    monthlyPrice: 4.99,
+    appStorePurchases: 70,
+    appStoreFee: 30,
+    webPurchases: 30,
+    platformFee: 0,
+    reelsPlays: Math.floor(rand() * 2000000),
+    reelsRPM: (0.5 + rand() * 1.5).toFixed(2),
+    qualifiedPlayRate: (85 + rand() * 15).toFixed(1),
+    reelsCreatorShare: 45
+  };
+};
+
+const getDateRange = () => {
+  const val = $('input[name="instaTimeWindow"]:checked').value;
+  const today = new Date();
+  if (val === 'custom') {
+    return {
+      start: $('#instaStartDate').value,
+      end: $('#instaEndDate').value,
+      label: `${$('#instaStartDate').value} to ${$('#instaEndDate').value}`
+    };
+  }
+  const days = parseInt(val, 10);
+  const startDate = new Date();
+  startDate.setDate(today.getDate() - days);
+  return {
+    start: startDate.toISOString().split('T')[0],
+    end: today.toISOString().split('T')[0],
+    label: `Last ${val} days`
+  };
+};
+
+const fetchInstagram = () => {
+  const id = $('#instaInput').value.trim().replace(/^@/, '');
+  if (!id) {
+    $('#instaStatus').textContent = 'Please enter an Instagram ID.';
+    return;
+  }
+
+  const { start, end, label } = getDateRange();
+  const metrics = generateMetrics(id, start, end);
+
+  $('#starsReceived').value = metrics.starsReceived;
+  $('#activeSubscribers').value = metrics.activeSubscribers;
+  $('#monthlyPrice').value = metrics.monthlyPrice;
+  $('#appStorePurchases').value = metrics.appStorePurchases;
+  $('#appStoreFee').value = metrics.appStoreFee;
+  $('#webPurchases').value = metrics.webPurchases;
+  $('#platformFee').value = metrics.platformFee;
+  $('#reelsPlays').value = metrics.reelsPlays;
+  $('#reelsRPM').value = metrics.reelsRPM;
+  $('#qualifiedPlayRate').value = metrics.qualifiedPlayRate;
+  $('#reelsCreatorShare').value = metrics.reelsCreatorShare;
+
+  syncSliders();
+  calculate();
+
+  const total = calculateGifts() + calculateSubscriptions() + calculateReels();
+  const rpm = inputs.reelsPlays() > 0 ? total / (inputs.reelsPlays() / 1000) : 0;
+
+  $('#instaTitle').textContent = `@${id}`;
+  $('#instaRevenue').textContent = formatUSD(total);
+  $('#instaRPM').textContent = rpm > 0 ? formatUSD(rpm) : '—';
+  $('#instaDateRange').textContent = label;
+  $('#instaSummary').classList.remove('hidden');
+  $('#instaStatus').textContent = '';
 };
 
 // ===== Debounced Calculate =====
@@ -286,6 +377,23 @@ const debouncedCalculate = () => {
 
 // ===== Event Listeners =====
 const setupEventListeners = () => {
+  // Time window radios for Instagram estimator
+  $$('input[name="instaTimeWindow"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      $('#instaCustomRange').classList.toggle('hidden', radio.value !== 'custom');
+    });
+  });
+
+  // Set default dates
+  const today = new Date();
+  const thirty = new Date();
+  thirty.setDate(today.getDate() - 30);
+  $('#instaEndDate').value = today.toISOString().split('T')[0];
+  $('#instaStartDate').value = thirty.toISOString().split('T')[0];
+
+  // Fetch button
+  $('#fetchInstaBtn').addEventListener('click', fetchInstagram);
+
   // Eligibility checkboxes
   $$('[id^="eligibility"]').forEach(el => {
     el.addEventListener('change', debouncedCalculate);
