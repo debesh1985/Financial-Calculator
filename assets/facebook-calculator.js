@@ -20,6 +20,7 @@ const inputs = {
   
   // Stars
   starsReceived: () => Math.max(0, Number($('#starsReceived').value||0)),
+  starsFee: () => clamp(Number($('#starsFee').value||5), 0, 50),
   
   // Subscriptions
   activeSubscribers: () => Math.max(0, Number($('#activeSubscribers').value||0)),
@@ -76,8 +77,8 @@ const calc = () => {
     return { starsUSD: 0, subscriptionsUSD: 0, reelsUSD: 0, longformUSD: 0, brandedUSD: 0, total: 0, overallRPM: 0 };
   }
   
-  // Stars Revenue = Stars_received × 0.01
-  const starsUSD = inputs.starsReceived() * 0.01;
+  // Stars Revenue = Stars_received × 0.01 × (1 - Stars_fee)
+  const starsUSD = inputs.starsReceived() * 0.01 * (1 - inputs.starsFee() / 100);
   
   // Subscriptions Revenue
   const gross = inputs.activeSubscribers() * inputs.monthlyPrice();
@@ -120,6 +121,7 @@ const updateUI = () => {
   $('#webPurchases').value = 100 - inputs.appStorePurchases();
   
   // Sync sliders with number inputs
+  $('#starsFeeNum').value = $('#starsFee').value;
   $('#appStorePurchasesNum').value = $('#appStorePurchases').value;
   $('#monetizableRateNum').value = $('#monetizableRate').value;
   $('#fillRateNum').value = $('#fillRate').value;
@@ -197,6 +199,8 @@ const resetToDefaults = () => {
   
   // Stars
   $('#starsReceived').value = 5000;
+  $('#starsFee').value = 5;
+  $('#starsFeeNum').value = 5;
   
   // Subscriptions
   $('#activeSubscribers').value = 200;
@@ -504,6 +508,7 @@ const bindEvents = () => {
   
   // Slider-number sync
   const sliderPairs = [
+    ['starsFee', 'starsFeeNum'],
     ['appStorePurchases', 'appStorePurchasesNum'],
     ['monetizableRate', 'monetizableRateNum'],
     ['fillRate', 'fillRateNum'],
