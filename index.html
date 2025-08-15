@@ -212,22 +212,16 @@
             <!-- Home price -->
             <div class="mb-3">
               <div class="form-field-wrapper">
-                <label class="form-label" for="homePrice">Home price / appraised value</label>
-                <div class="input-group">
-                  <span class="input-group-text" id="currencySymbol">$</span>
-                  <input id="homePrice" type="number" min="0" step="1000" class="form-control" value="700000" inputmode="numeric">
-                </div>
+                <label class="form-label" for="homePrice" id="homePriceLabel" data-label-base="Home price / appraised value">Home price / appraised value (CA$)</label>
+                <input id="homePrice" type="number" min="0" step="1000" class="form-control" value="700000" inputmode="numeric">
               </div>
             </div>
 
             <!-- Down payment -->
             <div class="mb-3">
               <div class="form-field-wrapper">
-                <label class="form-label" for="downPayment">Down payment</label>
-                <div class="input-group">
-                  <span class="input-group-text" id="currencySymbol2">$</span>
-                  <input id="downPayment" type="number" min="0" step="1000" class="form-control" value="140000" inputmode="numeric">
-                </div>
+                <label class="form-label" for="downPayment" id="downPaymentLabel" data-label-base="Down payment">Down payment (CA$)</label>
+                <input id="downPayment" type="number" min="0" step="1000" class="form-control" value="140000" inputmode="numeric">
               </div>
               <small class="text-muted" id="downPctHelp">20% of home price</small>
             </div>
@@ -283,51 +277,36 @@
             <!-- Monthly costs -->
             <div class="mb-3">
               <div class="form-field-wrapper">
-                <label class="form-label" for="tax">Property tax (monthly)</label>
-                <div class="input-group">
-                  <span class="input-group-text" id="currencySymbol3">$</span>
-                  <input id="tax" type="number" min="0" step="10" class="form-control" value="400">
-                </div>
+                <label class="form-label" for="tax" id="taxLabel" data-label-base="Property tax (monthly)">Property tax (monthly) (CA$)</label>
+                <input id="tax" type="number" min="0" step="10" class="form-control" value="400">
               </div>
             </div>
 
             <div class="mb-3">
               <div class="form-field-wrapper">
-                <label class="form-label" for="condo">Condo fee (monthly)</label>
-                <div class="input-group">
-                  <span class="input-group-text" id="currencySymbol4">$</span>
-                  <input id="condo" type="number" min="0" step="10" class="form-control" value="300">
-                </div>
+                <label class="form-label" for="condo" id="condoLabel" data-label-base="Condo fee (monthly)">Condo fee (monthly) (CA$)</label>
+                <input id="condo" type="number" min="0" step="10" class="form-control" value="300">
               </div>
             </div>
 
             <div class="mb-3">
               <div class="form-field-wrapper">
-                <label class="form-label" for="water">Water (monthly)</label>
-                <div class="input-group">
-                  <span class="input-group-text" id="currencySymbol5">$</span>
-                  <input id="water" type="number" min="0" step="5" class="form-control" value="40">
-                </div>
+                <label class="form-label" for="water" id="waterLabel" data-label-base="Water (monthly)">Water (monthly) (CA$)</label>
+                <input id="water" type="number" min="0" step="5" class="form-control" value="40">
               </div>
             </div>
 
             <div class="mb-3">
               <div class="form-field-wrapper">
-                <label class="form-label" for="electric">Electricity (monthly)</label>
-                <div class="input-group">
-                  <span class="input-group-text" id="currencySymbol6">$</span>
-                  <input id="electric" type="number" min="0" step="5" class="form-control" value="120">
-                </div>
+                <label class="form-label" for="electric" id="electricLabel" data-label-base="Electricity (monthly)">Electricity (monthly) (CA$)</label>
+                <input id="electric" type="number" min="0" step="5" class="form-control" value="120">
               </div>
             </div>
 
             <div class="mb-3">
               <div class="form-field-wrapper">
-                <label class="form-label" for="heating">Heating (monthly)</label>
-                <div class="input-group">
-                  <span class="input-group-text" id="currencySymbol7">$</span>
-                  <input id="heating" type="number" min="0" step="5" class="form-control" value="100">
-                </div>
+                <label class="form-label" for="heating" id="heatingLabel" data-label-base="Heating (monthly)">Heating (monthly) (CA$)</label>
+                <input id="heating" type="number" min="0" step="5" class="form-control" value="100">
               </div>
             </div>
           </div>

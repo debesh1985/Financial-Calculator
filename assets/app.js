@@ -149,15 +149,15 @@ function setupCityAutocomplete() {
 }
 
 function updateCurrencySymbols() {
-  const desktopCAD = document.getElementById('countryCAD');
+  const desktopCAD = document.getElementById('countryCAD') || document.getElementById('countryCADMain');
   const mobileCAD = document.getElementById('countryCADMobile');
   const isCAD = (desktopCAD && desktopCAD.checked) || (mobileCAD && mobileCAD.checked);
-  const symbol = '$'; // Both CAD and USD use $
+  const symbol = isCAD ? 'CA$' : '$';
 
-  // Update all currency symbols
-  document.querySelectorAll('[id^="currencySymbol"]').forEach(elem => {
-    if (elem) {
-      elem.textContent = symbol;
+  document.querySelectorAll('[data-label-base]').forEach(label => {
+    const base = label.getAttribute('data-label-base');
+    if (base) {
+      label.textContent = `${base} (${symbol})`;
     }
   });
 }
