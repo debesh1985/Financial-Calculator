@@ -441,8 +441,12 @@
         <div class="scenario-section" id="subscriptionsSection">
           <h3>💳 Subscriptions</h3>
           <div class="input-group">
-            <label for="activeSubscribers">Active subscribers <span class="info" title="Number of active paying subscribers">ⓘ</span></label>
-            <input type="number" id="activeSubscribers" min="0" step="1" value="200">
+            <label for="subscribersYear1">Subscribers in first year <span class="info" title="Number of subscribers in their first year">ⓘ</span></label>
+            <input type="number" id="subscribersYear1" min="0" step="1" value="100">
+          </div>
+          <div class="input-group">
+            <label for="subscribersYear2Plus">Subscribers 1+ years <span class="info" title="Number of subscribers after their first year">ⓘ</span></label>
+            <input type="number" id="subscribersYear2Plus" min="0" step="1" value="100">
           </div>
           <div class="input-group">
             <label for="monthlyPrice">Monthly price (USD) <span class="info" title="Subscription price per month">ⓘ</span></label>
@@ -457,16 +461,16 @@
             </div>
           </div>
           <div class="input-group">
-            <label for="appStoreFee">App store fee (%) <span class="info" title="App store commission (30% or 15% for year-2)">ⓘ</span></label>
-            <input type="number" id="appStoreFee" min="0" max="50" value="30">
-          </div>
-          <div class="input-group">
             <label for="webPurchases">Web purchases (%) <span class="info" title="Percentage of purchases through web (auto-calculated)">ⓘ</span></label>
             <input type="number" id="webPurchases" min="0" max="100" value="30" readonly>
           </div>
           <div class="input-group">
             <label for="platformFee">Platform/other fee (%) <span class="info" title="Additional platform fees for web purchases">ⓘ</span></label>
             <input type="number" id="platformFee" min="0" max="50" value="0">
+          </div>
+          <div class="input-group">
+            <label for="metaPlatformFee">Meta platform fee (%) <span class="info" title="Meta fee applied to subscription revenue after 2024">ⓘ</span></label>
+            <input type="number" id="metaPlatformFee" min="0" max="50" value="0">
           </div>
         </div>
 
