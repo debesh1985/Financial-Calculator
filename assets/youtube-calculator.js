@@ -21,7 +21,9 @@ const inputs = {
   viewsLF: () => Math.max(0, Number($('#viewsLF').value||0)),
   viewsShorts: () => Math.max(0, Number($('#viewsShorts').value||0)),
   monetizableRate: () => clamp(Number($('#monetizableRate').value||85), 0, 100),
-  adFillRate: () => clamp(Number($('#adFillRate').value||90), 0, 100),
+  preFill: () => clamp(Number($('#preFill').value||95), 0, 100),
+  midFill: () => clamp(Number($('#midFill').value||90), 0, 100),
+  postFill: () => clamp(Number($('#postFill').value||80), 0, 100),
   premiumViews: () => clamp(Number($('#premiumViews').value||5), 0, 100),
   premiumRPM: () => Math.max(0, Number($('#premiumRPM').value||3)),
   avgCPM: () => Math.max(0, Number($('#avgCPM').value||8)),
@@ -30,6 +32,7 @@ const inputs = {
   creatorShareLF: () => clamp(Number($('#creatorShareLF').value||55), 0, 100),
   creatorShareShorts: () => clamp(Number($('#creatorShareShorts').value||45), 0, 100),
   additionalSharing: () => clamp(Number($('#additionalSharing').value||0), 0, 50),
+  avgViewDuration: () => Math.max(0, Number($('#avgViewDuration').value||0)),
   manualImp: () => $('#manualImp').checked,
   adImpressionsManual: () => Math.max(0, Number($('#adImpressionsManual').value||2.5)),
   shortsRPM: () => Math.max(0, Number($('#shortsRPM').value||0.8))
@@ -50,12 +53,32 @@ const calc = () => {
     if (inputs.manualImp()) {
       adImpressions = inputs.adImpressionsManual();
     } else {
-      if (inputs.preRoll()) adImpressions += 1;
-      if (inputs.midRoll() && inputs.videoLength() >= 8) adImpressions += inputs.midrolls();
-      if (inputs.postRoll()) adImpressions += 0.5; // Post-roll has lower fill
+      const len = inputs.videoLength();
+      const avgDur = inputs.avgViewDuration();
+      const retention = len > 0 ? Math.min(avgDur / len, 1) : 0;
+
+      // Pre-roll
+      if (inputs.preRoll()) {
+        adImpressions += (inputs.preFill() / 100);
+      }
+
+      // Mid-rolls
+      if (inputs.midRoll() && len >= 8) {
+        const midCount = inputs.midrolls();
+        for (let i = 1; i <= midCount; i++) {
+          const position = (i / (midCount + 1)) * len;
+          const midRetention = position > 0 ? Math.min(avgDur / position, 1) : 0;
+          adImpressions += (inputs.midFill() / 100) * midRetention;
+        }
+      }
+
+      // Post-roll
+      if (inputs.postRoll()) {
+        adImpressions += (inputs.postFill() / 100) * retention;
+      }
     }
-    
-    const totalImpressions = monetizableViews * adImpressions * (inputs.adFillRate() / 100);
+
+    const totalImpressions = monetizableViews * adImpressions;
     const grossRevenue = (totalImpressions / 1000) * inputs.avgCPM();
     const seasonalRevenue = grossRevenue * (inputs.seasonality() / 100);
     const inventoryRevenue = seasonalRevenue * (inputs.inventoryAvail() / 100);
@@ -125,7 +148,9 @@ const sanitize = ()=>{
   // Sync sliders with number inputs
   const sliderPairs = [
     ['monetizableRate', 'monetizableRateNum'],
-    ['adFillRate', 'adFillRateNum'],
+    ['preFill', 'preFillNum'],
+    ['midFill', 'midFillNum'],
+    ['postFill', 'postFillNum'],
     ['premiumViews', 'premiumViewsNum'],
     ['seasonality', 'seasonalityNum'],
     ['inventoryAvail', 'inventoryAvailNum'],
@@ -204,11 +229,17 @@ const resetToDefaults = ()=>{
   $('#viewsShorts').value = 500000;
   $('#monetizableRate').value = 85;
   $('#monetizableRateNum').value = 85;
-  $('#adFillRate').value = 90;
-  $('#adFillRateNum').value = 90;
+  $('#preFill').value = 95;
+  $('#preFillNum').value = 95;
+  $('#midFill').value = 90;
+  $('#midFillNum').value = 90;
+  $('#postFill').value = 80;
+  $('#postFillNum').value = 80;
   $('#premiumViews').value = 5;
   $('#premiumViewsNum').value = 5;
   $('#premiumRPM').value = 3.00;
+
+  $('#avgViewDuration').value = 5;
   
   // Auction & Demand
   $('#avgCPM').value = 8.00;
@@ -262,7 +293,9 @@ const bindEvents = ()=>{
   // Slider-number sync
   const sliderPairs = [
     ['monetizableRate', 'monetizableRateNum'],
-    ['adFillRate', 'adFillRateNum'],
+    ['preFill', 'preFillNum'],
+    ['midFill', 'midFillNum'],
+    ['postFill', 'postFillNum'],
     ['premiumViews', 'premiumViewsNum'],
     ['seasonality', 'seasonalityNum'],
     ['inventoryAvail', 'inventoryAvailNum'],
@@ -702,13 +735,20 @@ const calculateChannelRevenue = (longFormViews, shortsViews) => {
   // Store original conservative settings
   const originalCPM = inputs.avgCPM();
   const originalMonetizable = inputs.monetizableRate();
-  const originalFillRate = inputs.adFillRate();
+  const originalPreFill = inputs.preFill();
+  const originalMidFill = inputs.midFill();
+  const originalPostFill = inputs.postFill();
   const originalShortsRPM = inputs.shortsRPM();
   
   // Apply more conservative estimates for channel analysis
   $('#avgCPM').value = Math.min(originalCPM, 4.0); // Cap at $4 CPM for conservative estimate
   $('#monetizableRate').value = Math.min(originalMonetizable, 75); // Reduce to 75%
-  $('#adFillRate').value = Math.min(originalFillRate, 85); // Reduce to 85%
+  $('#preFill').value = Math.min(originalPreFill, 85);
+  $('#preFillNum').value = Math.min(originalPreFill, 85);
+  $('#midFill').value = Math.min(originalMidFill, 85);
+  $('#midFillNum').value = Math.min(originalMidFill, 85);
+  $('#postFill').value = Math.min(originalPostFill, 85);
+  $('#postFillNum').value = Math.min(originalPostFill, 85);
   $('#shortsRPM').value = Math.min(originalShortsRPM, 0.60); // Conservative Shorts RPM
   
   // Temporarily override views
@@ -736,7 +776,12 @@ const calculateChannelRevenue = (longFormViews, shortsViews) => {
   $(`input[value="${oldFormat}"]`).checked = true;
   $('#avgCPM').value = originalCPM;
   $('#monetizableRate').value = originalMonetizable;
-  $('#adFillRate').value = originalFillRate;
+  $('#preFill').value = originalPreFill;
+  $('#preFillNum').value = originalPreFill;
+  $('#midFill').value = originalMidFill;
+  $('#midFillNum').value = originalMidFill;
+  $('#postFill').value = originalPostFill;
+  $('#postFillNum').value = originalPostFill;
   $('#shortsRPM').value = originalShortsRPM;
   
   return conservativeResult;
