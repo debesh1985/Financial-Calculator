@@ -103,9 +103,10 @@ const calc = () => {
   // Reels Revenue = Qualified_Plays × (Effective_RPM / 1000) × Creator_Share
   const qualifiedPlays = inputs.reelsPlays() * (inputs.qualifiedPlayRate() / 100);
   const reelsUSD = qualifiedPlays * (inputs.reelsRPM() / 1000) * (inputs.reelsCreatorShare() / 100);
-  
+
   // Long-form Revenue
-  const eligibleSeconds = inputs.longformViews() * inputs.avgWatchSeconds() * (inputs.monetizableRate() / 100);
+  const eligibleViews = inputs.longformViews() * (inputs.monetizableRate() / 100);
+  const eligibleSeconds = eligibleViews * inputs.avgWatchSeconds();
   const impressions = (eligibleSeconds / 60) * inputs.adsPerMinute() * (inputs.fillRate() / 100);
   const adRevenue = impressions * (inputs.eCPM() / 1000);
   const longformUSD = adRevenue * (inputs.creatorShare() / 100) * (1 - inputs.additionalReductions() / 100);
@@ -115,12 +116,12 @@ const calc = () => {
                      inputs.usageRightsFee() + inputs.deliverablesFee();
   
   const total = starsUSD + subscriptionsUSD + reelsUSD + longformUSD + brandedUSD;
-  
+
   // Overall RPM calculation
-  const totalViews = inputs.reelsPlays() + inputs.longformViews();
-  const overallRPM = totalViews > 0 ? (total / totalViews) * 1000 : 0;
-  
-  return { starsUSD, subscriptionsUSD, reelsUSD, longformUSD, brandedUSD, total, overallRPM };
+  const totalEligible = qualifiedPlays + eligibleViews;
+  const overallRPM = totalEligible > 0 ? (total / totalEligible) * 1000 : 0;
+
+  return { starsUSD, subscriptionsUSD, reelsUSD, longformUSD, brandedUSD, total, overallRPM, qualifiedPlays, eligibleViews };
 };
 
 // ===== UI Updates =====
