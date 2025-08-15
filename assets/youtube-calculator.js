@@ -31,6 +31,7 @@ const inputs = {
   inventoryAvail: () => clamp(Number($('#inventoryAvail').value||100), 50, 100),
   creatorShareLF: () => clamp(Number($('#creatorShareLF').value||55), 0, 100),
   creatorShareShorts: () => clamp(Number($('#creatorShareShorts').value||45), 0, 100),
+  creatorSharePremium: () => clamp(Number($('#creatorSharePremium').value||55), 0, 100),
   additionalSharing: () => clamp(Number($('#additionalSharing').value||0), 0, 50),
   avgViewDuration: () => Math.max(0, Number($('#avgViewDuration').value||0)),
   manualImp: () => $('#manualImp').checked,
@@ -96,11 +97,13 @@ const calc = () => {
 
   // Premium revenue
   if (inputs.modPremium()) {
-    const totalViews = (fmt === 'long' ? inputs.viewsLF() : 0) + 
+    const totalViews = (fmt === 'long' ? inputs.viewsLF() : 0) +
                       (fmt === 'shorts' ? inputs.viewsShorts() : 0) +
                       (fmt === 'both' ? inputs.viewsLF() + inputs.viewsShorts() : 0);
     const premiumViews = totalViews * (inputs.premiumViews() / 100);
     premiumUSD = (premiumViews / 1000) * inputs.premiumRPM();
+    const premiumShare = premiumUSD * (inputs.creatorSharePremium() / 100);
+    premiumUSD = premiumShare * (1 - inputs.additionalSharing() / 100);
   }
 
   const total = lfAdsUSD + shortsUSD + premiumUSD;
@@ -251,6 +254,7 @@ const resetToDefaults = ()=>{
   // Rights & Revenue
   $('#creatorShareLF').value = 55;
   $('#creatorShareShorts').value = 45;
+  $('#creatorSharePremium').value = 55;
   $('#additionalSharing').value = 0;
   $('#additionalSharingNum').value = 0;
   
