@@ -33,37 +33,69 @@
   <link rel="stylesheet" href="/assets/style.css" />
 
   <style>
-    /* Safe CSS - Fix Desktop Layout Issues */
-    
-    /* Ensure columns/cards stretch correctly */
-    #inputs-col .card,
-    #results-col .card,
-    #kpis-col .card { width: 100%; }
+    /* Desktop Layout Fixes */
+    body {
+      overflow-x: hidden;
+    }
 
-    /* Undo accidental zero-width layouts */
-    #results-col,
-    #inputs-col,
-    #kpis-col { flex: 1 1 auto; max-width: 100%; }
+    /* Ensure proper container behavior */
+    .container-fluid {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
 
-    /* Inputs fill their container without fixed widths */
-    #inputs-col .form-control,
-    #inputs-col .form-select { width: 100%; max-width: 100%; }
+    /* Fix card heights and layout */
+    #mortgage-grid .card {
+      width: 100%;
+      height: fit-content;
+      margin-bottom: 0;
+    }
 
-    /* Prevent horizontal scroll from long figures */
-    .result-number, .calc-amount { overflow-wrap: anywhere; }
+    /* Ensure form controls don't have fixed widths */
+    .form-control, .form-select {
+      width: 100%;
+      max-width: 100%;
+    }
 
-    /* Keep media responsive */
-    canvas, img, svg, iframe, table { max-width: 100%; height: auto; }
+    /* Prevent number overflow */
+    .result-number {
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
 
-    /* Kill rogue fixed widths & floats */
-    .card, .card-body, .form-control { max-width: 100%; }
-    [class*="col-"] { float: none !important; }
+    /* Responsive media */
+    canvas, img, svg, iframe, table {
+      max-width: 100%;
+      height: auto;
+    }
 
-    /* Prevent layout breaks */
-    body { overflow-x: clip; }
+    /* Grid adjustments for desktop */
+    @media (min-width: 992px) {
+      #mortgage-grid {
+        min-height: 600px;
+      }
+      
+      #inputs-col {
+        position: sticky;
+        top: 20px;
+      }
+    }
 
-    /* Optional: equal spacing */
-    .section { margin-bottom: 1.5rem; }
+    /* Ensure results are visible by default */
+    #results {
+      display: block !important;
+    }
+
+    /* Better spacing */
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    @media (max-width: 991px) {
+      .card-body {
+        padding: 1rem;
+      }
+    }
   </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -107,204 +139,230 @@
     </header>
 
     <!-- Calculator Form & Results - Responsive Grid -->
-    <div class="container-xxl py-4">
-      <div class="row g-4 align-items-start" id="mortgage-grid">
-        <!-- Inputs -->
-        <aside class="col-12 col-lg-5 col-xl-4" id="inputs-col">
-          <form id="mortgageForm" class="card p-4">
-            <h3 class="h5 mb-3">📊 Mortgage Details</h3>
-
-            <div class="form-group mb-3">
-              <label for="homePrice" class="form-label">Home Price</label>
-              <div class="input-group">
-                <span class="input-group-text" id="currency-symbol">$</span>
-                <input type="number" class="form-control" id="homePrice" value="500000" min="0" step="1000" aria-describedby="currency-symbol">
-              </div>
-            </div>
-
-            <div class="form-group mb-3">
-              <label for="downPayment" class="form-label">Down Payment</label>
-              <div class="input-group">
-                <span class="input-group-text" id="currency-symbol-2">$</span>
-                <input type="number" class="form-control" id="downPayment" value="100000" min="0" step="1000" aria-describedby="currency-symbol-2">
-              </div>
-              <div class="small text-muted mt-1">
-                <span id="downPaymentPercent">20%</span> of home price
-              </div>
-            </div>
-
-            <div class="form-group mb-3">
-              <label for="interestRate" class="form-label">Interest Rate (%)</label>
-              <input type="number" class="form-control" id="interestRate" value="5.5" min="0" max="20" step="0.01">
-            </div>
-
-            <div class="form-group mb-3">
-              <label for="amortization" class="form-label">Amortization Period (years)</label>
-              <select class="form-select" id="amortization">
-                <option value="15">15 years</option>
-                <option value="20">20 years</option>
-                <option value="25" selected>25 years</option>
-                <option value="30">30 years</option>
-              </select>
-            </div>
-
-            <div class="form-group mb-3">
-              <label for="paymentFrequency" class="form-label">Payment Frequency</label>
-              <select class="form-select" id="paymentFrequency">
-                <option value="monthly" selected>Monthly</option>
-                <option value="biweekly">Bi-weekly</option>
-                <option value="weekly">Weekly</option>
-              </select>
-            </div>
-
-            <!-- Additional Costs -->
-            <h4 class="h6 mt-4 mb-3">💰 Additional Monthly Costs</h4>
-
-            <div class="form-group mb-3">
-              <label for="propertyTax" class="form-label">Property Tax (monthly)</label>
-              <div class="input-group">
-                <span class="input-group-text">$</span>
-                <input type="number" class="form-control" id="propertyTax" value="400" min="0" step="10">
-              </div>
-            </div>
-
-            <div class="form-group mb-3">
-              <label for="homeInsurance" class="form-label">Home Insurance (monthly)</label>
-              <div class="input-group">
-                <span class="input-group-text">$</span>
-                <input type="number" class="form-control" id="homeInsurance" value="150" min="0" step="10">
-              </div>
-            </div>
-
-            <div class="form-group mb-3" id="cmhcGroup">
-              <label for="cmhcInsurance" class="form-label">CMHC Insurance (monthly)</label>
-              <div class="input-group">
-                <span class="input-group-text">$</span>
-                <input type="number" class="form-control" id="cmhcInsurance" value="0" min="0" step="10" readonly>
-              </div>
-              <div class="small text-muted mt-1">Calculated automatically based on down payment</div>
-            </div>
-
-            <div class="form-group mb-3">
-              <label for="condoFees" class="form-label">Condo Fees (optional)</label>
-              <div class="input-group">
-                <span class="input-group-text">$</span>
-                <input type="number" class="form-control" id="condoFees" value="0" min="0" step="10">
-              </div>
-            </div>
-
-            <div class="form-group mb-3">
-              <label for="utilities" class="form-label">Utilities (optional)</label>
-              <div class="input-group">
-                <span class="input-group-text">$</span>
-                <input type="number" class="form-control" id="utilities" value="200" min="0" step="10">
-              </div>
-            </div>
-
-            <button type="button" class="btn btn-primary w-100" id="calculateBtn">Calculate Payment</button>
-          </form>
-        </aside>
-
-        <!-- Results -->
-        <section class="col-12 col-lg-7 col-xl-5" id="results-col">
-          <div id="results" class="card p-4 mb-4" style="display: none;">
-            <h3 class="h5 mb-3">💵 Payment Breakdown</h3>
-
-            <div class="result-summary mb-4">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="fw-semibold">Principal & Interest:</span>
-                <span class="h5 mb-0 result-number" id="principalInterest">$0</span>
-              </div>
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span>Property Tax:</span>
-                <span class="result-number" id="propertyTaxResult">$0</span>
-              </div>
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span>Home Insurance:</span>
-                <span class="result-number" id="homeInsuranceResult">$0</span>
-              </div>
-              <div class="d-flex justify-content-between align-items-center mb-2" id="cmhcResult">
-                <span>CMHC Insurance:</span>
-                <span class="result-number" id="cmhcInsuranceResult">$0</span>
-              </div>
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span>Condo Fees:</span>
-                <span class="result-number" id="condoFeesResult">$0</span>
-              </div>
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span>Utilities:</span>
-                <span class="result-number" id="utilitiesResult">$0</span>
-              </div>
-              <hr>
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="fw-bold h6">Total Monthly Payment:</span>
-                <span class="h4 text-primary fw-bold mb-0 result-number" id="totalPayment">$0</span>
-              </div>
-            </div>
-
-            <div class="loan-details">
-              <h4 class="h6 mb-3">📋 Loan Summary</h4>
-              <div class="small">
-                <div class="d-flex justify-content-between mb-1">
-                  <span>Loan Amount:</span>
-                  <span class="result-number" id="loanAmount">$0</span>
+    <div class="container-fluid px-3 px-lg-4">
+      <div class="row g-4 align-items-start justify-content-center" id="mortgage-grid">
+        <!-- Inputs Column -->
+        <div class="col-12 col-lg-5 col-xl-4" id="inputs-col">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h3 class="card-title h5 mb-4">📊 Mortgage Details</h3>
+              
+              <form id="mortgageForm">
+                <div class="mb-3">
+                  <label for="homePrice" class="form-label">Home Price</label>
+                  <div class="input-group">
+                    <span class="input-group-text" id="currency-symbol">$</span>
+                    <input type="number" class="form-control" id="homePrice" value="500000" min="0" step="1000">
+                  </div>
                 </div>
-                <div class="d-flex justify-content-between mb-1">
-                  <span>Total Interest Paid:</span>
-                  <span class="result-number" id="totalInterest">$0</span>
+
+                <div class="mb-3">
+                  <label for="downPayment" class="form-label">Down Payment</label>
+                  <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="number" class="form-control" id="downPayment" value="100000" min="0" step="1000">
+                  </div>
+                  <div class="form-text">
+                    <span id="downPaymentPercent">20%</span> of home price
+                  </div>
                 </div>
-                <div class="d-flex justify-content-between mb-1">
-                  <span>Total Cost:</span>
-                  <span class="result-number" id="totalCost">$0</span>
+
+                <div class="mb-3">
+                  <label for="interestRate" class="form-label">Interest Rate (%)</label>
+                  <input type="number" class="form-control" id="interestRate" value="5.5" min="0" max="20" step="0.01">
                 </div>
-                <div class="d-flex justify-content-between mb-1">
-                  <span>Number of Payments:</span>
-                  <span class="result-number" id="numberOfPayments">0</span>
+
+                <div class="mb-3">
+                  <label for="amortization" class="form-label">Amortization Period (years)</label>
+                  <select class="form-select" id="amortization">
+                    <option value="15">15 years</option>
+                    <option value="20">20 years</option>
+                    <option value="25" selected>25 years</option>
+                    <option value="30">30 years</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label for="paymentFrequency" class="form-label">Payment Frequency</label>
+                  <select class="form-select" id="paymentFrequency">
+                    <option value="monthly" selected>Monthly</option>
+                    <option value="biweekly">Bi-weekly</option>
+                    <option value="weekly">Weekly</option>
+                  </select>
+                </div>
+
+                <hr class="my-4">
+                <h4 class="h6 mb-3">💰 Additional Monthly Costs</h4>
+
+                <div class="mb-3">
+                  <label for="propertyTax" class="form-label">Property Tax (monthly)</label>
+                  <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="number" class="form-control" id="propertyTax" value="400" min="0" step="10">
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="homeInsurance" class="form-label">Home Insurance (monthly)</label>
+                  <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="number" class="form-control" id="homeInsurance" value="150" min="0" step="10">
+                  </div>
+                </div>
+
+                <div class="mb-3" id="cmhcGroup">
+                  <label for="cmhcInsurance" class="form-label">CMHC Insurance (monthly)</label>
+                  <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="number" class="form-control" id="cmhcInsurance" value="0" min="0" step="10" readonly>
+                  </div>
+                  <div class="form-text">Calculated automatically based on down payment</div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="condoFees" class="form-label">Condo Fees (optional)</label>
+                  <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="number" class="form-control" id="condoFees" value="0" min="0" step="10">
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <label for="utilities" class="form-label">Utilities (optional)</label>
+                  <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="number" class="form-control" id="utilities" value="200" min="0" step="10">
+                  </div>
+                </div>
+
+                <button type="button" class="btn btn-primary btn-lg w-100" id="calculateBtn">Calculate Payment</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results Column -->
+        <div class="col-12 col-lg-7 col-xl-5" id="results-col">
+          <!-- Payment Results Card -->
+          <div id="results" class="card shadow-sm mb-4" style="display: block;">
+            <div class="card-body">
+              <h3 class="card-title h5 mb-4">💵 Payment Breakdown</h3>
+              
+              <div class="result-summary">
+                <div class="row g-2 mb-3">
+                  <div class="col-8">
+                    <span class="fw-semibold">Principal & Interest:</span>
+                  </div>
+                  <div class="col-4 text-end">
+                    <span class="h6 mb-0 result-number text-primary fw-bold" id="principalInterest">$0</span>
+                  </div>
+                </div>
+                
+                <div class="row g-2 mb-2">
+                  <div class="col-8">Property Tax:</div>
+                  <div class="col-4 text-end result-number" id="propertyTaxResult">$0</div>
+                </div>
+                
+                <div class="row g-2 mb-2">
+                  <div class="col-8">Home Insurance:</div>
+                  <div class="col-4 text-end result-number" id="homeInsuranceResult">$0</div>
+                </div>
+                
+                <div class="row g-2 mb-2" id="cmhcResult">
+                  <div class="col-8">CMHC Insurance:</div>
+                  <div class="col-4 text-end result-number" id="cmhcInsuranceResult">$0</div>
+                </div>
+                
+                <div class="row g-2 mb-2">
+                  <div class="col-8">Condo Fees:</div>
+                  <div class="col-4 text-end result-number" id="condoFeesResult">$0</div>
+                </div>
+                
+                <div class="row g-2 mb-3">
+                  <div class="col-8">Utilities:</div>
+                  <div class="col-4 text-end result-number" id="utilitiesResult">$0</div>
+                </div>
+                
+                <hr>
+                <div class="row g-2 align-items-center">
+                  <div class="col-8">
+                    <span class="fw-bold h6 mb-0">Total Monthly Payment:</span>
+                  </div>
+                  <div class="col-4 text-end">
+                    <span class="h4 text-success fw-bold mb-0 result-number" id="totalPayment">$0</span>
+                  </div>
+                </div>
+              </div>
+
+              <hr class="my-4">
+              <div class="loan-details">
+                <h4 class="h6 mb-3">📋 Loan Summary</h4>
+                <div class="small">
+                  <div class="row g-2 mb-2">
+                    <div class="col-8">Loan Amount:</div>
+                    <div class="col-4 text-end result-number" id="loanAmount">$0</div>
+                  </div>
+                  <div class="row g-2 mb-2">
+                    <div class="col-8">Total Interest Paid:</div>
+                    <div class="col-4 text-end result-number" id="totalInterest">$0</div>
+                  </div>
+                  <div class="row g-2 mb-2">
+                    <div class="col-8">Total Cost:</div>
+                    <div class="col-4 text-end result-number" id="totalCost">$0</div>
+                  </div>
+                  <div class="row g-2">
+                    <div class="col-8">Number of Payments:</div>
+                    <div class="col-4 text-end result-number" id="numberOfPayments">0</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Amortization Schedule -->
-          <div id="amortizationSection" class="card p-4" style="display: none;">
-            <h3 class="h5 mb-3">📈 Amortization Schedule (First 12 Payments)</h3>
-            <div class="table-responsive">
-              <table class="table table-sm">
-                <thead>
-                  <tr>
-                    <th>Payment #</th>
-                    <th>Principal</th>
-                    <th>Interest</th>
-                    <th>Balance</th>
-                  </tr>
-                </thead>
-                <tbody id="amortizationTable">
-                </tbody>
-              </table>
+          <div id="amortizationSection" class="card shadow-sm" style="display: none;">
+            <div class="card-body">
+              <h3 class="card-title h5 mb-3">📈 Amortization Schedule (First 12 Payments)</h3>
+              <div class="table-responsive">
+                <table class="table table-sm table-striped">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Payment #</th>
+                      <th>Principal</th>
+                      <th>Interest</th>
+                      <th>Balance</th>
+                    </tr>
+                  </thead>
+                  <tbody id="amortizationTable">
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </section>
+        </div>
 
-        <!-- KPIs / Side panel (optional) -->
-        <aside class="col-12 col-xl-3 d-none d-xl-block" id="kpis-col">
-          <div class="card p-3">
-            <h4 class="h6 mb-3">📊 Quick Stats</h4>
-            <div class="small">
-              <div class="d-flex justify-content-between mb-2">
-                <span>Down Payment %:</span>
-                <span id="downPaymentPercentKPI">20%</span>
-              </div>
-              <div class="d-flex justify-content-between mb-2">
-                <span>Interest Rate:</span>
-                <span id="interestRateKPI">5.5%</span>
-              </div>
-              <div class="d-flex justify-content-between mb-2">
-                <span>Amortization:</span>
-                <span id="amortizationKPI">25 years</span>
+        <!-- KPIs Side Panel -->
+        <div class="col-12 col-xl-3 d-none d-xl-block" id="kpis-col">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h4 class="card-title h6 mb-3">📊 Quick Stats</h4>
+              <div class="small">
+                <div class="row g-2 mb-2">
+                  <div class="col-7">Down Payment %:</div>
+                  <div class="col-5 text-end fw-semibold" id="downPaymentPercentKPI">20%</div>
+                </div>
+                <div class="row g-2 mb-2">
+                  <div class="col-7">Interest Rate:</div>
+                  <div class="col-5 text-end fw-semibold" id="interestRateKPI">5.5%</div>
+                </div>
+                <div class="row g-2">
+                  <div class="col-7">Amortization:</div>
+                  <div class="col-5 text-end fw-semibold" id="amortizationKPI">25 years</div>
+                </div>
               </div>
             </div>
           </div>
-        </aside>
+        </div>
       </div>
     </div>
   </main>
