@@ -97,7 +97,11 @@
     }
     
     .form-field-wrapper .input-group {
-      flex: 1;
+      max-width: 200px;
+      min-width: 150px;
+    }
+    
+    .form-field-wrapper .input-group .form-control {
       min-width: 0;
     }
     
@@ -115,6 +119,7 @@
       
       .form-field-wrapper .input-group {
         width: 100%;
+        max-width: none;
       }
     }
     
