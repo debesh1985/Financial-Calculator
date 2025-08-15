@@ -81,6 +81,43 @@
       margin: 1.5rem 0;
     }
     
+    /* Better alignment for form fields */
+    .form-field-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      width: 100%;
+    }
+    
+    .form-field-wrapper .form-label {
+      margin-bottom: 0;
+      white-space: nowrap;
+      min-width: 140px;
+      flex-shrink: 0;
+    }
+    
+    .form-field-wrapper .input-group {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    @media (max-width: 768px) {
+      .form-field-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      
+      .form-field-wrapper .form-label {
+        min-width: auto;
+        width: 100%;
+      }
+      
+      .form-field-wrapper .input-group {
+        width: 100%;
+      }
+    }
+    
     @media (max-width: 480px) {
       .container {
         padding-left: 1rem;
@@ -93,17 +130,6 @@
       
       .btn {
         min-height: 44px;
-      }
-      
-      /* Stack labels and inputs vertically on mobile for better readability */
-      .d-flex.align-items-center {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 0.5rem !important;
-      }
-      
-      .d-flex.align-items-center .input-group {
-        width: 100%;
       }
     }
   </style>
@@ -176,8 +202,8 @@
 
             <!-- Home price -->
             <div class="mb-3">
-              <div class="d-flex align-items-center gap-2">
-                <label class="form-label mb-0 flex-shrink-0" for="homePrice">Home price / appraised value</label>
+              <div class="form-field-wrapper">
+                <label class="form-label" for="homePrice">Home price / appraised value</label>
                 <div class="input-group">
                   <span class="input-group-text" id="currencySymbol">$</span>
                   <input id="homePrice" type="number" min="0" step="1000" class="form-control" value="700000" inputmode="numeric">
@@ -187,8 +213,8 @@
 
             <!-- Down payment -->
             <div class="mb-3">
-              <div class="d-flex align-items-center gap-2">
-                <label class="form-label mb-0 flex-shrink-0" for="downPayment">Down payment</label>
+              <div class="form-field-wrapper">
+                <label class="form-label" for="downPayment">Down payment</label>
                 <div class="input-group">
                   <span class="input-group-text" id="currencySymbol2">$</span>
                   <input id="downPayment" type="number" min="0" step="1000" class="form-control" value="140000" inputmode="numeric">
@@ -239,8 +265,8 @@
 
             <!-- Monthly costs -->
             <div class="mb-3">
-              <div class="d-flex align-items-center gap-2">
-                <label class="form-label mb-0 flex-shrink-0" for="tax">Property tax (monthly)</label>
+              <div class="form-field-wrapper">
+                <label class="form-label" for="tax">Property tax (monthly)</label>
                 <div class="input-group">
                   <span class="input-group-text" id="currencySymbol3">$</span>
                   <input id="tax" type="number" min="0" step="10" class="form-control" value="400">
@@ -249,8 +275,8 @@
             </div>
 
             <div class="mb-3">
-              <div class="d-flex align-items-center gap-2">
-                <label class="form-label mb-0 flex-shrink-0" for="condo">Condo fee (monthly)</label>
+              <div class="form-field-wrapper">
+                <label class="form-label" for="condo">Condo fee (monthly)</label>
                 <div class="input-group">
                   <span class="input-group-text" id="currencySymbol4">$</span>
                   <input id="condo" type="number" min="0" step="10" class="form-control" value="300">
@@ -259,8 +285,8 @@
             </div>
 
             <div class="mb-3">
-              <div class="d-flex align-items-center gap-2">
-                <label class="form-label mb-0 flex-shrink-0" for="water">Water (monthly)</label>
+              <div class="form-field-wrapper">
+                <label class="form-label" for="water">Water (monthly)</label>
                 <div class="input-group">
                   <span class="input-group-text" id="currencySymbol5">$</span>
                   <input id="water" type="number" min="0" step="5" class="form-control" value="40">
@@ -269,8 +295,8 @@
             </div>
 
             <div class="mb-3">
-              <div class="d-flex align-items-center gap-2">
-                <label class="form-label mb-0 flex-shrink-0" for="electric">Electricity (monthly)</label>
+              <div class="form-field-wrapper">
+                <label class="form-label" for="electric">Electricity (monthly)</label>
                 <div class="input-group">
                   <span class="input-group-text" id="currencySymbol6">$</span>
                   <input id="electric" type="number" min="0" step="5" class="form-control" value="120">
@@ -279,8 +305,8 @@
             </div>
 
             <div class="mb-3">
-              <div class="d-flex align-items-center gap-2">
-                <label class="form-label mb-0 flex-shrink-0" for="heating">Heating (monthly)</label>
+              <div class="form-field-wrapper">
+                <label class="form-label" for="heating">Heating (monthly)</label>
                 <div class="input-group">
                   <span class="input-group-text" id="currencySymbol7">$</span>
                   <input id="heating" type="number" min="0" step="5" class="form-control" value="100">
