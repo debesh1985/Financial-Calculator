@@ -94,6 +94,17 @@
       .btn {
         min-height: 44px;
       }
+      
+      /* Stack labels and inputs vertically on mobile for better readability */
+      .d-flex.align-items-center {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.5rem !important;
+      }
+      
+      .d-flex.align-items-center .input-group {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -165,19 +176,23 @@
 
             <!-- Home price -->
             <div class="mb-3">
-              <label class="form-label" for="homePrice">Home price / appraised value</label>
-              <div class="input-group">
-                <span class="input-group-text" id="currencySymbol">$</span>
-                <input id="homePrice" type="number" min="0" step="1000" class="form-control" value="700000" inputmode="numeric">
+              <div class="d-flex align-items-center gap-2">
+                <label class="form-label mb-0 flex-shrink-0" for="homePrice">Home price / appraised value</label>
+                <div class="input-group">
+                  <span class="input-group-text" id="currencySymbol">$</span>
+                  <input id="homePrice" type="number" min="0" step="1000" class="form-control" value="700000" inputmode="numeric">
+                </div>
               </div>
             </div>
 
             <!-- Down payment -->
             <div class="mb-3">
-              <label class="form-label" for="downPayment">Down payment</label>
-              <div class="input-group">
-                <span class="input-group-text" id="currencySymbol2">$</span>
-                <input id="downPayment" type="number" min="0" step="1000" class="form-control" value="140000" inputmode="numeric">
+              <div class="d-flex align-items-center gap-2">
+                <label class="form-label mb-0 flex-shrink-0" for="downPayment">Down payment</label>
+                <div class="input-group">
+                  <span class="input-group-text" id="currencySymbol2">$</span>
+                  <input id="downPayment" type="number" min="0" step="1000" class="form-control" value="140000" inputmode="numeric">
+                </div>
               </div>
               <small class="text-muted" id="downPctHelp">20% of home price</small>
             </div>
@@ -224,42 +239,52 @@
 
             <!-- Monthly costs -->
             <div class="mb-3">
-              <label class="form-label" for="tax">Property tax (monthly)</label>
-              <div class="input-group">
-                <span class="input-group-text" id="currencySymbol3">$</span>
-                <input id="tax" type="number" min="0" step="10" class="form-control" value="400">
+              <div class="d-flex align-items-center gap-2">
+                <label class="form-label mb-0 flex-shrink-0" for="tax">Property tax (monthly)</label>
+                <div class="input-group">
+                  <span class="input-group-text" id="currencySymbol3">$</span>
+                  <input id="tax" type="number" min="0" step="10" class="form-control" value="400">
+                </div>
               </div>
             </div>
 
             <div class="mb-3">
-              <label class="form-label" for="condo">Condo fee (monthly)</label>
-              <div class="input-group">
-                <span class="input-group-text" id="currencySymbol4">$</span>
-                <input id="condo" type="number" min="0" step="10" class="form-control" value="300">
+              <div class="d-flex align-items-center gap-2">
+                <label class="form-label mb-0 flex-shrink-0" for="condo">Condo fee (monthly)</label>
+                <div class="input-group">
+                  <span class="input-group-text" id="currencySymbol4">$</span>
+                  <input id="condo" type="number" min="0" step="10" class="form-control" value="300">
+                </div>
               </div>
             </div>
 
             <div class="mb-3">
-              <label class="form-label" for="water">Water (monthly)</label>
-              <div class="input-group">
-                <span class="input-group-text" id="currencySymbol5">$</span>
-                <input id="water" type="number" min="0" step="5" class="form-control" value="40">
+              <div class="d-flex align-items-center gap-2">
+                <label class="form-label mb-0 flex-shrink-0" for="water">Water (monthly)</label>
+                <div class="input-group">
+                  <span class="input-group-text" id="currencySymbol5">$</span>
+                  <input id="water" type="number" min="0" step="5" class="form-control" value="40">
+                </div>
               </div>
             </div>
 
             <div class="mb-3">
-              <label class="form-label" for="electric">Electricity (monthly)</label>
-              <div class="input-group">
-                <span class="input-group-text" id="currencySymbol6">$</span>
-                <input id="electric" type="number" min="0" step="5" class="form-control" value="120">
+              <div class="d-flex align-items-center gap-2">
+                <label class="form-label mb-0 flex-shrink-0" for="electric">Electricity (monthly)</label>
+                <div class="input-group">
+                  <span class="input-group-text" id="currencySymbol6">$</span>
+                  <input id="electric" type="number" min="0" step="5" class="form-control" value="120">
+                </div>
               </div>
             </div>
 
             <div class="mb-3">
-              <label class="form-label" for="heating">Heating (monthly)</label>
-              <div class="input-group">
-                <span class="input-group-text" id="currencySymbol7">$</span>
-                <input id="heating" type="number" min="0" step="5" class="form-control" value="100">
+              <div class="d-flex align-items-center gap-2">
+                <label class="form-label mb-0 flex-shrink-0" for="heating">Heating (monthly)</label>
+                <div class="input-group">
+                  <span class="input-group-text" id="currencySymbol7">$</span>
+                  <input id="heating" type="number" min="0" step="5" class="form-control" value="100">
+                </div>
               </div>
             </div>
           </div>
