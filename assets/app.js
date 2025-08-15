@@ -115,8 +115,11 @@ function setupEventListeners() {
     }
   });
 
-  // City input
-  document.getElementById('cityInput').addEventListener('input', updateCityList);
+  // City input - add null check
+  const cityInput = document.getElementById('cityInput');
+  if (cityInput) {
+    cityInput.addEventListener('input', updateCityList);
+  }
 }
 
 function setupCityAutocomplete() {
@@ -153,20 +156,32 @@ function updateCurrencySymbols() {
 }
 
 function updateDownPaymentPercent() {
-  const homePrice = parseFloat(document.getElementById('homePrice').value) || 0;
-  const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+  const homePriceEl = document.getElementById('homePrice');
+  const downPaymentEl = document.getElementById('downPayment');
+  const downPctHelpEl = document.getElementById('downPctHelp');
+  
+  if (!homePriceEl || !downPaymentEl || !downPctHelpEl) return;
+  
+  const homePrice = parseFloat(homePriceEl.value) || 0;
+  const downPayment = parseFloat(downPaymentEl.value) || 0;
   
   const percentage = homePrice > 0 ? ((downPayment / homePrice) * 100).toFixed(1) : 0;
-  document.getElementById('downPctHelp').textContent = `${percentage}% of home price`;
+  downPctHelpEl.textContent = `${percentage}% of home price`;
 }
 
 function updateUSAInsuranceVisibility() {
-  const isUSA = document.getElementById('countryUSD').checked;
-  const homePrice = parseFloat(document.getElementById('homePrice').value) || 0;
-  const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+  const countryUSDEl = document.getElementById('countryUSD');
+  const homePriceEl = document.getElementById('homePrice');
+  const downPaymentEl = document.getElementById('downPayment');
+  const usaMIChoice = document.getElementById('usaMIChoice');
+  
+  if (!countryUSDEl || !homePriceEl || !downPaymentEl || !usaMIChoice) return;
+  
+  const isUSA = countryUSDEl.checked;
+  const homePrice = parseFloat(homePriceEl.value) || 0;
+  const downPayment = parseFloat(downPaymentEl.value) || 0;
   const downPaymentPercent = homePrice > 0 ? (downPayment / homePrice) * 100 : 100;
   
-  const usaMIChoice = document.getElementById('usaMIChoice');
   if (isUSA && downPaymentPercent < 20) {
     usaMIChoice.classList.remove('d-none');
   } else {
@@ -307,17 +322,28 @@ function calculateAndUpdate() {
   const mortgage = calculateMortgage();
   
   if (!mortgage) {
-    // Clear results
-    document.getElementById('paymentDisplay').textContent = '$0.00';
-    document.getElementById('monthlyEquiv').textContent = '$0.00';
-    document.getElementById('ltvDisplay').textContent = '0%';
-    document.getElementById('miSummary').textContent = '—';
+    // Clear results with null checks
+    const paymentDisplay = document.getElementById('paymentDisplay');
+    const monthlyEquiv = document.getElementById('monthlyEquiv');
+    const ltvDisplay = document.getElementById('ltvDisplay');
+    const miSummary = document.getElementById('miSummary');
+    
+    if (paymentDisplay) paymentDisplay.textContent = '$0.00';
+    if (monthlyEquiv) monthlyEquiv.textContent = '$0.00';
+    if (ltvDisplay) ltvDisplay.textContent = '0%';
+    if (miSummary) miSummary.textContent = '—';
     return;
   }
 
-  // Update payment display
-  document.getElementById('paymentDisplay').textContent = formatCurrency(mortgage.payment);
-  document.getElementById('monthlyEquiv').textContent = formatCurrency(mortgage.monthlyEquivalent);
+  // Update payment display with null checks
+  const paymentDisplay = document.getElementById('paymentDisplay');
+  const monthlyEquiv = document.getElementById('monthlyEquiv');
+  const frequencyLabel = document.getElementById('frequencyLabel');
+  const ltvDisplay = document.getElementById('ltvDisplay');
+  const miSummary = document.getElementById('miSummary');
+  
+  if (paymentDisplay) paymentDisplay.textContent = formatCurrency(mortgage.payment);
+  if (monthlyEquiv) monthlyEquiv.textContent = formatCurrency(mortgage.monthlyEquivalent);
 
   // Update frequency label
   const frequencyLabels = {
@@ -328,11 +354,11 @@ function calculateAndUpdate() {
     'weekly': 'Weekly • 52 payments/yr',
     'acc-weekly': 'Accelerated Weekly • 52 payments/yr'
   };
-  document.getElementById('frequencyLabel').textContent = frequencyLabels[mortgage.frequency];
+  if (frequencyLabel) frequencyLabel.textContent = frequencyLabels[mortgage.frequency];
 
   // Update KPIs
-  document.getElementById('ltvDisplay').textContent = `${mortgage.ltvPercent.toFixed(1)}%`;
-  document.getElementById('miSummary').textContent = mortgage.insuranceInfo;
+  if (ltvDisplay) ltvDisplay.textContent = `${mortgage.ltvPercent.toFixed(1)}%`;
+  if (miSummary) miSummary.textContent = mortgage.insuranceInfo;
 
   // Calculate ownership costs
   updateOwnershipCosts(mortgage);
@@ -360,7 +386,12 @@ function updateOwnershipCosts(mortgage) {
 }
 
 function updateAmortizationChart(mortgage) {
-  const years = parseInt(document.getElementById('years').value) || 25;
+  const yearsEl = document.getElementById('years');
+  const chartEl = document.getElementById('amortChart');
+  
+  if (!yearsEl || !chartEl) return;
+  
+  const years = parseInt(yearsEl.value) || 25;
   
   // Generate amortization schedule
   let balance = mortgage.loanAmount;
@@ -388,8 +419,14 @@ function updateAmortizationChart(mortgage) {
     });
   }
 
+  // Check if Chart.js is loaded
+  if (typeof Chart === 'undefined') {
+    console.error('Chart.js is not loaded');
+    return;
+  }
+
   // Create chart
-  const ctx = document.getElementById('amortChart').getContext('2d');
+  const ctx = chartEl.getContext('2d');
   
   if (amortChart) {
     amortChart.destroy();
