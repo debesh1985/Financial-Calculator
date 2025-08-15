@@ -107,11 +107,11 @@ class UniversalLifeCalculator {
 
       // Insurer factors
       INSURERS: [
-        { name: "Insurer A", factor: 0.95 },
-        { name: "Insurer B", factor: 0.98 },
-        { name: "Insurer C", factor: 1.00 },
-        { name: "Insurer D", factor: 1.03 },
-        { name: "Insurer E", factor: 1.07 }
+        { name: "Sun Life", factor: 0.98 },
+        { name: "Equitable", factor: 1.00 },
+        { name: "Industrial Alliance", factor: 1.02 },
+        { name: "Prudential Financial", factor: 1.05 },
+        { name: "Pacific Life", factor: 1.03 }
       ]
     };
   }
@@ -398,20 +398,16 @@ class UniversalLifeCalculator {
     const baseRate = this.config.UL_BASE[countryKey][inputs.coiType][inputs.gender][smokerClass][ageBand] || 0.5;
     
     // Calculate risk multipliers
-    let totalRiskMultiplier = 1.0;
-    totalRiskMultiplier *= this.config.RISK.gender[inputs.gender] || 1.0;
-    totalRiskMultiplier *= this.config.RISK.smoking[inputs.smoking] || 1.0;
-    totalRiskMultiplier *= this.config.RISK.alcohol[inputs.alcohol] || 1.0;
-    totalRiskMultiplier *= this.config.RISK.job[inputs.jobCategory] || 1.0;
-    
-    // Medical conditions
-    inputs.medicalConditions.forEach(condition => {
-      totalRiskMultiplier *= this.config.RISK.medical[condition] || 1.0;
-    });
-    
-    // Coverage duration multiplier - longer coverage periods cost more
-    const durationMultiplier = this.getDurationMultiplier(inputs.coverageDuration);
-    totalRiskMultiplier *= durationMultiplier;
+    const riskFactors = [
+      this.config.RISK.gender[inputs.gender],
+      this.config.RISK.smoking[inputs.smoking],
+      this.config.RISK.alcohol[inputs.alcohol],
+      this.config.RISK.job[inputs.jobCategory],
+      ...inputs.medicalConditions.map(c => this.config.RISK.medical[c]),
+      this.getDurationMultiplier(inputs.coverageDuration)
+    ].filter(Boolean);
+
+    const totalRiskMultiplier = riskFactors.reduce((acc, factor) => acc * factor, 1.0);
     
     // Calculate monthly COI
     const units = Math.ceil(faceAmount / 1000);
@@ -421,7 +417,8 @@ class UniversalLifeCalculator {
     // Calculate monthly premium before interest
     const policyFee = parseFloat(inputs.monthlyPolicyFee) || this.config.LOADS.monthly_policy_fee[countryKey];
     const grossMonthly = monthlyCOI + policyFee + inputs.riderCharges;
-    const monthlyPremiumPreInterest = grossMonthly / (1 - (inputs.premiumLoad / 100));
+    const loadFactor = 1 - (inputs.premiumLoad / 100);
+    const monthlyPremiumPreInterest = grossMonthly / loadFactor;
     
     // Interest crediting effect (reduced impact)
     const creditAdjFactor = Math.max(0.92, 1 - (inputs.creditedRate / 100) * 0.3);
