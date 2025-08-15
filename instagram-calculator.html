@@ -326,6 +326,57 @@
       <p>Estimate earnings in <strong>USD</strong> for <strong>organic, policy-safe</strong> content across Gifts, Subscriptions, and Reels performance payouts.</p>
     </header>
 
+    <!-- Instagram ID Estimator -->
+    <section class="card" id="instaEstimator" style="margin-bottom: var(--space-lg);">
+      <h3>📊 Estimate by Instagram ID</h3>
+      <div class="channel-input-group">
+        <input type="text" id="instaInput" placeholder="Enter an Instagram @handle..." class="channel-url-input">
+        <button class="btn" id="fetchInstaBtn">Fetch</button>
+      </div>
+
+      <div class="time-window-controls">
+        <div class="radio-group">
+          <input type="radio" id="itime30" name="instaTimeWindow" value="30" checked>
+          <label for="itime30">Last 30 days</label>
+          <input type="radio" id="itime90" name="instaTimeWindow" value="90">
+          <label for="itime90">Last 90 days</label>
+          <input type="radio" id="itime365" name="instaTimeWindow" value="365">
+          <label for="itime365">Last 365 days</label>
+          <input type="radio" id="itimeCustom" name="instaTimeWindow" value="custom">
+          <label for="itimeCustom">Custom range</label>
+        </div>
+        <div class="custom-date-range hidden" id="instaCustomRange">
+          <input type="date" id="instaStartDate" class="date-input">
+          <span>to</span>
+          <input type="date" id="instaEndDate" class="date-input">
+        </div>
+      </div>
+
+      <div class="status-line" id="instaStatus"></div>
+
+      <div class="channel-summary hidden" id="instaSummary">
+        <div class="channel-header">
+          <div class="channel-info">
+            <h4 id="instaTitle">@username</h4>
+            <div class="channel-stats">
+              <span id="instaDateRange">Last 30 days</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="channel-kpis">
+          <div class="kpi-card">
+            <div class="kpi-label">Estimated Revenue</div>
+            <div class="kpi-value" id="instaRevenue">$0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Overall RPM</div>
+            <div class="kpi-value" id="instaRPM">$0</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Eligibility Checklist -->
     <section class="card" id="eligibilitySection" style="margin-bottom: var(--space-lg);">
       <h3>📋 Eligibility Requirements</h3>
