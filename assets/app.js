@@ -542,29 +542,34 @@ async function fetchMortgageRates() {
   ticker.textContent = 'Loading mortgage rates...';
 
   try {
-    const [caRes, usRes] = await Promise.all([
-      fetch('https://mortgageapi.ratehub.ca/v1/rates/variable/uninsured'),
-      fetch('https://financialmodelingprep.com/api/v3/mortgage-rates?apikey=demo')
+    const results = await Promise.allSettled([
+      fetch('https://mortgageapi.ratehub.ca/v1/rates/variable/uninsured').then(res => res.json()),
+      fetch('https://financialmodelingprep.com/api/v3/mortgage-rates?apikey=demo').then(res => res.json())
     ]);
-
-    const [caData, usData] = await Promise.all([caRes.json(), usRes.json()]);
 
     const rates = [];
 
-    const caRate = parseFloat(caData?.rate);
-    if (!isNaN(caRate)) {
-      rates.push({ country: 'Canada', rate: caRate });
+    const caResult = results[0];
+    if (caResult.status === 'fulfilled') {
+      const caRate = parseFloat(caResult.value?.rate);
+      if (!isNaN(caRate)) {
+        rates.push({ country: 'Canada', rate: caRate });
+      }
     }
 
-    let usRate = null;
-    if (Array.isArray(usData)) {
-      const entry = usData.find(r => r.item && r.item.toLowerCase().includes('variable'));
-      usRate = parseFloat(entry?.value);
-    } else {
-      usRate = parseFloat(usData?.rate);
-    }
-    if (!isNaN(usRate)) {
-      rates.push({ country: 'USA', rate: usRate });
+    const usResult = results[1];
+    if (usResult.status === 'fulfilled') {
+      const usData = usResult.value;
+      let usRate = null;
+      if (Array.isArray(usData)) {
+        const entry = usData.find(r => r.item && r.item.toLowerCase().includes('variable'));
+        usRate = parseFloat(entry?.value);
+      } else {
+        usRate = parseFloat(usData?.rate);
+      }
+      if (!isNaN(usRate)) {
+        rates.push({ country: 'USA', rate: usRate });
+      }
     }
 
     if (rates.length === 0) {
