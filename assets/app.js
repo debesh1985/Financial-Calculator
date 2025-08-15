@@ -177,7 +177,9 @@ function updateDownPaymentPercent() {
 }
 
 function updateUSAInsuranceVisibility() {
-  const countryUSDEl = document.getElementById('countryUSD');
+  const countryUSDEl =
+    document.getElementById('countryUSD') ||
+    document.getElementById('countryUSDMain');
   const countryUSDMobileEl = document.getElementById('countryUSDMobile');
   const homePriceEl = document.getElementById('homePrice');
   const downPaymentEl = document.getElementById('downPayment');
@@ -185,7 +187,9 @@ function updateUSAInsuranceVisibility() {
 
   if (!homePriceEl || !downPaymentEl || !usaMIChoice) return;
 
-  const isUSA = (countryUSDEl && countryUSDEl.checked) || (countryUSDMobileEl && countryUSDMobileEl.checked);
+  const isUSA =
+    (countryUSDEl && countryUSDEl.checked) ||
+    (countryUSDMobileEl && countryUSDMobileEl.checked);
   const homePrice = parseFloat(homePriceEl.value) || 0;
   const downPayment = parseFloat(downPaymentEl.value) || 0;
   const downPaymentPercent = homePrice > 0 ? (downPayment / homePrice) * 100 : 100;
