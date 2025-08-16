@@ -301,7 +301,16 @@
       <div class="status-line" id="statusLine" style="margin-top: 12px; padding: 8px; background: var(--card); border-radius: 4px; font-size: 14px; display: none;">
         <span id="statusText">Ready to estimate...</span>
       </div>
-      
+
+      <div id="eligibilityPanel" style="margin-top: 12px; padding: 8px; background: var(--card); border-radius: 4px; font-size: 14px; display: none;">
+        <div><strong>Met criteria</strong>
+          <ul id="criteriaMet" style="margin: 4px 0 0 16px;"></ul>
+        </div>
+        <div style="margin-top: 8px;"><strong>Unmet criteria</strong>
+          <ul id="criteriaUnmet" style="margin: 4px 0 0 16px;"></ul>
+        </div>
+      </div>
+
       <div class="estimate-disclaimer" style="margin-top: 12px; padding: 12px; background: #fff3cd; border-radius: 8px; border: 1px solid #f39c12;">
         <small style="color: #856404; line-height: 1.4;">
           <strong>Public Estimate Mode:</strong> Approximate earnings based on public metrics and user-provided RPMs. For actual payouts, check your Meta Professional Dashboard → Monetization.

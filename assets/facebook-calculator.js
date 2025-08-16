@@ -309,15 +309,18 @@ const estimateFromPageUrl = async () => {
     const eligibility = pageMeetsMonetization(estimatedData);
     profileEligible = eligibility.eligible;
     checkEligibility();
+    showEligibilityBreakdown(eligibility);
+
+    const summary = `Met: ${eligibility.met.join(', ') || 'none'}; Unmet: ${eligibility.unmet.join(', ') || 'none'}.`;
 
     if (!eligibility.eligible) {
-      showStatus(`Page is not eligible for monetization. Needs: ${eligibility.unmet.join(', ')}.`, 'error');
+      showStatus(`Page is not eligible for monetization. ${summary}`, 'error');
       return;
     }
 
     populateInputsFromEstimate(estimatedData);
 
-    showStatus(`Estimate complete! Revenue calculated for ${getSelectedDateRange().from} to ${getSelectedDateRange().to} based on page analysis.`, 'success');
+    showStatus(`Estimate complete! ${summary} Revenue calculated for ${getSelectedDateRange().from} to ${getSelectedDateRange().to} based on page analysis.`, 'success');
 
     // Scroll to results
     $('#results').scrollIntoView({ behavior: 'smooth' });
@@ -409,8 +412,9 @@ const pageMeetsMonetization = data => {
   const met = [];
   const unmet = [];
   criteria.forEach(c => (c.condition ? met.push(c.label) : unmet.push(c.label)));
+  const eligible = unmet.length === 0;
 
-  return { eligible: unmet.length === 0, met, unmet };
+  return { eligible, met, unmet };
 };
 
 const estimatePageSize = (pageHandle) => {
@@ -552,6 +556,18 @@ const showStatus = (message, type = 'info') => {
   statusText.textContent = message;
   statusLine.className = `status-line ${type}`;
   statusLine.style.display = 'block';
+};
+
+const showEligibilityBreakdown = ({ met, unmet }) => {
+  const panel = $('#eligibilityPanel');
+  const metList = $('#criteriaMet');
+  const unmetList = $('#criteriaUnmet');
+
+  if (!panel || !metList || !unmetList) return;
+
+  metList.innerHTML = met.map(item => `<li>${item}</li>`).join('');
+  unmetList.innerHTML = unmet.map(item => `<li>${item}</li>`).join('');
+  panel.style.display = 'block';
 };
 
 const handleDatePreset = (days) => {
