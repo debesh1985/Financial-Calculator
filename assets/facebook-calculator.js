@@ -7,17 +7,13 @@ const fmtUSD = n => new Intl.NumberFormat('en-US',{style:'currency',currency:'US
 const fmtPct = n => `${(n||0).toFixed(0)}%`;
 const debounce = (fn, ms=150) => { let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; };
 
+// Track programmatic eligibility
+let profileEligible = false;
+
 // ===== Input Getters =====
 const inputs = {
   scenario: () => $('input[name="scenario"]:checked').value,
-  
-  // Eligibility
-  eligibility1: () => $('#eligibility1').checked,
-  eligibility2: () => $('#eligibility2').checked,
-  eligibility3: () => $('#eligibility3').checked,
-  eligibility4: () => $('#eligibility4').checked,
-  eligibility5: () => $('#eligibility5').checked,
-  
+
   // Stars
   starsReceived: () => Math.max(0, Number($('#starsReceived').value||0)),
   starsFee: () => clamp(Number($('#starsFee').value||5), 0, 50),
@@ -56,23 +52,20 @@ const inputs = {
 
 // ===== Eligibility Check =====
 const checkEligibility = () => {
-  const allEligible = inputs.eligibility1() && inputs.eligibility2() && 
-                     inputs.eligibility3() && inputs.eligibility4() && inputs.eligibility5();
-  
-  $('#eligibilityWarning').classList.toggle('hidden', allEligible);
-  
+  $('#eligibilityWarning').classList.toggle('hidden', profileEligible);
+
   // Disable calculator if not eligible
   $$('input[type="number"], input[type="range"]').forEach(input => {
-    input.disabled = !allEligible;
+    input.disabled = !profileEligible;
   });
-  
+
   $$('.btn').forEach(btn => {
-    if (btn.id !== 'resetBtn' && btn.id !== 'resetBtnMobile') {
-      btn.disabled = !allEligible;
+    if (btn.id !== 'resetBtn' && btn.id !== 'resetBtnMobile' && btn.id !== 'estimateBtn') {
+      btn.disabled = !profileEligible;
     }
   });
-  
-  return allEligible;
+
+  return profileEligible;
 };
 
 // ===== Calculations =====
@@ -209,9 +202,6 @@ const resetToDefaults = () => {
   // Scenario
   $('#scenario-all').checked = true;
   
-  // Eligibility (start unchecked)
-  $$('#eligibilitySection input[type="checkbox"]').forEach(cb => cb.checked = false);
-  
   // Stars
   $('#starsReceived').value = 5000;
   $('#starsFee').value = 5;
@@ -278,8 +268,6 @@ const copyInputsAsLink = async () => {
 // ===== Page URL Estimation (Public Mode Only) =====
 const estimateFromPageUrl = async () => {
   const pageUrl = $('#pageUrl').value.trim();
-  const statusLine = $('#statusLine');
-  const statusText = $('#statusText');
   
   if (!pageUrl) {
     showStatus('Please enter a Facebook Page URL or @handle', 'error');
@@ -315,16 +303,15 @@ const estimateFromPageUrl = async () => {
     // For demo purposes, populate with estimated values
     const estimatedData = generateEstimatedData(pageHandle);
 
-    if (!pageMeetsMonetization(estimatedData)) {
-      $$('#eligibilitySection input[type="checkbox"]').forEach(cb => cb.checked = false);
-      checkEligibility();
+    profileEligible = pageMeetsMonetization(estimatedData);
+    checkEligibility();
+
+    if (!profileEligible) {
       showStatus('Page is not eligible for monetization. Profile must be at least 90 days old, have 10,000 followers, 5 public posts, 600,000 watch minutes in the past 60 days, and Professional Mode enabled.', 'error');
       return;
     }
 
-    $$('#eligibilitySection input[type="checkbox"]').forEach(cb => cb.checked = true);
     populateInputsFromEstimate(estimatedData);
-    checkEligibility();
 
     showStatus(`Estimate complete! Revenue calculated for ${getSelectedDateRange().from} to ${getSelectedDateRange().to} based on page analysis.`, 'success');
 
