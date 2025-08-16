@@ -273,38 +273,45 @@ const copyInputsAsLink = () => {
   });
 };
 
-// ===== Instagram ID Estimator =====
-const strToSeed = (str) => {
-  let h = 0;
-  for (let i = 0; i < str.length; i++) {
-    h = Math.imul(31, h) + str.charCodeAt(i) | 0;
+// ===== Instagram API =====
+const fetchInsights = async (id, start, end) => {
+  const accessToken = window.INSTAGRAM_ACCESS_TOKEN;
+  const metrics = [
+    'total_stars_received',
+    'active_subscribers',
+    'reels_play_count',
+    'followers_count'
+  ];
+
+  const params = new URLSearchParams({
+    metric: metrics.join(','),
+    since: start,
+    until: end,
+    access_token: accessToken
+  });
+
+  const url = `https://graph.facebook.com/v18.0/${id}/insights?${params.toString()}`;
+  const res = await fetch(url);
+  const data = await res.json();
+
+  if (!res.ok || data.error) {
+    throw new Error(data.error?.message || 'Failed to fetch insights');
   }
-  return Math.abs(h);
-};
 
-const seededRng = (seed) => {
-  return () => {
-    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
-    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
-    t ^= t + Math.imul(t ^ t >>> 7, 61 | t);
-    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  const getMetricValue = (name) => {
+    const entry = data.data?.find(m => m.name === name);
+    if (!entry) return 0;
+    if (Array.isArray(entry.values) && entry.values.length > 0) {
+      return parseFloat(entry.values[0].value) || 0;
+    }
+    return parseFloat(entry.value) || 0;
   };
-};
 
-const generateMetrics = (id, start, end) => {
-  const rand = seededRng(strToSeed(id + start + end));
   return {
-    starsReceived: Math.floor(rand() * 5000),
-    activeSubscribers: Math.floor(rand() * 2000),
-    monthlyPrice: 4.99,
-    appStorePurchases: 70,
-    appStoreFee: 30,
-    webPurchases: 30,
-    platformFee: 0,
-    reelsPlays: Math.floor(rand() * 2000000),
-    reelsRPM: (0.5 + rand() * 1.5).toFixed(2),
-    qualifiedPlayRate: (85 + rand() * 15).toFixed(1),
-    reelsCreatorShare: 45
+    starsReceived: getMetricValue('total_stars_received'),
+    activeSubscribers: getMetricValue('active_subscribers'),
+    reelsPlays: getMetricValue('reels_play_count'),
+    followers: getMetricValue('followers_count')
   };
 };
 
@@ -328,7 +335,7 @@ const getDateRange = () => {
   };
 };
 
-const fetchInstagram = () => {
+const fetchInstagram = async () => {
   const id = $('#instaInput').value.trim().replace(/^@/, '');
   if (!id) {
     $('#instaStatus').textContent = 'Please enter an Instagram ID.';
@@ -336,32 +343,30 @@ const fetchInstagram = () => {
   }
 
   const { start, end, label } = getDateRange();
-  const metrics = generateMetrics(id, start, end);
+  $('#instaStatus').textContent = 'Fetching account insights...';
 
-  $('#starsReceived').value = metrics.starsReceived;
-  $('#activeSubscribers').value = metrics.activeSubscribers;
-  $('#monthlyPrice').value = metrics.monthlyPrice;
-  $('#appStorePurchases').value = metrics.appStorePurchases;
-  $('#appStoreFee').value = metrics.appStoreFee;
-  $('#webPurchases').value = metrics.webPurchases;
-  $('#platformFee').value = metrics.platformFee;
-  $('#reelsPlays').value = metrics.reelsPlays;
-  $('#reelsRPM').value = metrics.reelsRPM;
-  $('#qualifiedPlayRate').value = metrics.qualifiedPlayRate;
-  $('#reelsCreatorShare').value = metrics.reelsCreatorShare;
+  try {
+    const metrics = await fetchInsights(id, start, end);
 
-  syncSliders();
-  calculate();
+    if (metrics.starsReceived !== undefined) $('#starsReceived').value = metrics.starsReceived;
+    if (metrics.activeSubscribers !== undefined) $('#activeSubscribers').value = metrics.activeSubscribers;
+    if (metrics.reelsPlays !== undefined) $('#reelsPlays').value = metrics.reelsPlays;
 
-  const total = calculateGifts() + calculateSubscriptions() + calculateReels();
-  const rpm = inputs.reelsPlays() > 0 ? total / (inputs.reelsPlays() / 1000) : 0;
+    syncSliders();
+    calculate();
 
-  $('#instaTitle').textContent = `@${id}`;
-  $('#instaRevenue').textContent = formatUSD(total);
-  $('#instaRPM').textContent = rpm > 0 ? formatUSD(rpm) : '—';
-  $('#instaDateRange').textContent = label;
-  $('#instaSummary').classList.remove('hidden');
-  $('#instaStatus').textContent = '';
+    const total = calculateGifts() + calculateSubscriptions() + calculateReels();
+    const rpm = inputs.reelsPlays() > 0 ? total / (inputs.reelsPlays() / 1000) : 0;
+
+    $('#instaTitle').textContent = `@${id}`;
+    $('#instaRevenue').textContent = formatUSD(total);
+    $('#instaRPM').textContent = rpm > 0 ? formatUSD(rpm) : '—';
+    $('#instaDateRange').textContent = label;
+    $('#instaSummary').classList.remove('hidden');
+    $('#instaStatus').textContent = '';
+  } catch (err) {
+    $('#instaStatus').textContent = `Error fetching data: ${err.message}`;
+  }
 };
 
 // ===== Debounced Calculate =====
