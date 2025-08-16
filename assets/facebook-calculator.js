@@ -209,8 +209,8 @@ const resetToDefaults = () => {
   // Scenario
   $('#scenario-all').checked = true;
   
-  // Eligibility (all checked)
-  $$('#eligibilitySection input[type="checkbox"]').forEach(cb => cb.checked = true);
+  // Eligibility (start unchecked)
+  $$('#eligibilitySection input[type="checkbox"]').forEach(cb => cb.checked = false);
   
   // Stars
   $('#starsReceived').value = 5000;
@@ -314,10 +314,20 @@ const estimateFromPageUrl = async () => {
     
     // For demo purposes, populate with estimated values
     const estimatedData = generateEstimatedData(pageHandle);
+
+    if (!pageMeetsMonetization(estimatedData)) {
+      $$('#eligibilitySection input[type="checkbox"]').forEach(cb => cb.checked = false);
+      checkEligibility();
+      showStatus('Page is not eligible for monetization. Profile must be at least 90 days old, have 10,000 followers, 5 public posts, 600,000 watch minutes in the past 60 days, and Professional Mode enabled.', 'error');
+      return;
+    }
+
+    $$('#eligibilitySection input[type="checkbox"]').forEach(cb => cb.checked = true);
     populateInputsFromEstimate(estimatedData);
-    
+    checkEligibility();
+
     showStatus(`Estimate complete! Revenue calculated for ${getSelectedDateRange().from} to ${getSelectedDateRange().to} based on page analysis.`, 'success');
-    
+
     // Scroll to results
     $('#results').scrollIntoView({ behavior: 'smooth' });
     
@@ -341,19 +351,25 @@ const generateEstimatedData = (pageHandle) => {
   // Get selected date range
   const dateRange = getSelectedDateRange();
   const daysDiff = Math.ceil((new Date(dateRange.to) - new Date(dateRange.from)) / (1000 * 60 * 60 * 24));
-  
+
   // Create a deterministic seed from page handle for consistent results
   const seed = createDeterministicSeed(pageHandle);
-  
+
   // Simulate more realistic page metrics based on handle and date range
   const pageSize = estimatePageSize(pageHandle);
   const engagementRate = estimateEngagementRate(pageSize);
-  
+
   // Calculate base metrics per day, then scale by date range
   const dailyMetrics = calculateDailyMetrics(pageSize, engagementRate, seed);
-  
+
   const totalSubs = Math.max(0, Math.floor(dailyMetrics.subscribersBase * (daysDiff / 30))); // Monthly growth
+  const watchMinutes = Math.floor(dailyMetrics.longformPerDay * 0.5 * daysDiff); // assume 30s avg watch
   return {
+    accountAgeDays: 30 + (seed % 1000),
+    followers: dailyMetrics.followers,
+    postCount: Math.max(0, Math.floor(dailyMetrics.postsPerDay * daysDiff)),
+    watchMinutes,
+    professionalMode: seed % 2 === 0,
     starsReceived: Math.max(0, Math.floor(dailyMetrics.starsPerDay * daysDiff)),
     subscribersYear1: Math.floor(totalSubs * 0.6),
     subscribersYear2Plus: Math.floor(totalSubs * 0.4),
@@ -362,6 +378,13 @@ const generateEstimatedData = (pageHandle) => {
     guaranteedImpressions: Math.max(0, Math.floor(dailyMetrics.brandedPerDay * daysDiff))
   };
 };
+
+const pageMeetsMonetization = data =>
+  data.accountAgeDays >= 90 &&
+  data.followers >= 10000 &&
+  data.postCount >= 5 &&
+  data.watchMinutes >= 600000 &&
+  data.professionalMode;
 
 const estimatePageSize = (pageHandle) => {
   // Estimate page size category based on handle characteristics
@@ -418,19 +441,24 @@ const calculateDailyMetrics = (pageSize, engagementRate, seed) => {
   const followers = Math.floor(followerEstimates[pageSize] * variation);
   const dailyReach = Math.floor(followers * 0.1); // Assume 10% daily reach
   const dailyEngagement = Math.floor(dailyReach * engagementRate);
-  
+
   // Calculate realistic daily metrics with deterministic variations
   const starsVariation = 0.5 + ((seed % 100) / 100); // 0.5 to 1.5
   const reelsVariation = 0.7 + ((seed % 200) / 333); // 0.7 to 1.3
   const longformVariation = 0.6 + ((seed % 150) / 187.5); // 0.6 to 1.4
   const brandedVariation = 0.4 + ((seed % 300) / 250); // 0.4 to 1.6
-  
+  const postsVariation = 0.5 + ((seed % 50) / 50); // 0.5 to 1.5
+
+  const basePosts = pageSize === 'large' ? 3 : pageSize === 'medium' ? 2 : 1;
+
   return {
+    followers,
     starsPerDay: Math.floor(dailyEngagement * 0.001 * 10 * starsVariation), // 0.1% of engaged users send ~10 stars
     subscribersBase: Math.floor(followers * 0.005), // 0.5% subscription rate (stable)
     reelsPerDay: Math.floor(dailyReach * 0.3 * reelsVariation), // 30% of reached users watch reels
     longformPerDay: Math.floor(dailyReach * 0.15 * longformVariation), // 15% watch long-form content
-    brandedPerDay: Math.floor(dailyReach * (pageSize === 'large' ? 0.2 : pageSize === 'medium' ? 0.1 : 0.05) * brandedVariation) // Branded content impressions
+    brandedPerDay: Math.floor(dailyReach * (pageSize === 'large' ? 0.2 : pageSize === 'medium' ? 0.1 : 0.05) * brandedVariation), // Branded content impressions
+    postsPerDay: Math.max(1, Math.floor(basePosts * postsVariation))
   };
 };
 
