@@ -7,17 +7,13 @@ const fmtUSD = n => new Intl.NumberFormat('en-US',{style:'currency',currency:'US
 const fmtPct = n => `${(n||0).toFixed(0)}%`;
 const debounce = (fn, ms=150) => { let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; };
 
+// Track programmatic eligibility
+let profileEligible = false;
+
 // ===== Input Getters =====
 const inputs = {
   scenario: () => $('input[name="scenario"]:checked').value,
-  
-  // Eligibility
-  eligibility1: () => $('#eligibility1').checked,
-  eligibility2: () => $('#eligibility2').checked,
-  eligibility3: () => $('#eligibility3').checked,
-  eligibility4: () => $('#eligibility4').checked,
-  eligibility5: () => $('#eligibility5').checked,
-  
+
   // Stars
   starsReceived: () => Math.max(0, Number($('#starsReceived').value||0)),
   starsFee: () => clamp(Number($('#starsFee').value||5), 0, 50),
@@ -56,23 +52,20 @@ const inputs = {
 
 // ===== Eligibility Check =====
 const checkEligibility = () => {
-  const allEligible = inputs.eligibility1() && inputs.eligibility2() && 
-                     inputs.eligibility3() && inputs.eligibility4() && inputs.eligibility5();
-  
-  $('#eligibilityWarning').classList.toggle('hidden', allEligible);
-  
+  $('#eligibilityWarning').classList.toggle('hidden', profileEligible);
+
   // Disable calculator if not eligible
   $$('input[type="number"], input[type="range"]').forEach(input => {
-    input.disabled = !allEligible;
+    input.disabled = !profileEligible;
   });
-  
+
   $$('.btn').forEach(btn => {
-    if (btn.id !== 'resetBtn' && btn.id !== 'resetBtnMobile') {
-      btn.disabled = !allEligible;
+    if (btn.id !== 'resetBtn' && btn.id !== 'resetBtnMobile' && btn.id !== 'estimateBtn') {
+      btn.disabled = !profileEligible;
     }
   });
-  
-  return allEligible;
+
+  return profileEligible;
 };
 
 // ===== Calculations =====
@@ -209,9 +202,6 @@ const resetToDefaults = () => {
   // Scenario
   $('#scenario-all').checked = true;
   
-  // Eligibility (start unchecked)
-  $$('#eligibilitySection input[type="checkbox"]').forEach(cb => cb.checked = false);
-  
   // Stars
   $('#starsReceived').value = 5000;
   $('#starsFee').value = 5;
@@ -278,8 +268,6 @@ const copyInputsAsLink = async () => {
 // ===== Page URL Estimation (Public Mode Only) =====
 const estimateFromPageUrl = async () => {
   const pageUrl = $('#pageUrl').value.trim();
-  const statusLine = $('#statusLine');
-  const statusText = $('#statusText');
   
   if (!pageUrl) {
     showStatus('Please enter a Facebook Page URL or @handle', 'error');
@@ -315,16 +303,15 @@ const estimateFromPageUrl = async () => {
     // For demo purposes, populate with estimated values
     const estimatedData = generateEstimatedData(pageHandle);
 
-    if (!pageMeetsMonetization(estimatedData)) {
-      $$('#eligibilitySection input[type="checkbox"]').forEach(cb => cb.checked = false);
-      checkEligibility();
+    profileEligible = pageMeetsMonetization(estimatedData);
+    checkEligibility();
+
+    if (!profileEligible) {
       showStatus('Page is not eligible for monetization. Profile must be at least 90 days old, have 10,000 followers, 5 public posts, 600,000 watch minutes in the past 60 days, and Professional Mode enabled.', 'error');
       return;
     }
 
-    $$('#eligibilitySection input[type="checkbox"]').forEach(cb => cb.checked = true);
     populateInputsFromEstimate(estimatedData);
-    checkEligibility();
 
     showStatus(`Estimate complete! Revenue calculated for ${getSelectedDateRange().from} to ${getSelectedDateRange().to} based on page analysis.`, 'success');
 
@@ -363,13 +350,13 @@ const generateEstimatedData = (pageHandle) => {
   const dailyMetrics = calculateDailyMetrics(pageSize, engagementRate, seed);
 
   const totalSubs = Math.max(0, Math.floor(dailyMetrics.subscribersBase * (daysDiff / 30))); // Monthly growth
-  const watchMinutes = Math.floor(dailyMetrics.longformPerDay * 0.5 * daysDiff); // assume 30s avg watch
+  const watchMinutes = Math.floor(dailyMetrics.followers * 0.3 * 60); // assume 0.3 min per follower per day over 60 days
   return {
-    accountAgeDays: 30 + (seed % 1000),
+    accountAgeDays: 90 + (seed % 1000),
     followers: dailyMetrics.followers,
     postCount: Math.max(0, Math.floor(dailyMetrics.postsPerDay * daysDiff)),
     watchMinutes,
-    professionalMode: seed % 2 === 0,
+    professionalMode: true,
     starsReceived: Math.max(0, Math.floor(dailyMetrics.starsPerDay * daysDiff)),
     subscribersYear1: Math.floor(totalSubs * 0.6),
     subscribersYear2Plus: Math.floor(totalSubs * 0.4),
@@ -397,8 +384,10 @@ const estimatePageSize = (pageHandle) => {
     return 'large';
   } else if (handle.includes('news') || handle.includes('media')) {
     return 'medium';
-  } else if (handle.length > 15 || /\d{4,}/.test(handle)) {
-    return 'small'; // Long handles or many numbers suggest smaller pages
+  } else if (/\d/.test(handle)) {
+    return 'medium'; // Handles with numbers typically belong to mid-sized pages
+  } else if (handle.length > 15) {
+    return 'small'; // Very long handles suggest smaller pages
   }
   
   return 'medium'; // Default assumption
@@ -515,16 +504,10 @@ const populateInputsFromEstimate = (data) => {
 const showStatus = (message, type = 'info') => {
   const statusLine = $('#statusLine');
   const statusText = $('#statusText');
-  
+
   statusText.textContent = message;
   statusLine.className = `status-line ${type}`;
   statusLine.style.display = 'block';
-  
-  if (type === 'success' || type === 'error') {
-    setTimeout(() => {
-      statusLine.style.display = 'none';
-    }, 5000);
-  }
 };
 
 const handleDatePreset = (days) => {
