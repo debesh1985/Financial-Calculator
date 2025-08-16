@@ -69,7 +69,7 @@ const checkEligibility = () => {
 };
 
 // ===== Calculations =====
-const calc = () => {
+const calc = (rangeMonths = 1) => {
   if (!checkEligibility()) {
     return { starsUSD: 0, subscriptionsUSD: 0, reelsUSD: 0, longformUSD: 0, brandedUSD: 0, total: 0, overallRPM: 0 };
   }
@@ -91,7 +91,7 @@ const calc = () => {
   const netWebYear2Plus = grossYear2Plus * webPercent * (1 - inputs.platformFee() / 100);
   const netWeb = (netWebYear1 + netWebYear2Plus) * (1 - inputs.metaPlatformFee() / 100);
 
-  const subscriptionsUSD = netApp + netWeb;
+  const subscriptionsUSD = (netApp + netWeb) * rangeMonths;
   
   // Reels Revenue = Qualified_Plays × (Effective_RPM / 1000) × Creator_Share
   const qualifiedPlays = inputs.reelsPlays() * (inputs.qualifiedPlayRate() / 100);
@@ -134,9 +134,12 @@ const updateUI = () => {
   $('#monetizableRateNum').value = $('#monetizableRate').value;
   $('#fillRateNum').value = $('#fillRate').value;
   $('#additionalReductionsNum').value = $('#additionalReductions').value;
-  
+
   // Calculate results
-  const { starsUSD, subscriptionsUSD, reelsUSD, longformUSD, brandedUSD, total, overallRPM } = calc();
+  const dateRange = getSelectedDateRange();
+  const daysDiff = Math.ceil((new Date(dateRange.to) - new Date(dateRange.from)) / (1000 * 60 * 60 * 24));
+  const rangeMonths = daysDiff / 30;
+  const { starsUSD, subscriptionsUSD, reelsUSD, longformUSD, brandedUSD, total, overallRPM } = calc(rangeMonths);
   
   // Update results display
   $('#estTotal').textContent = fmtUSD(total);
@@ -514,17 +517,13 @@ const getSelectedDateRange = () => {
 };
 
 const populateInputsFromEstimate = (data) => {
-  // Calculate monthly values from the date range
-  const dateRange = getSelectedDateRange();
-  const daysDiff = Math.ceil((new Date(dateRange.to) - new Date(dateRange.from)) / (1000 * 60 * 60 * 24));
-  const monthlyMultiplier = 30 / daysDiff; // Convert to monthly estimates
-  
-  $('#starsReceived').value = Math.round(data.starsReceived * monthlyMultiplier);
+  // Populate input fields with totals for the selected date range
+  $('#starsReceived').value = Math.round(data.starsReceived);
   $('#subscribersYear1').value = Math.round(data.subscribersYear1);
   $('#subscribersYear2Plus').value = Math.round(data.subscribersYear2Plus);
-  $('#reelsPlays').value = Math.round(data.reelsPlays * monthlyMultiplier);
-  $('#longformViews').value = Math.round(data.longformViews * monthlyMultiplier);
-  $('#guaranteedImpressions').value = Math.round(data.guaranteedImpressions * monthlyMultiplier);
+  $('#reelsPlays').value = Math.round(data.reelsPlays);
+  $('#longformViews').value = Math.round(data.longformViews);
+  $('#guaranteedImpressions').value = Math.round(data.guaranteedImpressions);
   
   // Update RPM values to more realistic estimates based on page analysis
   const pageHandle = extractPageHandle($('#pageUrl').value.trim());
