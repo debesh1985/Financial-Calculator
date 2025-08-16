@@ -345,6 +345,7 @@ const generateEstimatedData = (pageHandle) => {
   // Get selected date range
   const dateRange = getSelectedDateRange();
   const daysDiff = Math.ceil((new Date(dateRange.to) - new Date(dateRange.from)) / (1000 * 60 * 60 * 24));
+  const dayCount = Math.min(daysDiff, 60);
 
   // Create a deterministic seed from page handle for consistent results
   const seed = createDeterministicSeed(pageHandle);
@@ -356,15 +357,15 @@ const generateEstimatedData = (pageHandle) => {
   // Calculate base metrics per day, then scale by date range
   const dailyMetrics = calculateDailyMetrics(pageSize, engagementRate, seed);
 
-  const totalSubs = Math.max(0, Math.floor(dailyMetrics.subscribersBase * (daysDiff / 30))); // Monthly growth
-  const watchMinutes = Math.floor(dailyMetrics.followers * 0.25 * 60); // assume 0.25 min per follower per day over 60 days
+  const totalSubs = Math.max(0, Math.floor(dailyMetrics.subscribersBase * (dayCount / 30))); // Monthly growth
+  const watchMinutes = Math.floor(dailyMetrics.followers * 0.25 * dayCount); // assume 0.25 min per follower per day
 
-  // Scale engagement metrics by date range
-  const likes = Math.max(0, Math.floor(dailyMetrics.likesPerDay * daysDiff));
-  const comments = Math.max(0, Math.floor(dailyMetrics.commentsPerDay * daysDiff));
-  const shares = Math.max(0, Math.floor(dailyMetrics.sharesPerDay * daysDiff));
+  // Scale engagement metrics by day count
+  const likes = Math.max(0, Math.floor(dailyMetrics.likesPerDay * dayCount));
+  const comments = Math.max(0, Math.floor(dailyMetrics.commentsPerDay * dayCount));
+  const shares = Math.max(0, Math.floor(dailyMetrics.sharesPerDay * dayCount));
   const totalEngagements = likes + comments + shares;
-  const engagementRateActual = dailyMetrics.followers > 0 ? totalEngagements / (dailyMetrics.followers * daysDiff) : 0;
+  const engagementRateActual = dailyMetrics.followers > 0 ? totalEngagements / (dailyMetrics.followers * dayCount) : 0;
 
   // Deterministic compliance and demographic data
   const policyCompliant = (seed % 10) !== 0; // 90% chance of compliance
@@ -375,33 +376,36 @@ const generateEstimatedData = (pageHandle) => {
   return {
     accountAgeDays: 90 + (seed % 1000),
     followers: dailyMetrics.followers,
-    postCount: Math.max(0, Math.floor(dailyMetrics.postsPerDay * daysDiff)),
+    postCount: Math.max(0, Math.floor(dailyMetrics.postsPerDay * dayCount)),
     watchMinutes,
     professionalMode: true,
-    starsReceived: Math.max(0, Math.floor(dailyMetrics.starsPerDay * daysDiff)),
+    starsReceived: Math.max(0, Math.floor(dailyMetrics.starsPerDay * dayCount)),
     subscribersYear1: Math.floor(totalSubs * 0.6),
     subscribersYear2Plus: Math.floor(totalSubs * 0.4),
-    reelsPlays: Math.max(0, Math.floor(dailyMetrics.reelsPerDay * daysDiff)),
-    longformViews: Math.max(0, Math.floor(dailyMetrics.longformPerDay * daysDiff)),
-    guaranteedImpressions: Math.max(0, Math.floor(dailyMetrics.brandedPerDay * daysDiff)),
+    reelsPlays: Math.max(0, Math.floor(dailyMetrics.reelsPerDay * dayCount)),
+    longformViews: Math.max(0, Math.floor(dailyMetrics.longformPerDay * dayCount)),
+    guaranteedImpressions: Math.max(0, Math.floor(dailyMetrics.brandedPerDay * dayCount)),
     likes,
     comments,
     shares,
     engagementRate: engagementRateActual,
     policyCompliant,
     age,
-    country
+    country,
+    dayCount
   };
 };
 
 const pageMeetsMonetization = data => {
   const supportedCountries = ['US', 'CA', 'GB', 'AU', 'IN'];
+  const watchWindowDays = data.dayCount || 60;
+  const watchMinutesReq = 10000 * watchWindowDays;
   const criteria = [
     { condition: data.accountAgeDays >= 90, label: 'profile 90+ days old' },
     { condition: data.followers >= 500, label: '500 followers' },
     { condition: data.followers >= 10000, label: '10,000 followers' },
     { condition: data.postCount >= 5, label: '5 public posts' },
-    { condition: data.watchMinutes >= 600000, label: '600,000 watch minutes (60 days)' },
+    { condition: data.watchMinutes >= watchMinutesReq, label: `${watchMinutesReq.toLocaleString()} watch minutes (${watchWindowDays} days)` },
     { condition: data.likes > 0 && data.comments > 0 && data.shares > 0, label: 'active engagement (likes/comments/shares)' },
     { condition: data.policyCompliant, label: 'policy compliance' },
     { condition: data.age >= 18, label: 'age 18+' },
