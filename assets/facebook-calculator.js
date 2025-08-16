@@ -303,11 +303,12 @@ const estimateFromPageUrl = async () => {
     // For demo purposes, populate with estimated values
     const estimatedData = generateEstimatedData(pageHandle);
 
-    profileEligible = pageMeetsMonetization(estimatedData);
+    const eligibility = pageMeetsMonetization(estimatedData);
+    profileEligible = eligibility.eligible;
     checkEligibility();
 
-    if (!profileEligible) {
-      showStatus('Page is not eligible for monetization. Profile must be at least 90 days old, have 10,000 followers, 5 public posts, 600,000 watch minutes in the past 60 days, and Professional Mode enabled.', 'error');
+    if (!eligibility.eligible) {
+      showStatus(`Page is not eligible for monetization. Needs: ${eligibility.unmet.join(', ')}.`, 'error');
       return;
     }
 
@@ -366,12 +367,15 @@ const generateEstimatedData = (pageHandle) => {
   };
 };
 
-const pageMeetsMonetization = data =>
-  data.accountAgeDays >= 90 &&
-  data.followers >= 10000 &&
-  data.postCount >= 5 &&
-  data.watchMinutes >= 600000 &&
-  data.professionalMode;
+const pageMeetsMonetization = data => {
+  const unmet = [];
+  if (data.accountAgeDays < 90) unmet.push('profile 90+ days old');
+  if (data.followers < 10000) unmet.push('10,000 followers');
+  if (data.postCount < 5) unmet.push('5 public posts');
+  if (data.watchMinutes < 600000) unmet.push('600,000 watch minutes (60 days)');
+  if (!data.professionalMode) unmet.push('Professional Mode enabled');
+  return { eligible: unmet.length === 0, unmet };
+};
 
 const estimatePageSize = (pageHandle) => {
   // Estimate page size category based on handle characteristics
