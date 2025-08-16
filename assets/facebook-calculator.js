@@ -350,13 +350,13 @@ const generateEstimatedData = (pageHandle) => {
   const dailyMetrics = calculateDailyMetrics(pageSize, engagementRate, seed);
 
   const totalSubs = Math.max(0, Math.floor(dailyMetrics.subscribersBase * (daysDiff / 30))); // Monthly growth
-  const watchMinutes = Math.floor(dailyMetrics.longformPerDay * 0.5 * daysDiff); // assume 30s avg watch
+  const watchMinutes = Math.floor(dailyMetrics.followers * 0.3 * 60); // assume 0.3 min per follower per day over 60 days
   return {
-    accountAgeDays: 30 + (seed % 1000),
+    accountAgeDays: 90 + (seed % 1000),
     followers: dailyMetrics.followers,
     postCount: Math.max(0, Math.floor(dailyMetrics.postsPerDay * daysDiff)),
     watchMinutes,
-    professionalMode: seed % 2 === 0,
+    professionalMode: true,
     starsReceived: Math.max(0, Math.floor(dailyMetrics.starsPerDay * daysDiff)),
     subscribersYear1: Math.floor(totalSubs * 0.6),
     subscribersYear2Plus: Math.floor(totalSubs * 0.4),
@@ -384,8 +384,10 @@ const estimatePageSize = (pageHandle) => {
     return 'large';
   } else if (handle.includes('news') || handle.includes('media')) {
     return 'medium';
-  } else if (handle.length > 15 || /\d{4,}/.test(handle)) {
-    return 'small'; // Long handles or many numbers suggest smaller pages
+  } else if (/\d/.test(handle)) {
+    return 'medium'; // Handles with numbers typically belong to mid-sized pages
+  } else if (handle.length > 15) {
+    return 'small'; // Very long handles suggest smaller pages
   }
   
   return 'medium'; // Default assumption
@@ -502,16 +504,10 @@ const populateInputsFromEstimate = (data) => {
 const showStatus = (message, type = 'info') => {
   const statusLine = $('#statusLine');
   const statusText = $('#statusText');
-  
+
   statusText.textContent = message;
   statusLine.className = `status-line ${type}`;
   statusLine.style.display = 'block';
-  
-  if (type === 'success' || type === 'error') {
-    setTimeout(() => {
-      statusLine.style.display = 'none';
-    }, 5000);
-  }
 };
 
 const handleDatePreset = (days) => {
