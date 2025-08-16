@@ -440,6 +440,25 @@ const fetchChannelId = async (input) => {
     return parsed.value;
   }
   
+  if (parsed.type === 'handle') {
+    try {
+      const response = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=id&forHandle=${encodeURIComponent(parsed.value)}&key=${YT_API_KEY}`);
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+      }
+      const data = await response.json();
+      if (data.error) {
+        throw new Error(`API Error: ${data.error.message}`);
+      }
+      if (data.items && data.items.length > 0) {
+        return data.items[0].id;
+      }
+    } catch (e) {
+      console.warn('Handle lookup failed:', e);
+      // Fall through to search
+    }
+  }
+
   if (parsed.type === 'username') {
     try {
       const response = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=id&forUsername=${parsed.value}&key=${YT_API_KEY}`);
@@ -455,12 +474,12 @@ const fetchChannelId = async (input) => {
       }
     } catch (e) {
       console.warn('Username lookup failed:', e);
-      // Fall through to handle search
+      // Fall through to search
     }
   }
-  
-  // Search for handle
-  const query = parsed.type === 'handle' ? `@${parsed.value}` : parsed.value;
+
+  // Search for channel by name/handle
+  const query = parsed.value;
   const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${encodeURIComponent(query)}&key=${YT_API_KEY}&maxResults=10`);
   
   if (!response.ok) {
