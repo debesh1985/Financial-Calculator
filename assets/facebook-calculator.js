@@ -351,7 +351,7 @@ const generateEstimatedData = (pageHandle) => {
   const dailyMetrics = calculateDailyMetrics(pageSize, engagementRate, seed);
 
   const totalSubs = Math.max(0, Math.floor(dailyMetrics.subscribersBase * (daysDiff / 30))); // Monthly growth
-  const watchMinutes = Math.floor(dailyMetrics.followers * 0.3 * 60); // assume 0.3 min per follower per day over 60 days
+  const watchMinutes = Math.floor(dailyMetrics.followers * 0.25 * 60); // assume 0.25 min per follower per day over 60 days
   return {
     accountAgeDays: 90 + (seed % 1000),
     followers: dailyMetrics.followers,
@@ -392,9 +392,11 @@ const estimatePageSize = (pageHandle) => {
     return 'medium'; // Handles with numbers typically belong to mid-sized pages
   } else if (handle.length > 15) {
     return 'small'; // Very long handles suggest smaller pages
+  } else if (/^[a-z]+[._-][a-z]+$/.test(handle)) {
+    return 'small'; // Personal name style handles
   }
-  
-  return 'medium'; // Default assumption
+
+  return 'small'; // Default assumption for ambiguous handles
 };
 
 const estimateEngagementRate = (pageSize) => {
@@ -424,7 +426,7 @@ const calculateDailyMetrics = (pageSize, engagementRate, seed) => {
   const followerEstimates = {
     'large': 500000,   // 500K+ followers
     'medium': 50000,   // 50K followers
-    'small': 5000      // 5K followers
+    'small': 8000      // ~8K followers
   };
   
   // Use seed to create deterministic variations (±20% from base)
