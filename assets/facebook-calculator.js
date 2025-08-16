@@ -117,9 +117,10 @@ const calc = () => {
   
   const total = starsUSD + subscriptionsUSD + reelsUSD + longformUSD + brandedUSD;
 
-  // Overall RPM calculation
+  // Overall RPM should only reflect revenue tied directly to plays or views
+  const viewRevenue = reelsUSD + longformUSD;
   const totalEligible = qualifiedPlays + eligibleViews;
-  const overallRPM = totalEligible > 0 ? (total / totalEligible) * 1000 : 0;
+  const overallRPM = totalEligible > 0 ? (viewRevenue / totalEligible) * 1000 : 0;
 
   return { starsUSD, subscriptionsUSD, reelsUSD, longformUSD, brandedUSD, total, overallRPM, qualifiedPlays, eligibleViews };
 };
