@@ -352,6 +352,20 @@ const generateEstimatedData = (pageHandle) => {
 
   const totalSubs = Math.max(0, Math.floor(dailyMetrics.subscribersBase * (daysDiff / 30))); // Monthly growth
   const watchMinutes = Math.floor(dailyMetrics.followers * 0.25 * 60); // assume 0.25 min per follower per day over 60 days
+
+  // Scale engagement metrics by date range
+  const likes = Math.max(0, Math.floor(dailyMetrics.likesPerDay * daysDiff));
+  const comments = Math.max(0, Math.floor(dailyMetrics.commentsPerDay * daysDiff));
+  const shares = Math.max(0, Math.floor(dailyMetrics.sharesPerDay * daysDiff));
+  const totalEngagements = likes + comments + shares;
+  const engagementRateActual = dailyMetrics.followers > 0 ? totalEngagements / (dailyMetrics.followers * daysDiff) : 0;
+
+  // Deterministic compliance and demographic data
+  const policyCompliant = (seed % 10) !== 0; // 90% chance of compliance
+  const age = 18 + (seed % 30); // 18-47 years old
+  const countries = ['US', 'CA', 'GB', 'AU', 'IN'];
+  const country = countries[seed % countries.length];
+
   return {
     accountAgeDays: 90 + (seed % 1000),
     followers: dailyMetrics.followers,
@@ -363,18 +377,37 @@ const generateEstimatedData = (pageHandle) => {
     subscribersYear2Plus: Math.floor(totalSubs * 0.4),
     reelsPlays: Math.max(0, Math.floor(dailyMetrics.reelsPerDay * daysDiff)),
     longformViews: Math.max(0, Math.floor(dailyMetrics.longformPerDay * daysDiff)),
-    guaranteedImpressions: Math.max(0, Math.floor(dailyMetrics.brandedPerDay * daysDiff))
+    guaranteedImpressions: Math.max(0, Math.floor(dailyMetrics.brandedPerDay * daysDiff)),
+    likes,
+    comments,
+    shares,
+    engagementRate: engagementRateActual,
+    policyCompliant,
+    age,
+    country
   };
 };
 
 const pageMeetsMonetization = data => {
+  const supportedCountries = ['US', 'CA', 'GB', 'AU', 'IN'];
+  const criteria = [
+    { condition: data.accountAgeDays >= 90, label: 'profile 90+ days old' },
+    { condition: data.followers >= 500, label: '500 followers' },
+    { condition: data.followers >= 10000, label: '10,000 followers' },
+    { condition: data.postCount >= 5, label: '5 public posts' },
+    { condition: data.watchMinutes >= 600000, label: '600,000 watch minutes (60 days)' },
+    { condition: data.likes > 0 && data.comments > 0 && data.shares > 0, label: 'active engagement (likes/comments/shares)' },
+    { condition: data.policyCompliant, label: 'policy compliance' },
+    { condition: data.age >= 18, label: 'age 18+' },
+    { condition: supportedCountries.includes(data.country), label: 'supported country' },
+    { condition: data.professionalMode, label: 'Professional Mode enabled' }
+  ];
+
+  const met = [];
   const unmet = [];
-  if (data.accountAgeDays < 90) unmet.push('profile 90+ days old');
-  if (data.followers < 10000) unmet.push('10,000 followers');
-  if (data.postCount < 5) unmet.push('5 public posts');
-  if (data.watchMinutes < 600000) unmet.push('600,000 watch minutes (60 days)');
-  if (!data.professionalMode) unmet.push('Professional Mode enabled');
-  return { eligible: unmet.length === 0, unmet };
+  criteria.forEach(c => (c.condition ? met.push(c.label) : unmet.push(c.label)));
+
+  return { eligible: unmet.length === 0, met, unmet };
 };
 
 const estimatePageSize = (pageHandle) => {
@@ -445,6 +478,9 @@ const calculateDailyMetrics = (pageSize, engagementRate, seed) => {
   const postsVariation = 0.5 + ((seed % 50) / 50); // 0.5 to 1.5
 
   const basePosts = pageSize === 'large' ? 3 : pageSize === 'medium' ? 2 : 1;
+  const likesPerDay = Math.floor(dailyEngagement * 0.6);
+  const commentsPerDay = Math.floor(dailyEngagement * 0.25);
+  const sharesPerDay = Math.floor(dailyEngagement * 0.15);
 
   return {
     followers,
@@ -453,7 +489,10 @@ const calculateDailyMetrics = (pageSize, engagementRate, seed) => {
     reelsPerDay: Math.floor(dailyReach * 0.3 * reelsVariation), // 30% of reached users watch reels
     longformPerDay: Math.floor(dailyReach * 0.15 * longformVariation), // 15% watch long-form content
     brandedPerDay: Math.floor(dailyReach * (pageSize === 'large' ? 0.2 : pageSize === 'medium' ? 0.1 : 0.05) * brandedVariation), // Branded content impressions
-    postsPerDay: Math.max(1, Math.floor(basePosts * postsVariation))
+    postsPerDay: Math.max(1, Math.floor(basePosts * postsVariation)),
+    likesPerDay,
+    commentsPerDay,
+    sharesPerDay
   };
 };
 
