@@ -132,6 +132,13 @@
         min-height: 44px;
       }
     }
+
+    .about-map iframe {
+      width: 100%;
+      min-height: 320px;
+      border: 0;
+      border-radius: 12px;
+    }
   </style>
 </head>
   <body class="d-flex flex-column min-vh-100">
@@ -384,6 +391,17 @@
             Compare different payment frequencies including accelerated bi-weekly options to see how they affect your amortization schedule.
           </p>
 
+          <h3 class="h5 mt-4 mb-2">About Us</h3>
+          <p class="text-muted mb-2">Raisa De and her team is located at 100 Milverton Dr #210, Mississauga, ON, L5R 3G2.</p>
+          <div class="about-map mb-4">
+            <iframe
+              title="Raisa De team office location"
+              src="https://www.google.com/maps?q=100+Milverton+Dr+%23210,+Mississauga,+ON+L5R+3G2&output=embed"
+              loading="lazy"
+              allowfullscreen
+              referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+
           <h3 class="h5 mt-4 mb-3">Frequently Asked Questions</h3>
           <div class="border rounded">
             <div class="border-bottom">
@@ -449,7 +467,15 @@
     "@type": "Organization",
     "name": "FunDu Web Co.",
     "url": "https://financialcalculator.replit.app/",
-    "sameAs": []
+    "sameAs": [],
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "100 Milverton Dr #210",
+      "addressLocality": "Mississauga",
+      "addressRegion": "ON",
+      "postalCode": "L5R 3G2",
+      "addressCountry": "CA"
+    }
   }
   </script>
 
